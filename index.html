@@ -648,6 +648,7 @@ input.mc-score::-webkit-outer-spin-button,input.mc-score::-webkit-inner-spin-but
 <!-- ══ 경기편성 ══ -->
 <div id="pg-session" class="pg">
   <div id="ses-form">
+    <div id="form-existing"></div>
     <div class="card">
       <div class="card-title">① 모임 기본 설정</div>
       <label class="f-lbl">모임 날짜</label>
@@ -720,9 +721,13 @@ input.mc-score::-webkit-outer-spin-button,input.mc-score::-webkit-inner-spin-but
       <button class="tog" data-v="month" onclick="setRF(this)">이번 달</button>
       <button class="tog" data-v="3m" onclick="setRF(this)">3개월</button>
     </div>
+    <div class="tog-wrap" id="tg-rankby" style="margin-top:10px;">
+      <button class="tog on" data-v="match" onclick="setRB(this)">🏆 승부순</button>
+      <button class="tog" data-v="att" onclick="setRB(this)">📅 출석순</button>
+    </div>
     <div style="font-size:13px;color:var(--muted);margin-top:12px;line-height:1.6;">
-      📊 순위 기준: <strong style="color:var(--text2);">①승수 → ②게임 다승 → ③득실차</strong> 순<br>
-      승수가 같으면 이긴 게임 수(다승), 그다음 득실차로 순위가 결정됩니다.
+      🏆 <strong style="color:var(--text2);">승부순</strong>: ①승수 → ②게임 다승 → ③득실차<br>
+      📅 <strong style="color:var(--text2);">출석순</strong>: 모임 출석 횟수가 많은 순 (빠짐없이 출석하면 🌟개근)
     </div>
   </div>
   <div class="card" id="rank-list"><div class="empty"><span class="empty-ico">🏆</span>확정된 결과가 없습니다.</div></div>
@@ -937,7 +942,7 @@ var courts=2,totalMin=120,gameMin=30,mtype='doubles',surface='grass',pIds=[];
 var isPopping=false;
 
 /* ── FIREBASE ── */
-var APP_VER='3.0 (2026-09-19)';
+var APP_VER='3.1 (2026-09-19)';
 var fbApp=null,fbDB=null,fbRef=null,isOnline=false;
 var FB_KEY='btc_firebase_cfg';
 var lastSavedSnapshot='';   // 자기가 저장한 데이터 추적 (echo 방지)
@@ -1250,6 +1255,8 @@ function sanitizeDB(db){
 function sortDB(db){
   (db.sessions||[]).sort(function(a,b){
     if((a.date||'')!==(b.date||''))return (a.date||'')<(b.date||'')?-1:1;
+    var at=a.ts||0,bt=b.ts||0;
+    if(at!==bt)return at-bt;   // 같은 날짜면 생성 순서대로
     return a.id<b.id?-1:1;
   });
   (db.members||[]).sort(function(a,b){
@@ -1265,10 +1272,18 @@ function adoptServer(d){
   sanitizeDB(inc);sortDB(inc);
   return inc;
 }
-/* 구버전 회원 데이터에 표시 순서(ord) 부여 */
+/* 구버전 데이터 이행: 회원 표시 순서(ord) + 모임 생성 시각(ts) 부여 */
 function migrate(){
   var ch=false,mx=DB.members.reduce(function(a,m){return Math.max(a,m.ord||0);},0);
   DB.members.forEach(function(m){if(m.ord==null){mx++;m.ord=mx;ch=true;}});
+  DB.sessions.forEach(function(s){
+    if(s.ts==null){
+      // uid 끝부분이 base36 생성시각 — 추출 실패 시 0 (날짜만으로 정렬)
+      var t=parseInt(String(s.id).slice(8),36);
+      s.ts=(t>1400000000000&&t<4102444800000)?t:0;
+      ch=true;
+    }
+  });
   return ch;
 }
 /* 변경된 항목만 골라내는 부분 저장 패치 (전체 덮어쓰기 → 항목별 저장: 동시 입력 충돌 최소화) */
@@ -1634,6 +1649,11 @@ function rSession(){if(pending){showPrev();return;}if(activeId){showActive();ret
 function showForm(){
   pending=null;
   ['ses-form','ses-prev','ses-active'].forEach(function(id,i){document.getElementById(id).style.display=i===0?'block':'none';});
+  // 기존 모임이 있으면 점수 입력으로 바로 가는 버튼 표시
+  var fe=document.getElementById('form-existing');
+  if(fe)fe.innerHTML=DB.sessions.length
+    ?'<button class="btn btn-green" style="margin-bottom:4px;" onclick="showActive()">✏️ 기존 모임 점수 입력 ('+DB.sessions.length+'개) →</button>'
+    :'';
   document.getElementById('ses-date').value=today();updCalc();rChips();
   if(!isPopping)window.history.pushState({tab:'session',sub:'form'},'',window.location.pathname);
 }
@@ -1652,7 +1672,7 @@ function doCreate(){
   if(pIds.length<minP){toast((mtype==='singles'?'단식은 최소 2명':'복식은 최소 4명')+' 필요합니다.');return;}
   var ms=genMatches(pIds,DB.sessions,mtype,calcG());
   if(!ms.length){toast('편성 가능한 경기가 없습니다.');return;}
-  pending={id:uid(),date:document.getElementById('ses-date').value||today(),matchType:mtype,surface:surface,courts:courts,totalMin:totalMin,gameMin:gameMin,totalGames:calcG(),presentIds:[].concat(pIds),matches:ms,resultsLocked:false};
+  pending={id:uid(),ts:Date.now(),date:document.getElementById('ses-date').value||today(),matchType:mtype,surface:surface,courts:courts,totalMin:totalMin,gameMin:gameMin,totalGames:calcG(),presentIds:[].concat(pIds),matches:ms,resultsLocked:false};
   showPrev();
 }
 function showPrev(){
@@ -1679,6 +1699,10 @@ function doConfirm(){DB.sessions.push(pending);activeId=pending.id;pending=null;
 function cancelPrev(){pending=null;showForm();}
 function showActive(){
   ['ses-form','ses-prev','ses-active'].forEach(function(id,i){document.getElementById(id).style.display=i===2?'block':'none';});
+  // 선택된 모임이 없으면 가장 최근 모임을 자동 선택 (바로 점수 입력 가능)
+  if((!activeId||!DB.sessions.find(function(s){return s.id===activeId;}))&&DB.sessions.length){
+    activeId=DB.sessions[DB.sessions.length-1].id;
+  }
   document.getElementById('ses-list').innerHTML=[].concat(DB.sessions).reverse().map(function(s){
     return'<div class="row" style="'+(s.id===activeId?'border-left:3px solid var(--brand);padding-left:12px;':'')+'" onclick="selSes(\''+s.id+'\')">'
       +'<div class="row-ico">📅</div><div class="row-body"><span class="row-title">'+s.date+'</span><span class="row-sub">'+s.matches.length+'경기</span></div>'
@@ -1929,7 +1953,10 @@ function rHistory(){
       +'</div>'
       +'<div class="hs-detail" id="hist-d-'+s.id+'" style="display:'+(open?'block':'none')+';">'
         +mh
-        +'<button onclick="delSes(\''+s.id+'\')" style="margin-top:12px;background:var(--red-l);border:1px solid #fca5a5;border-radius:8px;color:var(--red);font-size:13px;padding:7px 14px;cursor:pointer;font-weight:700;">🗑️ 모임 전체 삭제</button>'
+        +'<div style="display:flex;gap:8px;margin-top:12px;">'
+          +'<button onclick="openSes(\''+s.id+'\')" style="flex:1;background:linear-gradient(135deg,#2a5e42,#6bbb8a);border:none;border-radius:10px;color:#fff;font-size:14px;padding:12px;cursor:pointer;font-weight:700;font-family:inherit;">✏️ 점수 입력·수정</button>'
+          +'<button onclick="delSes(\''+s.id+'\')" style="background:var(--red-l);border:1px solid #fca5a5;border-radius:10px;color:var(--red);font-size:13px;padding:12px 14px;cursor:pointer;font-weight:700;font-family:inherit;">🗑️ 삭제</button>'
+        +'</div>'
       +'</div>'
     +'</div>';
   }).join('');
@@ -1956,14 +1983,25 @@ function delHistMatch(sid,mid){
 }
 
 /* ── RANKING ── */
+var rankBy='match';   // match=승부순, att=출석순
 function setRF(btn){rf=btn.dataset.v;document.getElementById('tg-rank').querySelectorAll('.tog').forEach(function(b){b.classList.remove('on');});btn.classList.add('on');rRanking();}
+function setRB(btn){rankBy=btn.dataset.v;document.getElementById('tg-rankby').querySelectorAll('.tog').forEach(function(b){b.classList.remove('on');});btn.classList.add('on');rRanking();}
 function calcRanks(f){
-  var stats={};DB.members.forEach(function(m){stats[m.id]={id:m.id,name:m.name,wins:0,draws:0,losses:0,played:0,gf:0,ga:0};});
-  var now=new Date();
+  var stats={};DB.members.forEach(function(m){stats[m.id]={id:m.id,name:m.name,wins:0,draws:0,losses:0,played:0,gf:0,ga:0,att:0};});
+  var now=new Date(),attTotal=0;
   DB.sessions.forEach(function(s){
-    if(!s.resultsLocked)return;var d=new Date(s.date);
+    var d=new Date(s.date);
     if(f==='month'&&(d.getMonth()!==now.getMonth()||d.getFullYear()!==now.getFullYear()))return;
     if(f==='3m'&&(now-d)/(86400000*30)>3)return;
+    // 출석 집계: 확정 전 모임도 포함 (참석자는 편성 때 정해짐)
+    attTotal++;
+    var pres=(s.presentIds&&s.presentIds.length)?s.presentIds:(function(){
+      var set={};(s.matches||[]).forEach(function(m){[].concat(m.team1||[],m.team2||[]).forEach(function(id){set[id]=1;});});
+      return Object.keys(set);
+    })();
+    pres.forEach(function(id){if(stats[id])stats[id].att++;});
+    // 승패 집계: 확정된 모임만
+    if(!s.resultsLocked)return;
     s.matches.forEach(function(m){
       // 점수로 결과 판정 (구버전 데이터 호환): 1=팀1승, 2=팀2승, 0=무승부
       var sc1=parseInt(m.score1),sc2=parseInt(m.score2);
@@ -1977,7 +2015,16 @@ function calcRanks(f){
       m.team2.forEach(function(id){if(stats[id]){stats[id].gf+=sc2;stats[id].ga+=sc1;if(res===2)stats[id].wins++;else if(res===1)stats[id].losses++;else stats[id].draws++;}});
     });
   });
-  return Object.values(stats).filter(function(s){return s.played>0;}).sort(function(a,b){
+  var arr=Object.values(stats).filter(function(s){return s.played>0||s.att>0;});
+  arr.forEach(function(s){s.attTotal=attTotal;});
+  arr.sort(function(a,b){
+    if(rankBy==='att'){
+      // 출석순: ①출석 많은 순 → ②승수 → ③게임 다승 → ④이름
+      if(b.att!==a.att)return b.att-a.att;
+      if(b.wins!==a.wins)return b.wins-a.wins;
+      if(b.gf!==a.gf)return b.gf-a.gf;
+      return (a.name||'')<(b.name||'')?-1:1;
+    }
     // 1순위: 승수(매치 승) 많은 순
     if(b.wins!==a.wins)return b.wins-a.wins;
     // 2순위: 총 게임 승수(게임 다승) — 4:6 패배여도 4게임 승 인정
@@ -1991,6 +2038,7 @@ function calcRanks(f){
     var pa=(a.wins+a.losses)?a.wins/(a.wins+a.losses):0, pb=(b.wins+b.losses)?b.wins/(b.wins+b.losses):0;
     return pb-pa;
   });
+  return arr;
 }
 function rRanking(){
   var list=document.getElementById('rank-list'),ranks=calcRanks(rf);
@@ -2002,11 +2050,16 @@ function rRanking(){
     var diff=r.gf-r.ga;
     var diffStr=(diff>0?'+':'')+diff;  // 득실차 표기
     var rankColor=i<3?rankColors[i]:'#94a3b8';
+    var perfect=(r.attTotal>0&&r.att===r.attTotal)
+      ?' <span style="font-size:11.5px;background:rgba(200,150,10,.14);color:#a07708;border:1px solid rgba(200,150,10,.35);border-radius:6px;padding:1px 6px;font-weight:700;">🌟개근</span>':'';
+    var sub=rankBy==='att'
+      ?'출석 '+r.att+'/'+r.attTotal+'회 · '+r.played+'경기'
+      :r.played+'경기 · 출석 '+r.att+'회 · 게임 '+r.gf+'/'+r.ga+'('+diffStr+')';
     return'<div class="rank-row">'
       +'<span class="rank-n" style="color:'+rankColor+';">'+(i+1)+'</span>'
       +'<div class="rank-info">'
-        +'<div class="rank-nm">'+r.name+'</div>'
-        +'<div class="rank-sub">'+r.played+'경기 · 게임 '+r.gf+'/'+r.ga+'('+diffStr+')</div>'
+        +'<div class="rank-nm">'+r.name+perfect+'</div>'
+        +'<div class="rank-sub">'+sub+'</div>'
       +'</div>'
       +'<div class="rank-stat">'
         +'<span class="rw">'+r.wins+'승</span>'
