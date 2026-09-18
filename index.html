@@ -588,6 +588,9 @@ input.mc-score::-webkit-outer-spin-button,input.mc-score::-webkit-inner-spin-but
     </div>
   </div>
 
+  <!-- 서버 공유 중단 경고 (보안규칙 만료 감지 시 표시) -->
+  <div id="home-alert" style="display:none;margin:14px 14px 0;padding:14px 16px;background:#fef2f2;border:2px solid #fca5a5;border-radius:12px;font-size:14px;color:#991b1b;line-height:1.65;"></div>
+
   <!-- 바로가기 (2x2 카드) -->
   <div class="quick-grid">
     <button class="qg-card c-session" onclick="goTab('session')">
@@ -718,8 +721,8 @@ input.mc-score::-webkit-outer-spin-button,input.mc-score::-webkit-inner-spin-but
       <button class="tog" data-v="3m" onclick="setRF(this)">3개월</button>
     </div>
     <div style="font-size:13px;color:var(--muted);margin-top:12px;line-height:1.6;">
-      📊 순위 기준: <strong style="color:var(--text2);">①승수 → ②게임 득실차 → ③총 득점</strong> 순<br>
-      승패가 같으면 게임 득실로 순위가 결정됩니다.
+      📊 순위 기준: <strong style="color:var(--text2);">①승수 → ②게임 다승 → ③득실차</strong> 순<br>
+      승수가 같으면 이긴 게임 수(다승), 그다음 득실차로 순위가 결정됩니다.
     </div>
   </div>
   <div class="card" id="rank-list"><div class="empty"><span class="empty-ico">🏆</span>확정된 결과가 없습니다.</div></div>
@@ -827,6 +830,30 @@ input.mc-score::-webkit-outer-spin-button,input.mc-score::-webkit-inner-spin-but
     </div>
   </div>
 
+  <!-- ③-1 백업 · 복원 -->
+  <div class="card">
+    <div class="card-title">🗄️ 백업 · 복원</div>
+    <div style="font-size:14px;color:var(--text2);line-height:1.65;margin-bottom:14px;">
+      Firebase 연결 시 <strong style="color:var(--text);">하루 1회 자동 백업</strong>됩니다 (최근 14개 보관).<br>
+      백업파일 저장·복원은 연결 없이도 사용할 수 있습니다.
+    </div>
+    <button onclick="exportJSON()" style="width:100%;padding:15px;background:linear-gradient(135deg,#2a5e42,#6bbb8a);border:none;border-radius:12px;color:#fff;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:10px;">📤 백업파일 저장 (내보내기)</button>
+    <button onclick="document.getElementById('imp-file').click()" style="width:100%;padding:15px;background:var(--card);border:1.5px solid var(--line);border-radius:12px;color:var(--text2);font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;">📂 백업파일 열기 (복원)</button>
+    <input type="file" id="imp-file" accept=".json,application/json" style="display:none;" onchange="importJSON(event)">
+    <div style="display:flex;gap:10px;margin-top:10px;">
+      <button onclick="loadBackups()" style="flex:1;padding:13px;background:var(--card);border:1.5px solid var(--line);border-radius:12px;color:var(--text2);font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;">☁️ 자동 백업 목록</button>
+      <button onclick="loadTrash()" style="flex:1;padding:13px;background:var(--card);border:1.5px solid var(--line);border-radius:12px;color:var(--text2);font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;">🗑️ 휴지통</button>
+    </div>
+    <div id="bk-list-wrap" style="display:none;margin-top:14px;padding-top:12px;border-top:1px solid var(--line2);">
+      <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:6px;">☁️ 자동 백업 목록</div>
+      <div id="bk-list"></div>
+    </div>
+    <div id="trash-wrap" style="display:none;margin-top:14px;padding-top:12px;border-top:1px solid var(--line2);">
+      <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:6px;">🗑️ 최근 삭제된 모임 <span style="font-weight:500;color:var(--muted);">(60일 보관)</span></div>
+      <div id="trash-list"></div>
+    </div>
+  </div>
+
   <!-- ④ Firebase 설정 방법 (단계별) -->
   <div class="card">
     <div class="card-title">📋 Firebase 설정값 얻는 방법</div>
@@ -893,6 +920,8 @@ input.mc-score::-webkit-outer-spin-button,input.mc-score::-webkit-inner-spin-but
     </div>
   </div>
 
+  <div style="text-align:center;padding:8px 0 22px;font-size:12.5px;color:var(--muted);">백세 테니스 클럽 <span id="app-ver"></span></div>
+
 </div><!-- pg-settings end -->
 
 </div><!-- main end -->
@@ -908,10 +937,15 @@ var courts=2,totalMin=120,gameMin=30,mtype='doubles',surface='grass',pIds=[];
 var isPopping=false;
 
 /* ── FIREBASE ── */
+var APP_VER='3.0 (2026-09-19)';
 var fbApp=null,fbDB=null,fbRef=null,isOnline=false;
 var FB_KEY='btc_firebase_cfg';
 var lastSavedSnapshot='';   // 자기가 저장한 데이터 추적 (echo 방지)
 var isEditingScore=false;   // 점수 입력 중 플래그
+var fbReady=false;          // 서버 첫 스냅샷 수신 여부 (수신 전엔 서버에 쓰지 않음)
+var lastSyncedDB=null;      // 서버와 마지막으로 일치한 상태 (부분 저장 diff 기준점)
+var ruleDenied=false;       // 보안규칙 만료(접근 거부) 감지 플래그
+var fbRetryTimer=null;
 
 function getFBCfg(){try{var s=localStorage.getItem(FB_KEY);return s?JSON.parse(s):null;}catch(e){return null;}}
 function saveFBCfg(c){try{localStorage.setItem(FB_KEY,JSON.stringify(c));}catch(e){}}
@@ -927,6 +961,7 @@ function initFB(cfg){
   }
   try{
     if(fbApp){try{fbApp.delete();}catch(e){}}
+    fbReady=false;lastSyncedDB=null;
     fbApp=firebase.initializeApp(cfg,'btc-'+Date.now());
     fbDB=fbApp.database();
     fbRef=fbDB.ref('baekse-tennis');
@@ -941,21 +976,27 @@ function initFB(cfg){
 
     // 실시간 리스너 — 다른 기기의 변경만 반영 (자기 저장은 무시)
     fbRef.on('value',function(snap){
+      var first=!fbReady;
+      fbReady=true;ruleDenied=false;
+      var ha=document.getElementById('home-alert');if(ha)ha.style.display='none';
       var d=snap.val();
+      var inc=adoptServer(d);
+      lastSyncedDB=JSON.parse(JSON.stringify(inc));  // 서버 상태 기록 (부분 저장 기준점)
+      if(first){setTimeout(maintainFB,1500);}         // 하루 1회 자동 백업 + 오래된 백업/휴지통 정리
       if(d){
         // 자기가 방금 저장한 데이터면 화면 새로고침 안 함 (입력 끊김 방지)
-        var incoming=JSON.stringify({
-          members:d.members?Object.values(d.members):[],
-          sessions:d.sessions?Object.values(d.sessions):[]
-        });
+        var incoming=JSON.stringify(inc);
         if(incoming===lastSavedSnapshot){return;}
-
-        DB.members=d.members?Object.values(d.members):[];
-        DB.sessions=d.sessions?Object.values(d.sessions):[];
+        DB.members=inc.members;DB.sessions=inc.sessions;
+        if(migrate()){save();}                        // 구버전 데이터에 회원 순서 부여
         try{localStorage.setItem('btc2',JSON.stringify(DB));}catch(e){}
         // 입력 중이 아닐 때만 새로고침
         if(!isEditingScore){refreshTab();}
       }
+    },function(err){
+      // 읽기 거부 → 테스트 모드 30일 만료 가능성 (리스너가 끊기므로 재시도 예약)
+      console.error('FB listener:',err);
+      showRuleAlert();
     });
 
     updateFBUI();
@@ -980,6 +1021,14 @@ function updateFBUI(){
     if(ban){ban.style.background='linear-gradient(135deg,#064e3b,#065f46)';}
     if(shr){shr.style.display='block';}
     if(hdot){hdot.style.background='#22c55e';}
+  }else if(ruleDenied){
+    if(dot){dot.className='fb-dot';}
+    if(ttl){ttl.textContent='🚫 서버 접근 거부 — 보안규칙 만료';}
+    if(sub){sub.textContent='아래 "테스트 모드 30일 만료 대비" 안내대로 규칙을 수정하세요';}
+    if(ico){ico.textContent='⚠️';}
+    if(ban){ban.style.background='linear-gradient(135deg,#7f1d1d,#991b1b)';}
+    if(shr){shr.style.display='none';}
+    if(hdot){hdot.style.background='#ef4444';}
   }else{
     if(dot){dot.className='fb-dot';}
     if(ttl){ttl.textContent='연결 안 됨 (로컬 저장)';}
@@ -988,6 +1037,27 @@ function updateFBUI(){
     if(ban){ban.style.background='linear-gradient(135deg,#1e3a2f,#2a5e42)';}
     if(shr){shr.style.display='none';}
     if(hdot){hdot.style.background='rgba(0,0,0,.2)';}
+  }
+}
+
+/* 보안규칙 만료(접근 거부) 감지 시 경고 + 자동 재시도 */
+function showRuleAlert(){
+  var firstTime=!ruleDenied;
+  isOnline=false;fbReady=false;ruleDenied=true;
+  updateFBUI();
+  var ha=document.getElementById('home-alert');
+  if(ha){ha.style.display='block';ha.innerHTML='🚫 <strong>서버 공유가 중단되었습니다.</strong><br>'
+    +'Firebase 보안규칙(테스트 모드 30일)이 만료된 것으로 보입니다.<br>'
+    +'관리자가 <strong>Firebase 콘솔 → Realtime Database → 규칙</strong>을 수정하면 자동으로 다시 연결됩니다.<br>'
+    +'<span style="font-size:13px;">지금 입력하는 기록은 이 휴대폰에만 저장되며, 재연결되면 서버와 다시 합쳐집니다.</span>';}
+  if(firstTime)toast('🚫 서버 접근 거부 — 설정 탭을 확인하세요');
+  // 1분마다 자동 재연결 시도 (규칙 수정 시 자동 복구)
+  if(!fbRetryTimer){
+    fbRetryTimer=setTimeout(function(){
+      fbRetryTimer=null;
+      var c=getFBCfg();
+      if(c&&c.databaseURL&&!fbReady){initFB(c);}
+    },60000);
   }
 }
 
@@ -1025,22 +1095,31 @@ function connectFB(){
         // 양쪽 다 데이터 있음 → 사용자 선택
         if(confirm('서버에 기존 데이터가 있습니다.\n\n[확인] 서버 데이터 받기 (내 데이터 대체)\n[취소] 내 데이터로 서버 덮어쓰기')){
           // 서버 데이터 받기
-          DB.members=serverData.members?Object.values(serverData.members):[];
-          DB.sessions=serverData.sessions?Object.values(serverData.sessions):[];
+          var inc1=adoptServer(serverData);
+          DB.members=inc1.members;DB.sessions=inc1.sessions;migrate();
           try{localStorage.setItem('btc2',JSON.stringify(DB));}catch(e){}
+        }else{
+          // 내 데이터로 서버 덮어쓰기 선택 → 리스너가 서버 데이터로 바꾸기 전에 로컬을 보존해 두고 업로드
+          var keepLocal=JSON.parse(JSON.stringify({members:DB.members,sessions:DB.sessions}));
+          setTimeout(function(){
+            DB.members=keepLocal.members;DB.sessions=keepLocal.sessions;
+            sortDB(DB);
+            try{localStorage.setItem('btc2',JSON.stringify(DB));}catch(e){}
+            pushAllFB();refreshTab();
+          },900);
         }
         initFB(cfg);
       }else if(hasServer&&!hasLocal){
         // 서버만 있음 → 받기
-        DB.members=serverData.members?Object.values(serverData.members):[];
-        DB.sessions=serverData.sessions?Object.values(serverData.sessions):[];
+        var inc2=adoptServer(serverData);
+        DB.members=inc2.members;DB.sessions=inc2.sessions;migrate();
         try{localStorage.setItem('btc2',JSON.stringify(DB));}catch(e){}
         initFB(cfg);
         toast('📥 서버 데이터를 받았습니다!');
       }else{
         // 로컬만 있거나 둘 다 없음 → 연결 후 업로드
         initFB(cfg);
-        if(hasLocal){setTimeout(function(){save();},800);}
+        if(hasLocal){setTimeout(function(){pushAllFB();},900);}
       }
       refreshTab();
     }).catch(function(e){
@@ -1056,6 +1135,8 @@ function disconnectFB(){
   if(!confirm('Firebase 연결을 해제할까요?'))return;
   try{if(fbRef)fbRef.off();if(fbApp)fbApp.delete();}catch(e){}
   fbApp=null;fbDB=null;fbRef=null;isOnline=false;
+  fbReady=false;lastSyncedDB=null;ruleDenied=false;
+  if(fbRetryTimer){clearTimeout(fbRetryTimer);fbRetryTimer=null;}
   localStorage.removeItem(FB_KEY);
   updateFBUI();
   toast('연결 해제됨');
@@ -1108,13 +1189,21 @@ function copyClip(t){
   }
 }
 
-function uploadFB(){
-  if(!isOnline||!fbRef){toast('⚠️ Firebase에 먼저 연결하세요.');return;}
-  if(!confirm('로컬 데이터를 Firebase에 업로드합니다.\n기존 서버 데이터는 덮어씁니다.'))return;
+/* 전체 데이터를 서버에 밀어넣기 (의도적 전체 덮어쓰기: 첫 업로드·복원용) */
+function pushAllFB(){
+  if(!fbRef)return Promise.reject(new Error('연결 안 됨'));
+  sortDB(DB);
   var mo={};DB.members.forEach(function(m){mo[m.id]=m;});
   var so={};DB.sessions.forEach(function(s){so[s.id]=s;});
   lastSavedSnapshot=JSON.stringify({members:DB.members,sessions:DB.sessions});
-  fbRef.set({members:mo,sessions:so})
+  lastSyncedDB=JSON.parse(lastSavedSnapshot);
+  return fbRef.set({members:mo,sessions:so});
+}
+
+function uploadFB(){
+  if(!isOnline||!fbRef){toast('⚠️ Firebase에 먼저 연결하세요.');return;}
+  if(!confirm('로컬 데이터를 Firebase에 업로드합니다.\n기존 서버 데이터는 덮어씁니다.'))return;
+  pushAllFB()
     .then(function(){toast('☁️ 업로드 완료! 모든 회원에게 공유됩니다.');})
     .catch(function(e){toast('❌ 실패: '+e.message);});
 }
@@ -1124,8 +1213,9 @@ function downloadFB(){
   fbRef.once('value').then(function(snap){
     var d=snap.val();
     if(d){
-      DB.members=d.members?Object.values(d.members):[];
-      DB.sessions=d.sessions?Object.values(d.sessions):[];
+      var inc=adoptServer(d);
+      DB.members=inc.members;DB.sessions=inc.sessions;migrate();
+      lastSyncedDB=JSON.parse(JSON.stringify(inc));
       try{localStorage.setItem('btc2',JSON.stringify(DB));}catch(e){}
       toast('📥 다운로드 완료!');rHome();
     }else{toast('Firebase에 저장된 데이터가 없습니다.');}
@@ -1139,24 +1229,237 @@ function clearLocal(){
   toast('🗑️ 삭제됨');rHome();
 }
 
+/* ── 데이터 정규화 ──
+   Firebase 왕복 시 빈 배열·null이 사라지고(team1:[] → 없음) 자식 순서가 id순으로 뒤섞이므로
+   받는 쪽에서 항상 형태를 복원하고 순서를 고정한다. */
+function toArr(x){return x?(Array.isArray(x)?x:Object.values(x)):[];}
+function sanitizeDB(db){
+  db.members=toArr(db.members).filter(function(m){return m&&m.id&&m.name;});
+  db.sessions=toArr(db.sessions).filter(function(s){return s&&s.id;});
+  db.sessions.forEach(function(s){
+    s.matches=toArr(s.matches).filter(function(m){return m&&m.id;});
+    s.presentIds=toArr(s.presentIds);
+    s.matches.forEach(function(m){
+      m.team1=toArr(m.team1);m.team2=toArr(m.team2);
+      if(m.score1==null)m.score1='';if(m.score2==null)m.score2='';
+      if(m.winner===undefined)m.winner=null;
+    });
+  });
+  return db;
+}
+function sortDB(db){
+  (db.sessions||[]).sort(function(a,b){
+    if((a.date||'')!==(b.date||''))return (a.date||'')<(b.date||'')?-1:1;
+    return a.id<b.id?-1:1;
+  });
+  (db.members||[]).sort(function(a,b){
+    var ao=a.ord!=null?a.ord:9e9,bo=b.ord!=null?b.ord:9e9;
+    if(ao!==bo)return ao-bo;
+    return (a.name||'')<(b.name||'')?-1:1;
+  });
+  return db;
+}
+function adoptServer(d){
+  var inc=d?{members:d.members?Object.values(d.members):[],sessions:d.sessions?Object.values(d.sessions):[]}
+           :{members:[],sessions:[]};
+  sanitizeDB(inc);sortDB(inc);
+  return inc;
+}
+/* 구버전 회원 데이터에 표시 순서(ord) 부여 */
+function migrate(){
+  var ch=false,mx=DB.members.reduce(function(a,m){return Math.max(a,m.ord||0);},0);
+  DB.members.forEach(function(m){if(m.ord==null){mx++;m.ord=mx;ch=true;}});
+  return ch;
+}
+/* 변경된 항목만 골라내는 부분 저장 패치 (전체 덮어쓰기 → 항목별 저장: 동시 입력 충돌 최소화) */
+function diffPatch(prev,cur){
+  prev=prev||{members:[],sessions:[]};
+  var patch={};
+  ['members','sessions'].forEach(function(k){
+    var pm={},cm={};
+    (prev[k]||[]).forEach(function(x){pm[x.id]=x;});
+    (cur[k]||[]).forEach(function(x){cm[x.id]=x;});
+    Object.keys(cm).forEach(function(id){
+      if(!pm[id]||JSON.stringify(pm[id])!==JSON.stringify(cm[id]))patch[k+'/'+id]=cm[id];
+    });
+    Object.keys(pm).forEach(function(id){if(!cm[id])patch[k+'/'+id]=null;});
+  });
+  return patch;
+}
+
 /* ── STORAGE ── */
 function save(){
+  sortDB(DB);
   try{localStorage.setItem('btc2',JSON.stringify(DB));}catch(e){}
-  if(isOnline&&fbRef){
-    var mo={};DB.members.forEach(function(m){mo[m.id]=m;});
-    var so={};DB.sessions.forEach(function(s){so[s.id]=s;});
-    // 저장 스냅샷 기록 (리스너 echo 방지용)
+  if(!isOnline||!fbRef)return;
+  if(!fbReady)return;   // 서버 첫 응답 전엔 쓰지 않음 (오래된 로컬로 서버 덮어쓰기 방지)
+  try{
+    var patch=diffPatch(lastSyncedDB,DB);
+    if(!Object.keys(patch).length)return;
     lastSavedSnapshot=JSON.stringify({members:DB.members,sessions:DB.sessions});
-    fbRef.set({members:mo,sessions:so}).catch(function(e){
+    lastSyncedDB=JSON.parse(lastSavedSnapshot);
+    fbRef.update(patch).catch(function(e){
       console.error('FB save:',e);
-      toast('⚠️ 서버 저장 실패 (로컬 저장됨)');
+      lastSyncedDB=null;   // 실패 → 다음 저장 때 전체 항목 다시 전송
+      var msg=''+(e&&e.message||e);
+      if(msg.toLowerCase().indexOf('permission')>-1){showRuleAlert();}
+      else{toast('⚠️ 서버 저장 실패 (로컬 저장됨)');}
     });
+  }catch(err){
+    // diff 계산 실패 시 기존 방식(전체 저장)으로 안전하게 폴백
+    console.error('diff fallback:',err);
+    pushAllFB().catch(function(){toast('⚠️ 서버 저장 실패 (로컬 저장됨)');});
   }
 }
 function load(){
   try{var d=localStorage.getItem('btc2');if(d)DB=JSON.parse(d);}catch(e){}
+  if(!DB||typeof DB!=='object')DB={members:[],sessions:[]};
+  sanitizeDB(DB);migrate();sortDB(DB);
   var cfg=getFBCfg();
   if(cfg&&cfg.databaseURL){setTimeout(function(){initFB(cfg);},600);}
+}
+
+/* ── 자동 백업 · 휴지통 유지관리 (연결 후 하루 1회) ── */
+function maintainFB(){
+  if(!isOnline||!fbDB)return;
+  if(!DB.members.length&&!DB.sessions.length)return;   // 빈 데이터는 백업하지 않음
+  var bref=fbDB.ref('baekse-tennis-backups');
+  var key=today();
+  bref.child(key).once('value').then(function(s){
+    if(s.exists())return null;
+    return bref.child(key).set({ts:Date.now(),members:DB.members,sessions:DB.sessions});
+  }).then(function(){
+    return bref.once('value');
+  }).then(function(s){
+    var v=s.val()||{},keys=Object.keys(v).sort();
+    var over=keys.length-14;
+    for(var i=0;i<over;i++){bref.child(keys[i]).remove();}
+  }).catch(function(e){console.error('backup:',e);});
+  // 휴지통 60일 경과 항목 정리
+  fbDB.ref('baekse-tennis-trash').once('value').then(function(s){
+    var v=s.val()||{},cut=Date.now()-60*86400000;
+    Object.keys(v).forEach(function(k){
+      if((v[k]&&v[k].ts||0)<cut)fbDB.ref('baekse-tennis-trash/'+k).remove();
+    });
+  }).catch(function(){});
+}
+
+/* ── 자동 백업 목록 · 복원 ── */
+function loadBackups(){
+  if(!isOnline||!fbDB){toast('⚠️ Firebase 연결 후 사용할 수 있습니다.');return;}
+  var wrap=document.getElementById('bk-list-wrap'),w=document.getElementById('bk-list');
+  wrap.style.display='block';
+  w.innerHTML='<div style="padding:10px 0;color:var(--muted);font-size:14px;">불러오는 중...</div>';
+  fbDB.ref('baekse-tennis-backups').once('value').then(function(s){
+    var v=s.val();window._bkCache=v||{};
+    if(!v){w.innerHTML='<div style="padding:10px 0;color:var(--muted);font-size:14px;">아직 백업이 없습니다.<br>연결 상태에서 하루 1회 자동 생성됩니다.</div>';return;}
+    var keys=Object.keys(v).sort().reverse();
+    w.innerHTML=keys.map(function(k){
+      var b=v[k]||{};
+      var mc=b.members?(Array.isArray(b.members)?b.members.length:Object.keys(b.members).length):0;
+      var sc=b.sessions?(Array.isArray(b.sessions)?b.sessions.length:Object.keys(b.sessions).length):0;
+      return'<div class="row" style="cursor:default;"><div class="row-ico">☁️</div>'
+        +'<div class="row-body"><span class="row-title" style="font-size:15px;">'+k+'</span><span class="row-sub">회원 '+mc+' · 모임 '+sc+'</span></div>'
+        +'<button onclick="restoreBackup(\''+k+'\')" style="background:var(--brand-l);border:1px solid var(--brand);border-radius:8px;color:var(--brand);font-size:13px;padding:6px 13px;cursor:pointer;font-weight:700;font-family:inherit;">복원</button></div>';
+    }).join('');
+  }).catch(function(e){w.innerHTML='<div style="padding:10px 0;color:var(--red);font-size:14px;">불러오기 실패: '+e.message+'</div>';});
+}
+function restoreBackup(k){
+  var v=window._bkCache&&window._bkCache[k];
+  if(!v){toast('백업 데이터를 찾을 수 없습니다.');return;}
+  if(!confirm('['+k+'] 백업으로 되돌립니다.\n\n현재 데이터는 복원 직전 상태로 자동 보관되며,\n복원 결과는 모든 기기에 적용됩니다.\n진행할까요?'))return;
+  // 복원 전 현재 상태를 별도 백업으로 보관
+  try{fbDB.ref('baekse-tennis-backups/'+today()+'_pre-restore').set({ts:Date.now(),members:DB.members,sessions:DB.sessions});}catch(e){}
+  var inc=adoptServer(v);
+  DB.members=inc.members;DB.sessions=inc.sessions;migrate();normalizeWinners();
+  try{localStorage.setItem('btc2',JSON.stringify(DB));}catch(e){}
+  pushAllFB().then(function(){toast('✅ 복원 완료! 모든 기기에 적용됩니다.');refreshTab();})
+    .catch(function(e){toast('⚠️ 서버 반영 실패: '+e.message);});
+}
+
+/* ── 휴지통 (삭제된 모임 60일 보관) ── */
+function loadTrash(){
+  if(!isOnline||!fbDB){toast('⚠️ Firebase 연결 후 사용할 수 있습니다.');return;}
+  var wrap=document.getElementById('trash-wrap'),w=document.getElementById('trash-list');
+  wrap.style.display='block';
+  w.innerHTML='<div style="padding:10px 0;color:var(--muted);font-size:14px;">불러오는 중...</div>';
+  fbDB.ref('baekse-tennis-trash').once('value').then(function(s){
+    var v=s.val();window._trCache=v||{};
+    if(!v||!Object.keys(v).length){w.innerHTML='<div style="padding:10px 0;color:var(--muted);font-size:14px;">휴지통이 비어 있습니다.</div>';return;}
+    var keys=Object.keys(v).sort(function(a,b){return(v[b].ts||0)-(v[a].ts||0);});
+    w.innerHTML=keys.map(function(k){
+      var t=v[k]||{},ses=t.session||{};
+      var mc=ses.matches?(Array.isArray(ses.matches)?ses.matches.length:Object.keys(ses.matches).length):0;
+      var del=t.ts?new Date(t.ts):null;
+      var delStr=del?(del.getMonth()+1)+'.'+del.getDate()+' 삭제':'';
+      return'<div class="row" style="cursor:default;"><div class="row-ico">📅</div>'
+        +'<div class="row-body"><span class="row-title" style="font-size:15px;">'+(ses.date||'?')+' 모임</span><span class="row-sub">'+mc+'경기 · '+delStr+'</span></div>'
+        +'<button onclick="restoreTrash(\''+k+'\')" style="background:var(--brand-l);border:1px solid var(--brand);border-radius:8px;color:var(--brand);font-size:13px;padding:6px 13px;cursor:pointer;font-weight:700;font-family:inherit;">복원</button></div>';
+    }).join('');
+  }).catch(function(e){w.innerHTML='<div style="padding:10px 0;color:var(--red);font-size:14px;">불러오기 실패: '+e.message+'</div>';});
+}
+function restoreTrash(k){
+  var t=window._trCache&&window._trCache[k];
+  if(!t||!t.session){toast('휴지통 데이터를 찾을 수 없습니다.');return;}
+  if(DB.sessions.find(function(s){return s.id===t.session.id;})){toast('이미 존재하는 모임입니다.');return;}
+  if(!confirm((t.session.date||'?')+' 모임을 복원할까요?'))return;
+  var tmp={members:[],sessions:[t.session]};
+  sanitizeDB(tmp);
+  DB.sessions.push(tmp.sessions[0]);
+  save();
+  try{fbDB.ref('baekse-tennis-trash/'+k).remove();}catch(e){}
+  refreshTab();loadTrash();
+  toast('✅ 모임이 복원되었습니다.');
+}
+
+/* ── 백업파일 내보내기 / 가져오기 ── */
+function exportJSON(){
+  try{
+    var payload={app:'baekse-tennis',ver:APP_VER,exportedAt:new Date().toISOString(),
+      data:{members:DB.members,sessions:DB.sessions}};
+    var txt=JSON.stringify(payload,null,1);
+    var name='백세테니스_백업_'+today()+'.json';
+    var blob=new Blob([txt],{type:'application/json'});
+    var file=null;
+    try{file=new File([blob],name,{type:'application/json'});}catch(e){}
+    if(file&&navigator.canShare&&navigator.canShare({files:[file]})){
+      // 휴대폰: 공유 시트로 (카카오톡·파일 앱 등에 저장 가능)
+      navigator.share({files:[file],title:name}).then(function(){toast('📤 백업파일 공유 완료');})
+        .catch(function(err){if(err&&err.name==='AbortError')return;dlBlob(blob,name);});
+    }else{dlBlob(blob,name);}
+  }catch(e){toast('❌ 내보내기 실패: '+e.message);}
+}
+function dlBlob(blob,name){
+  var a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);a.download=name;
+  document.body.appendChild(a);a.click();
+  setTimeout(function(){URL.revokeObjectURL(a.href);a.remove();},4000);
+  toast('📥 백업파일이 저장되었습니다.');
+}
+function importJSON(ev){
+  var f=ev.target.files&&ev.target.files[0];
+  ev.target.value='';
+  if(!f)return;
+  var r=new FileReader();
+  r.onload=function(){
+    try{
+      var obj=JSON.parse(r.result);
+      var data=(obj&&obj.data&&(obj.data.members||obj.data.sessions))?obj.data:obj;
+      if(!data||(!Array.isArray(data.members)&&!Array.isArray(data.sessions)))throw new Error('백업파일 형식이 아닙니다');
+      var mc=(data.members||[]).length,sc=(data.sessions||[]).length;
+      if(!confirm('백업파일 내용: 회원 '+mc+'명 · 모임 '+sc+'개\n\n현재 데이터를 이 내용으로 교체합니다.'
+        +(isOnline?'\n(서버에도 반영되어 모든 기기에 적용됩니다)':'')+'\n진행할까요?'))return;
+      DB={members:data.members||[],sessions:data.sessions||[]};
+      sanitizeDB(DB);migrate();sortDB(DB);normalizeWinners();
+      try{localStorage.setItem('btc2',JSON.stringify(DB));}catch(e){}
+      if(isOnline&&fbRef){
+        pushAllFB().then(function(){toast('✅ 복원 완료 (서버 반영됨)');})
+          .catch(function(e){toast('⚠️ 서버 반영 실패: '+e.message);});
+      }else{toast('✅ 복원 완료 (이 기기)');}
+      refreshTab();
+    }catch(e){toast('❌ 가져오기 실패: '+e.message);}
+  };
+  r.readAsText(f);
 }
 
 /* ── UTILS ── */
@@ -1304,10 +1607,11 @@ function rMembers(){
   }).join('');
 }
 function addMem(){
-  var inp=document.getElementById('mem-inp'),name=inp.value.trim();
+  var inp=document.getElementById('mem-inp'),name=inp.value.replace(/[<>&"'`]/g,'').trim();
   if(!name){toast('이름을 입력하세요.');return;}
   if(DB.members.find(function(m){return m.name===name;})){toast('이미 등록된 이름입니다.');return;}
-  DB.members.push({id:uid(),name:name});save();inp.value='';rMembers();updAS();toast('✅ 추가되었습니다.');
+  var mx=DB.members.reduce(function(a,m){return Math.max(a,m.ord||0);},0);
+  DB.members.push({id:uid(),name:name,ord:mx+1});save();inp.value='';rMembers();updAS();toast('✅ 추가되었습니다.');
 }
 function delMem(id){
   if(!confirm('삭제하시겠습니까?'))return;
@@ -1320,8 +1624,8 @@ function editMem(id){
   el.querySelector('input').focus();
 }
 function saveMem(id,nv,old){
-  nv=nv.trim();if(!nv||nv===old){rMembers();return;}
-  DB.members=DB.members.map(function(m){return m.id===id?{id:m.id,name:nv}:m;});
+  nv=nv.replace(/[<>&"'`]/g,'').trim();if(!nv||nv===old){rMembers();return;}
+  DB.members=DB.members.map(function(m){return m.id===id?Object.assign({},m,{name:nv}):m;});
   save();rMembers();updAS();toast('✅ 수정되었습니다.');
 }
 
@@ -1387,15 +1691,25 @@ function showActive(){
 }
 function selSes(id){activeId=id;showActive();}
 
-/* ── 모임 삭제 ── */
-function delSes(id){
-  if(!confirm('이 모임을 삭제하시겠습니까?\n경기 기록도 함께 삭제됩니다.'))return;
+/* ── 모임 삭제 (연결 시 휴지통에 60일 보관 후 삭제) ── */
+function removeSession(id){
+  var sess=DB.sessions.find(function(s){return s.id===id;});
+  if(sess&&isOnline&&fbDB){
+    try{fbDB.ref('baekse-tennis-trash/'+id).set({ts:Date.now(),session:sess});}catch(e){}
+  }
   DB.sessions=DB.sessions.filter(function(s){return s.id!==id;});
   if(activeId===id)activeId=DB.sessions.length?DB.sessions[DB.sessions.length-1].id:null;
   save();
+  return!!(sess&&isOnline&&fbDB);
+}
+function delSes(id){
+  var msg=isOnline?'이 모임을 삭제하시겠습니까?\n경기 기록도 함께 삭제됩니다.\n(삭제된 모임은 휴지통에 60일간 보관됩니다)'
+                  :'이 모임을 삭제하시겠습니까?\n경기 기록도 함께 삭제됩니다.';
+  if(!confirm(msg))return;
+  var trashed=removeSession(id);
   var hp=document.getElementById('pg-history');
   if(hp&&hp.classList.contains('on'))rHistory();else showActive();
-  toast('🗑️ 모임이 삭제되었습니다.');
+  toast(trashed?'🗑️ 삭제됨 — 설정 탭 휴지통에서 복원 가능':'🗑️ 모임이 삭제되었습니다.');
 }
 
 function rScore(){
@@ -1635,7 +1949,7 @@ function delHistMatch(sid,mid){
   // 경기가 모두 삭제되면 모임도 삭제할지 확인
   if(!sess.matches.length){
     if(confirm('이 모임의 모든 경기가 삭제되었습니다.\n빈 모임도 삭제하시겠습니까?')){
-      DB.sessions=DB.sessions.filter(function(s){return s.id!==sid;});
+      removeSession(sid);
     }
   }
   save();rHistory();toast('🗑️ 경기가 삭제되었습니다.');
@@ -1792,6 +2106,7 @@ function normalizeWinners(){
 (function(){
   load();
   normalizeWinners();
+  var av=document.getElementById('app-ver');if(av)av.textContent='v'+APP_VER;
   var d=new Date(),days=['일','월','화','수','목','금','토'];
   var hd=document.getElementById('hdr-date');if(hd)hd.textContent=(d.getMonth()+1)+'.'+d.getDate()+'('+days[d.getDay()]+')';
   updCalc();updAS();
