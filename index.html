@@ -545,7 +545,7 @@ input.mc-score::-webkit-outer-spin-button,input.mc-score::-webkit-inner-spin-but
 
 <!-- HEADER -->
 <div id="hdr">
-  <div id="brand">
+  <div id="brand" onclick="goTab('home')" style="cursor:pointer;" title="홈으로">
     <span class="brand-logo"><svg viewBox="0 0 48 48" width="100%" height="100%"><circle cx="24" cy="24" r="23" fill="#2f7d4f"/><circle cx="24" cy="24" r="22" fill="none" stroke="#274f37" stroke-width="2"/><circle cx="24" cy="24" r="18.4" fill="none" stroke="#ece4cf" stroke-width="1" opacity=".75"/><g fill="#ece4cf"><ellipse cx="11.8" cy="24.5" rx="1.6" ry="2.8" transform="rotate(-52 11.8 24.5)"/><ellipse cx="11.2" cy="28.4" rx="1.7" ry="3" transform="rotate(-38 11.2 28.4)"/><ellipse cx="11.3" cy="32.3" rx="1.7" ry="3" transform="rotate(-22 11.3 32.3)"/><ellipse cx="12.4" cy="35.8" rx="1.6" ry="2.7" transform="rotate(-8 12.4 35.8)"/><ellipse cx="36.2" cy="24.5" rx="1.6" ry="2.8" transform="rotate(52 36.2 24.5)"/><ellipse cx="36.8" cy="28.4" rx="1.7" ry="3" transform="rotate(38 36.8 28.4)"/><ellipse cx="36.7" cy="32.3" rx="1.7" ry="3" transform="rotate(22 36.7 32.3)"/><ellipse cx="35.6" cy="35.8" rx="1.6" ry="2.7" transform="rotate(8 35.6 35.8)"/></g><circle cx="24" cy="6.6" r="1.3" fill="#ece4cf"/><circle cx="24" cy="20.5" r="8.2" fill="#fbfbf3"/><path d="M17.2 16c2.9 2.7 2.9 6.3 0 9M30.8 16c-2.9 2.7 -2.9 6.3 0 9" fill="none" stroke="#2f7d4f" stroke-width="1.4" stroke-linecap="round"/><text x="24" y="40.2" text-anchor="middle" font-size="7" font-weight="700" fill="#ece4cf" font-family="Georgia,serif">100</text></svg></span>
     <span class="brand-name">CENTURY TENNIS CLUB</span>
     <span class="hdr-fb-dot" id="hdr-fb-dot"></span>
@@ -974,7 +974,7 @@ function lgIco(s){return lgOf(s)==='baekse'?'💯':'🎾';}
 function lgName(s){return lgOf(s)==='baekse'?'백세리그':'일반리그';}
 
 /* ── FIREBASE ── */
-var APP_VER='3.3 (2026-09-19)';
+var APP_VER='3.4 (2026-09-19)';
 var fbApp=null,fbDB=null,fbRef=null,isOnline=false;
 var FB_KEY='btc_firebase_cfg';
 var lastSavedSnapshot='';   // 자기가 저장한 데이터 추적 (echo 방지)
