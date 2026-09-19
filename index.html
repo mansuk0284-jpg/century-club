@@ -19,15 +19,16 @@
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 /* ── 디자인 토큰 (wimbledon.com 스코어 페이지 참고: 진녹색·흰 카드·가는 선·절제된 색) ── */
 :root{
-  --green:#0B2917;          /* 헤더·히어로·강조 배경 */
-  --green-2:#12361F;        /* 진녹색 위 살짝 밝은 면 */
-  --accent:#006633;         /* 링크·활성 탭·기본 버튼·승리 */
-  --accent-d:#00522A;
-  --accent-l:#D3F0E0;       /* 승자 행 틴트 */
+  --green:#1F6641;          /* 헤더·칩·태그 (코트 그린) */
+  --green-2:#2C7F52;
+  --hero:linear-gradient(150deg,#3E9A6C 0%,#2C7F52 55%,#1F6641 100%);   /* 히어로·시상·분석 배너 */
+  --accent:#1A7A4A;         /* 링크·활성 탭·기본 버튼·승리 */
+  --accent-d:#146039;
+  --accent-l:#D4F1E1;       /* 승자 행 틴트 */
   --accent-l2:#EAF6EF;
-  --gold:#D6C77A;           /* 아이브로우·시상 포인트 */
+  --gold:#EBD58C;           /* 아이브로우·시상 포인트 */
   --gold-d:#8C7A2A;
-  --bg:#F4F5F7;             /* 페이지 배경 */
+  --bg:#F3F6F3;             /* 페이지 배경 */
   --card:#FFFFFF;
   --gray-1:#F5F6F8;
   --gray-2:#E4E9F1;         /* 칩·보조 버튼 */
@@ -81,22 +82,34 @@ b,strong{font-weight:700;}
 .pg{display:none}
 .pg.on{display:block}
 .sec-label{font-family:'Gothic A1','Noto Sans KR',sans-serif;font-size:15px;font-weight:800;color:var(--text);padding:18px 18px 8px;letter-spacing:-.3px;}
+.sec-en{font-family:'Cinzel',serif;font-size:9.5px;font-weight:700;letter-spacing:2px;color:var(--accent);text-transform:uppercase;margin-left:9px;vertical-align:2px;}
+.pg-hd{display:flex;align-items:baseline;gap:10px;padding:16px 18px 9px;}
+.pg-hd .ko{font-family:'Gothic A1','Noto Sans KR',sans-serif;font-size:20px;font-weight:800;color:var(--text);letter-spacing:-.6px;line-height:1.1;}
+.pg-hd .en{font-family:'Cinzel',serif;font-size:10.5px;font-weight:700;letter-spacing:2.4px;color:var(--accent);text-transform:uppercase;}
+.eyebrow-a{font-family:'Cinzel',serif;font-size:10px;font-weight:700;letter-spacing:2.4px;color:var(--accent);text-transform:uppercase;margin-bottom:5px;}
+.ah-en{font-family:'Cinzel',serif;font-size:9.5px;font-weight:700;letter-spacing:2.2px;color:var(--gold);text-transform:uppercase;margin-bottom:3px;}
 
 /* ── 홈 히어로 ── */
-.court-hero{margin:0 0 14px;padding:16px 18px 14px;position:relative;overflow:hidden;background:var(--green);color:#fff;}
+.court-hero{margin:0 0 14px;padding:16px 18px 14px;position:relative;overflow:hidden;background:repeating-linear-gradient(90deg,rgba(255,255,255,0) 0 30px,rgba(255,255,255,.05) 30px 60px),var(--hero);color:#fff;}
 .court-hero::before,.award-hero::before,.ana-hero::before,.fb-banner::before{
   content:'';position:absolute;inset:0;pointer-events:none;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='260' viewBox='0 0 400 260'%3E%3Cg fill='none' stroke='%23ffffff' stroke-opacity='0.09' stroke-width='2'%3E%3Crect x='18' y='34' width='364' height='192'/%3E%3Cline x1='18' y1='58' x2='382' y2='58'/%3E%3Cline x1='18' y1='202' x2='382' y2='202'/%3E%3Cline x1='102' y1='58' x2='102' y2='202'/%3E%3Cline x1='298' y1='58' x2='298' y2='202'/%3E%3Cline x1='102' y1='130' x2='298' y2='130'/%3E%3C/g%3E%3Cline x1='200' y1='34' x2='200' y2='226' stroke='%23ffffff' stroke-opacity='0.14' stroke-width='2' stroke-dasharray='4 4'/%3E%3C/svg%3E");
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='260' viewBox='0 0 400 260'%3E%3Cg fill='none' stroke='%23ffffff' stroke-opacity='0.13' stroke-width='2'%3E%3Crect x='18' y='34' width='364' height='192'/%3E%3Cline x1='18' y1='58' x2='382' y2='58'/%3E%3Cline x1='18' y1='202' x2='382' y2='202'/%3E%3Cline x1='102' y1='58' x2='102' y2='202'/%3E%3Cline x1='298' y1='58' x2='298' y2='202'/%3E%3Cline x1='102' y1='130' x2='298' y2='130'/%3E%3C/g%3E%3Cline x1='200' y1='34' x2='200' y2='226' stroke='%23ffffff' stroke-opacity='0.2' stroke-width='2' stroke-dasharray='4 4'/%3E%3C/svg%3E");
   background-size:cover;background-position:center;
 }
 .court-hero>*{position:relative;}
-.court-hero-name{font-family:'Cinzel',serif;font-size:10.5px;font-weight:700;letter-spacing:2.8px;color:var(--gold);margin-bottom:4px;}
-.court-hero-motto{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:rgba(255,255,255,.62);letter-spacing:.3px;margin-bottom:12px;padding-right:100px;}
-.court-stats{display:flex;border-top:1px solid rgba(255,255,255,.14);padding-top:11px;}
+.court-hero::before{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='260' viewBox='0 0 400 260'%3E%3Cg fill='none' stroke='%23ffffff' stroke-opacity='0.2' stroke-width='2'%3E%3Crect x='18' y='34' width='364' height='192'/%3E%3Cline x1='18' y1='58' x2='382' y2='58'/%3E%3Cline x1='18' y1='202' x2='382' y2='202'/%3E%3Cline x1='102' y1='58' x2='102' y2='202'/%3E%3Cline x1='298' y1='58' x2='298' y2='202'/%3E%3Cline x1='102' y1='130' x2='298' y2='130'/%3E%3Cline x1='18' y1='130' x2='31' y2='130'/%3E%3Cline x1='369' y1='130' x2='382' y2='130'/%3E%3C/g%3E%3Cline x1='200' y1='34' x2='200' y2='226' stroke='%23ffffff' stroke-opacity='0.3' stroke-width='2.5' stroke-dasharray='4 4'/%3E%3C/svg%3E");
+  background-size:contain;background-repeat:no-repeat;background-position:center;
+}
+.court-hero-name{font-family:'Cinzel',serif;font-size:10.5px;font-weight:700;letter-spacing:2.8px;color:var(--gold);margin-bottom:4px;padding-right:90px;white-space:nowrap;}
+.court-hero-motto{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:14px;color:rgba(255,255,255,.74);margin-bottom:12px;padding-right:90px;}
+@media (max-width:340px){.court-hero-name{font-size:9.5px;letter-spacing:2px;}}
+.court-stats{display:flex;padding-top:6px;}
 .cs-box{flex:1;text-align:center;}
-.cs-box+.cs-box{border-left:1px solid rgba(255,255,255,.14);}
-.cs-num{font-family:'Gothic A1',sans-serif;font-size:26px;font-weight:800;color:#fff;font-variant-numeric:tabular-nums;line-height:1;letter-spacing:-.8px;}
-.cs-cap{font-size:12px;color:rgba(255,255,255,.62);margin-top:5px;letter-spacing:-.1px;}
+.cs-box+.cs-box{border-left:none;}
+.cs-num{font-family:'Gothic A1',sans-serif;font-size:26px;font-weight:800;color:#fff;font-variant-numeric:tabular-nums;line-height:1;letter-spacing:-.8px;text-shadow:0 2px 8px rgba(0,0,0,.22);}
+.cs-cap{font-size:12px;color:rgba(255,255,255,.8);margin-top:5px;letter-spacing:-.1px;}
+.cs-en{font-family:'Cinzel',serif;font-size:8.5px;font-weight:700;letter-spacing:1.5px;color:var(--gold);text-transform:uppercase;margin-top:3px;line-height:1;}
 .court-book-btn{position:absolute;top:13px;right:16px;z-index:2;display:inline-flex;align-items:center;gap:5px;background:transparent;border:1px solid rgba(255,255,255,.5);border-radius:999px;padding:6px 12px 6px 9px;font-family:inherit;font-size:12.5px;font-weight:600;color:#fff;cursor:pointer;white-space:nowrap;}
 .court-book-btn:active{background:rgba(255,255,255,.14);}
 #home-alert{margin:0 18px 12px!important;padding:12px 14px!important;background:var(--red-l)!important;border:1px solid #F1B6AE!important;border-radius:8px!important;font-size:13.5px!important;color:#7A2016!important;line-height:1.6!important;}
@@ -109,7 +122,8 @@ b,strong{font-weight:700;}
 .qg-ic svg{width:21px;height:21px;stroke:currentColor;}
 .qg-txt{width:100%;text-align:center;}
 .qg-t{font-family:'Gothic A1','Noto Sans KR',sans-serif;font-size:12.5px;font-weight:800;color:var(--text);letter-spacing:-.5px;line-height:1.2;white-space:nowrap;}
-.qg-s,.qg-arr{display:none;}
+.qg-arr{display:none;}
+.qg-s{font-family:'Cinzel',serif;font-size:7.5px;font-weight:700;letter-spacing:.7px;color:var(--muted);text-transform:uppercase;margin-top:4px;line-height:1;white-space:nowrap;}
 
 /* ── CARD ── */
 .card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:15px 16px;margin:0 18px 10px;}
@@ -127,8 +141,8 @@ b,strong{font-weight:700;}
 .lg-baekse{background:var(--green);color:#fff;}
 .lg-general{background:var(--gray-2);color:var(--text2);}
 .pill{display:inline-block;font-size:11.5px;font-weight:700;line-height:1;padding:5px 8px;border-radius:4px;border:1px solid var(--line);color:var(--text2);background:#fff;white-space:nowrap;}
-.pill.ok{border-color:rgba(0,102,51,.35);color:var(--accent);background:var(--accent-l2);}
-.pill.up{border-color:rgba(0,102,51,.35);color:var(--accent);background:var(--accent-l2);}
+.pill.ok{border-color:rgba(26,122,74,.35);color:var(--accent);background:var(--accent-l2);}
+.pill.up{border-color:rgba(26,122,74,.35);color:var(--accent);background:var(--accent-l2);}
 .pill.down{border-color:var(--gray-3);color:var(--muted);background:var(--gray-1);}
 
 /* ── TAG (완료/진행중) ── */
@@ -140,7 +154,7 @@ b,strong{font-weight:700;}
 /* ── FORM ── */
 .f-lbl{display:block;font-size:12.5px;font-weight:700;color:var(--muted);margin:12px 0 5px;letter-spacing:.1px;}
 input[type=text],input[type=date],input[type=number],select,textarea{width:100%;padding:11px 12px;background:#fff;border:1px solid var(--gray-3);border-radius:6px;color:var(--text);font-family:inherit;font-size:16px;outline:none;-webkit-appearance:none;transition:border-color .15s;}
-input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(0,102,51,.12);}
+input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(26,122,74,.12);}
 input::placeholder,textarea::placeholder{color:#9AA3AE;}
 textarea{resize:none;font-size:14px;line-height:1.6;}
 .row-inp{display:flex;gap:8px;}
@@ -173,7 +187,7 @@ textarea{resize:none;font-size:14px;line-height:1.6;}
 
 /* ── 참석자 칩 ── */
 .sel-act{display:inline-flex;align-items:center;gap:5px;padding:7px 12px;border-radius:6px;border:1px solid var(--line);background:#fff;color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;}
-.sel-act.all{color:var(--accent);border-color:rgba(0,102,51,.35);}
+.sel-act.all{color:var(--accent);border-color:rgba(26,122,74,.35);}
 .chip-grid{display:flex;flex-wrap:wrap;gap:7px;margin-top:8px;}
 .chip{padding:9px 14px;background:#fff;border:1px solid var(--gray-3);border-radius:6px;color:var(--text2);font-family:inherit;font-size:15px;font-weight:500;cursor:pointer;transition:all .12s;}
 .chip.sel{background:var(--green);border-color:var(--green);color:#fff;font-weight:700;}
@@ -195,7 +209,7 @@ textarea{resize:none;font-size:14px;line-height:1.6;}
 .sbtn.primary{background:var(--accent);border-color:var(--accent);color:#fff;}
 
 /* ── 라운드 구분 · 휴식 ── */
-.rdiv{color:var(--muted);display:flex;align-items:center;gap:10px;padding:12px 0 8px;font-size:11.5px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;}
+.rdiv{color:var(--muted);display:flex;align-items:center;gap:10px;padding:12px 0 8px;font-family:'Cinzel',serif;font-size:11px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;}
 .rdiv::after{content:'';flex:1;height:1px;background:var(--line);}
 .rest-line{font-size:12.5px;color:var(--muted);margin:-4px 0 8px;line-height:1.5;}
 .rest-line b{color:var(--text2);font-weight:600;}
@@ -219,7 +233,7 @@ textarea{resize:none;font-size:14px;line-height:1.6;}
 .mtc-row.win .mtc-sc{color:var(--text);}
 .mtc-chk{width:22px;height:22px;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:var(--accent);}
 input.mc-score{width:46px;height:38px;padding:0;text-align:center;font-family:'Gothic A1',sans-serif;font-size:19px;font-weight:800;border:1px solid var(--gray-3);border-radius:6px;background:#fff;color:var(--text);outline:none;-webkit-appearance:none;-moz-appearance:textfield;flex-shrink:0;}
-input.mc-score:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(0,102,51,.12);}
+input.mc-score:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(26,122,74,.12);}
 input.mc-score.win{border-color:var(--accent);background:#fff;}
 input.mc-score:disabled{background:transparent;border-color:transparent;color:var(--text);}
 input.mc-score::-webkit-outer-spin-button,input.mc-score::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
@@ -291,7 +305,7 @@ input.mc-score::-webkit-outer-spin-button,input.mc-score::-webkit-inner-spin-but
 .legend .fdots{vertical-align:-3px;margin:0 3px;}
 
 /* ── 시상 (진녹색 카드) ── */
-.award-hero{position:relative;overflow:hidden;border-radius:8px;margin:0 18px 10px;padding:18px 16px 14px;background:var(--green);color:#fff;}
+.award-hero{position:relative;overflow:hidden;border-radius:8px;margin:0 18px 10px;padding:18px 16px 14px;background:var(--hero);color:#fff;}
 .award-hero>*{position:relative;}
 .award-eyebrow{font-family:'Cinzel',serif;font-size:10.5px;font-weight:700;letter-spacing:3px;color:var(--gold);text-align:center;}
 .award-title{font-family:'Gothic A1','Noto Sans KR',sans-serif;font-weight:900;font-size:22px;color:#fff;text-align:center;margin:6px 0 2px;letter-spacing:-.5px;}
@@ -316,7 +330,7 @@ input.mc-score::-webkit-outer-spin-button,input.mc-score::-webkit-inner-spin-but
 .ana-chip.on{background:var(--green);color:#fff;font-weight:700;}
 .ana-av{width:28px;height:28px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0;background:#fff;color:var(--accent);}
 .ana-chip.on .ana-av{background:rgba(255,255,255,.18)!important;color:#fff!important;}
-.ana-hero{position:relative;overflow:hidden;border-radius:8px;margin:0 18px 10px;padding:16px 16px 14px;color:#fff;background:var(--green);}
+.ana-hero{position:relative;overflow:hidden;border-radius:8px;margin:0 18px 10px;padding:16px 16px 14px;color:#fff;background:var(--hero);}
 .ana-hero>*{position:relative;}
 .ah-top{display:flex;align-items:center;gap:13px;}
 .ah-av{width:50px;height:50px;border-radius:50%;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.4);display:flex;align-items:center;justify-content:center;font-family:'Gothic A1',sans-serif;font-size:22px;font-weight:800;flex-shrink:0;color:#fff;}
@@ -410,7 +424,7 @@ input.mc-score::-webkit-outer-spin-button,input.mc-score::-webkit-inner-spin-but
 .book-site-ico{width:38px;height:38px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:var(--gray-1);color:var(--accent);}
 .book-site-body{flex:1;min-width:0;}
 .book-site-name{font-size:15px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
-.book-site-badge{display:inline-block;font-size:10.5px;font-weight:700;color:var(--accent);border:1px solid rgba(0,102,51,.4);background:var(--accent-l2);border-radius:4px;padding:3px 6px;line-height:1;}
+.book-site-badge{display:inline-block;font-size:10.5px;font-weight:700;color:var(--accent);border:1px solid rgba(26,122,74,.4);background:var(--accent-l2);border-radius:4px;padding:3px 6px;line-height:1;}
 .book-site-desc{font-size:12.5px;color:var(--muted);margin-top:2px;line-height:1.4;}
 .book-site-arrow{color:var(--muted);flex-shrink:0;display:flex;}
 
@@ -430,7 +444,7 @@ input.mc-score::-webkit-outer-spin-button,input.mc-score::-webkit-inner-spin-but
 .fb-step-body strong{color:var(--text);}
 .fb-step-body a{color:var(--accent);font-weight:700;text-decoration:none;}
 .fb-step-body code{background:var(--gray-1);padding:1px 6px;border-radius:4px;font-size:13px;font-family:monospace;}
-.fb-share-box{display:none;background:var(--accent-l2);border:1px solid rgba(0,102,51,.3);border-radius:6px;padding:14px;margin-top:14px;}
+.fb-share-box{display:none;background:var(--accent-l2);border:1px solid rgba(26,122,74,.3);border-radius:6px;padding:14px;margin-top:14px;}
 .fb-share-title{font-size:15px;font-weight:700;color:var(--accent-d);margin-bottom:6px;}
 .fb-share-sub{font-size:14px;color:var(--accent-d);line-height:1.6;margin-bottom:10px;}
 .paste-area{width:100%;padding:12px;background:#1E2226;border:none;border-radius:6px;font-size:13px;font-family:monospace;color:#D4D4D4;height:110px;resize:none;outline:none;line-height:1.7;margin-top:8px;}
@@ -510,15 +524,15 @@ input.mc-score::-webkit-outer-spin-button,input.mc-score::-webkit-inner-spin-but
     <div class="court-stats">
       <div class="cs-box">
         <div class="cs-num" id="st-mem">0</div>
-        <div class="cs-cap">등록 회원</div>
+        <div class="cs-cap">등록 회원</div><div class="cs-en">Members</div>
       </div>
       <div class="cs-box">
         <div class="cs-num" id="st-ses">0</div>
-        <div class="cs-cap">총 모임</div>
+        <div class="cs-cap">총 모임</div><div class="cs-en">Sessions</div>
       </div>
       <div class="cs-box">
         <div class="cs-num" id="st-mat">0</div>
-        <div class="cs-cap">총 경기</div>
+        <div class="cs-cap">총 경기</div><div class="cs-en">Matches</div>
       </div>
     </div>
   </div>
@@ -530,25 +544,25 @@ input.mc-score::-webkit-outer-spin-button,input.mc-score::-webkit-inner-spin-but
   <div class="quick-grid">
     <button class="qg-card c-session" onclick="goTab('session')">
       <div class="qg-ic" style="background:#3f9d6b;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M5.5 6.6c3.2 2.6 3.2 8.2 0 10.8M18.5 6.6c-3.2 2.6 -3.2 8.2 0 10.8" stroke-opacity=".9"/></svg></div>
-      <div class="qg-txt"><div class="qg-t">경기 편성</div><div class="qg-s">대진표 만들기</div></div>
+      <div class="qg-txt"><div class="qg-t">경기 편성</div><div class="qg-s">Schedule</div></div>
     </button>
     <button class="qg-card c-history" onclick="goTab('history')">
       <div class="qg-ic" style="background:#4d94d6;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5.5" y="5" width="13" height="15.5" rx="2.2"/><path d="M9.3 5V4a1 1 0 0 1 1-1h3.4a1 1 0 0 1 1 1v1z"/><path d="M9 11h6M9 14.6h4"/></svg></div>
-      <div class="qg-txt"><div class="qg-t">경기 기록</div><div class="qg-s">결과·이력</div></div>
+      <div class="qg-txt"><div class="qg-t">경기 기록</div><div class="qg-s">Results</div></div>
     </button>
     <button class="qg-card c-ranking" onclick="goTab('ranking')">
       <div class="qg-ic" style="background:#d6a73a;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4h8v4.2a4 4 0 0 1-8 0z"/><path d="M8 5.4H5.4v1.4A2.6 2.6 0 0 0 8 9.4M16 5.4h2.6v1.4A2.6 2.6 0 0 1 16 9.4"/><path d="M12 12.3v2.7M10.2 15h3.6l.7 4.6H9.5z"/></svg></div>
-      <div class="qg-txt"><div class="qg-t">랭킹</div><div class="qg-s">승률·순위</div></div>
+      <div class="qg-txt"><div class="qg-t">랭킹</div><div class="qg-s">Rankings</div></div>
     </button>
     <button class="qg-card c-analysis" onclick="goTab('analysis')">
       <div class="qg-ic" style="background:#9277cf;"><svg width="24" height="24" viewBox="0 0 24 24"><g fill="currentColor" stroke="none"><rect x="5.4" y="12" width="3.2" height="6.6" rx="1"/><rect x="10.4" y="7.6" width="3.2" height="11" rx="1"/><rect x="15.4" y="14" width="3.2" height="4.6" rx="1"/></g></svg></div>
-      <div class="qg-txt"><div class="qg-t">분석</div><div class="qg-s">전적·파트너·추이</div></div>
+      <div class="qg-txt"><div class="qg-t">분석</div><div class="qg-s">Insights</div></div>
     </button>
   </div>
 
   <!-- 섹션: 최근 모임 -->
   <div id="home-rec" style="display:none">
-    <div class="sec-label">최근 모임</div>
+    <div class="sec-label">최근 모임<span class="sec-en">Recent</span></div>
     <div class="card" style="margin-bottom:16px;">
       <div id="home-rec-list"></div>
     </div>
@@ -557,6 +571,7 @@ input.mc-score::-webkit-outer-spin-button,input.mc-score::-webkit-inner-spin-but
 
 <!-- ══ 회원관리 ══ -->
 <div id="pg-members" class="pg">
+  <div class="pg-hd"><span class="ko">회원</span><span class="en">Members</span></div>
   <div class="card">
     <div class="card-title">새 회원 등록</div>
     <div class="row-inp">
@@ -572,6 +587,7 @@ input.mc-score::-webkit-outer-spin-button,input.mc-score::-webkit-inner-spin-but
 
 <!-- ══ 경기편성 ══ -->
 <div id="pg-session" class="pg">
+  <div class="pg-hd"><span class="ko">경기</span><span class="en">Matches</span></div>
   <div id="ses-form">
     <div id="form-existing"></div>
     <div class="card">
@@ -641,6 +657,7 @@ input.mc-score::-webkit-outer-spin-button,input.mc-score::-webkit-inner-spin-but
 
 <!-- ══ 기록 ══ -->
 <div id="pg-history" class="pg">
+  <div class="pg-hd"><span class="ko">경기 기록</span><span class="en">Results</span></div>
   <div class="card">
     <div class="tog-wrap" id="tg-histlg">
       <button class="tog on" data-v="baekse" onclick="setHL(this)">백세리그</button>
@@ -653,6 +670,7 @@ input.mc-score::-webkit-outer-spin-button,input.mc-score::-webkit-inner-spin-but
 
 <!-- ══ 랭킹 ══ -->
 <div id="pg-ranking" class="pg">
+  <div class="pg-hd"><span class="ko">랭킹</span><span class="en">Rankings</span></div>
   <div class="card">
     <div class="card-title">랭킹 설정</div>
     <div class="tog-wrap" id="tg-ranklg">
@@ -681,6 +699,7 @@ input.mc-score::-webkit-outer-spin-button,input.mc-score::-webkit-inner-spin-but
 
 <!-- ══ 분석 ══ -->
 <div id="pg-analysis" class="pg">
+  <div class="pg-hd"><span class="ko">분석</span><span class="en">Insights</span></div>
   <div class="card">
     <div class="card-title">분석 설정</div>
     <div class="tog-wrap" id="tg-analg">
@@ -704,8 +723,8 @@ input.mc-score::-webkit-outer-spin-button,input.mc-score::-webkit-inner-spin-but
   <div class="card" style="display:flex;align-items:center;gap:10px;">
     <button class="ic-btn" onclick="goTab('home')"><i data-ic="arrow-left" data-size="20"></i></button>
     <div>
-      <div style="font-size:17px;font-weight:800;color:var(--text);">코트 예약 바로가기</div>
-      <div style="font-size:12.5px;color:var(--muted);margin-top:2px;">부산·김해·양산 지역 공공 테니스장 예약 사이트</div>
+      <div class="pg-hd" style="padding:0;"><span class="ko" style="font-size:18px;">코트 예약</span><span class="en">Court Booking</span></div>
+      <div style="font-size:12.5px;color:var(--muted);margin-top:3px;">부산·김해·양산 공공 테니스장 예약 사이트</div>
     </div>
   </div>
 
@@ -778,6 +797,7 @@ input.mc-score::-webkit-outer-spin-button,input.mc-score::-webkit-inner-spin-but
     </div>
     <div id="fb-ico" class="fb-banner-ico"><i data-ic="cloud" data-size="26"></i></div>
   </div>
+  <div class="pg-hd"><span class="ko">설정</span><span class="en">Settings</span></div>
 
   <!-- ② 설정값 입력 카드 -->
   <div class="card">
@@ -939,7 +959,7 @@ input.mc-score::-webkit-outer-spin-button,input.mc-score::-webkit-inner-spin-but
     </div>
   </div>
 
-  <div style="text-align:center;padding:8px 0 22px;font-size:12.5px;color:var(--muted);">백세 테니스 클럽 <span id="app-ver"></span></div>
+  <div style="text-align:center;padding:8px 0 22px;font-size:12.5px;color:var(--muted);">Century Tennis Club · 백세 테니스 클럽 <span id="app-ver"></span></div>
 
 </div><!-- pg-settings end -->
 
@@ -1060,7 +1080,7 @@ function lgIco(s){return lgTagH(s);}
 function lgName(s){return lgOf(s)==='baekse'?'백세리그':'일반리그';}
 
 /* ── FIREBASE ── */
-var APP_VER='5.0 (2026-09-19)';
+var APP_VER='5.1 (2026-09-19)';
 var fbApp=null,fbDB=null,fbRef=null,isOnline=false;
 var FB_KEY='btc_firebase_cfg';
 var lastSavedSnapshot='';   // 자기가 저장한 데이터 추적 (echo 방지)
@@ -2182,7 +2202,7 @@ function showPrev(){
   document.getElementById('prev-fair').innerHTML=fairCard(pending);
   var byR={};pending.matches.forEach(function(m){byR[m.round]=byR[m.round]||[];byR[m.round].push(m);});
   var h='';Object.keys(byR).sort(function(a,b){return a-b;}).forEach(function(r){
-    h+='<div class="rdiv">'+r+'라운드</div>'+restLine(pending.presentIds,byR[r]);
+    h+='<div class="rdiv">Round '+r+'</div>'+restLine(pending.presentIds,byR[r]);
     byR[r].forEach(function(m){h+=matchCardH(m,pending,'preview');});
   });
   document.getElementById('prev-matches').innerHTML=h;
@@ -2245,7 +2265,7 @@ function rScore(){
   if(!sess){se.innerHTML='';return;}
   var byR={};sess.matches.forEach(function(m){byR[m.round]=byR[m.round]||[];byR[m.round].push(m);});
   var mh='';Object.keys(byR).sort(function(a,b){return a-b;}).forEach(function(r){
-    mh+='<div class="rdiv">'+r+'라운드</div>'+restLine(sess.presentIds,byR[r]);
+    mh+='<div class="rdiv">Round '+r+'</div>'+restLine(sess.presentIds,byR[r]);
     byR[r].forEach(function(m){mh+=matchCardH(m,sess,'input');});
   });
   if(!sess.resultsLocked)mh+='<div class="rule-note">점수는 게임 수로 입력합니다 (예: 6-4, 7-5). 입력하면 바로 저장됩니다.</div>';
@@ -2256,7 +2276,7 @@ function rScore(){
   }else{
     bottomBtns+='<button class="btn btn-ghost mt8" onclick="unlockS(\''+sess.id+'\')">'+ic('unlock',16)+'결과 수정하기</button>';
   }
-  se.innerHTML='<div class="card"><div class="card-title" style="justify-content:space-between;"><span style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">'+dstr(sess.date)+' 결과 입력'+lgTagH(sess)+'</span>'
+  se.innerHTML='<div class="card"><div class="eyebrow-a">Match Results</div><div class="card-title" style="justify-content:space-between;"><span style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">'+dstr(sess.date)+' 결과 입력'+lgTagH(sess)+'</span>'
     +(sess.resultsLocked?'<span class="tag tg">확정</span>':'')
     +'</div>'+mh+bottomBtns+'</div>';
 }
@@ -2386,7 +2406,7 @@ function rHistory(){
     var open=!!histOpen[s.id];
     var byR={};s.matches.forEach(function(m){byR[m.round]=byR[m.round]||[];byR[m.round].push(m);});
     var mh=Object.keys(byR).sort(function(a,b){return a-b;}).map(function(r){
-      return'<div class="rdiv">'+r+'라운드</div>'+byR[r].map(function(m){return matchCardH(m,s,'hist');}).join('');
+      return'<div class="rdiv">Round '+r+'</div>'+byR[r].map(function(m){return matchCardH(m,s,'hist');}).join('');
     }).join('');
     return'<div class="hs">'
       +'<div class="hs-hdr" onclick="toggleHist(\''+s.id+'\')">'
@@ -2540,7 +2560,7 @@ function rRanking(){
 /* ── ANALYSIS ── */
 /* 분석: 확정된 모임의 경기 기록에서 선수·클럽 단위 지표를 계산해 보여준다.
    색 체계는 랭킹과 동일 — 승 파랑 · 무 노랑 · 패 빨강 (승률은 무승부 제외) */
-var COL={W:'#006633',D:'#8C7A2A',DT:'#B7791F',L:'#C7CDD6'};
+var COL={W:'#1A7A4A',D:'#8C7A2A',DT:'#B7791F',L:'#C7CDD6'};
 var PF_LBL={all:'전체 기간',month:'이번 달','3m':'최근 3개월'};
 var SF_ICO={grass:'',hard:'',clay:''};
 var KLBL={W:'승',D:'무',L:'패'};
@@ -2701,7 +2721,7 @@ function anaHero(mem,P,ranks){
   var streak=P.cur.n>=2?'<span class="ah-streak'+(P.cur.k==='W'?'':' down')+'">'+P.cur.n+(P.cur.k==='W'?'연승 중':'연패 중')+'</span>':'';
   return'<div class="ana-hero">'
     +'<div class="ah-top"><div class="ah-av">'+esc(mem.name.charAt(0))+'</div>'
-    +'<div class="ah-id"><div class="ah-name">'+esc(mem.name)+'</div>'
+    +'<div class="ah-id"><div class="ah-en">Player Profile</div><div class="ah-name">'+esc(mem.name)+'</div>'
     +'<div class="ah-sub"><span class="nw">'+lgTag()+' · '+PF_LBL[anaPf]+'</span>'+(pos>=0?' <span class="nw">· 랭킹 <b>'+(pos+1)+'위</b>/'+ranks.length+'명</span>':'')+'</div></div></div>'
     +'<div class="ah-kpis">'
     +'<div class="ah-kpi"><b>'+P.n+'</b><span>경기</span></div>'
@@ -2843,7 +2863,7 @@ function anaPlayerHtml(mid,recs,sess,attSess){
 function anaClubHtml(recs,sess,attSess){
   var players=[],pm={},rv={};
   DB.members.forEach(function(m){var P=anaPlayer(m.id,recs,attSess);if(P.n)players.push({m:m,P:P});});
-  var h='<div class="ana-hero"><div class="ah-top"><div class="ah-av">'+ic('users',22)+'</div><div class="ah-id"><div class="ah-name">클럽 하이라이트</div>'
+  var h='<div class="ana-hero"><div class="ah-top"><div class="ah-av">'+ic('users',22)+'</div><div class="ah-id"><div class="ah-en">Club Insights</div><div class="ah-name">클럽 하이라이트</div>'
     +'<div class="ah-sub">'+lgTag()+' · '+PF_LBL[anaPf]+'</div></div></div>'
     +'<div class="ah-kpis"><div class="ah-kpi"><b>'+sess.length+'</b><span>확정 모임</span></div><div class="ah-kpi"><b>'+recs.length+'</b><span>경기</span></div><div class="ah-kpi"><b>'+players.length+'</b><span>참가 선수</span></div></div></div>';
   var cards='';
