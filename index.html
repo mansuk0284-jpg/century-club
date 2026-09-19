@@ -456,6 +456,33 @@ input.mc-score::-webkit-outer-spin-button,input.mc-score::-webkit-inner-spin-but
 .rl{color:var(--muted);}
 .rpct{font-size:14px;font-weight:700;color:var(--text2);background:var(--bg2);border-radius:8px;padding:4px 0;min-width:46px;text-align:center;font-variant-numeric:tabular-nums;margin-left:4px;}
 
+/* ── 백세리그 시상 (챔피언십 스타일) ── */
+.award-hero{
+  position:relative;overflow:hidden;border-radius:18px;margin:0 18px 10px;
+  padding:18px 16px 15px;
+  background:linear-gradient(150deg,#2d7a52 0%,#22663d 55%,#17492b 100%);
+  box-shadow:0 2px 6px rgba(20,45,32,.15),0 14px 32px rgba(20,45,32,.22);
+}
+.award-hero::before{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='260' viewBox='0 0 400 260'%3E%3Cg fill='none' stroke='%23ffffff' stroke-opacity='0.13' stroke-width='2'%3E%3Crect x='18' y='34' width='364' height='192'/%3E%3Cline x1='18' y1='58' x2='382' y2='58'/%3E%3Cline x1='18' y1='202' x2='382' y2='202'/%3E%3Cline x1='102' y1='58' x2='102' y2='202'/%3E%3Cline x1='298' y1='58' x2='298' y2='202'/%3E%3Cline x1='102' y1='130' x2='298' y2='130'/%3E%3Cline x1='18' y1='130' x2='31' y2='130'/%3E%3Cline x1='369' y1='130' x2='382' y2='130'/%3E%3C/g%3E%3Cline x1='200' y1='34' x2='200' y2='226' stroke='%23ffffff' stroke-opacity='0.2' stroke-width='2.5' stroke-dasharray='4 4'/%3E%3C/svg%3E");
+  background-size:cover;background-position:center;
+}
+.award-eyebrow{position:relative;font-family:'Cinzel',serif;font-size:11px;font-weight:700;letter-spacing:3px;color:rgba(232,199,106,.92);text-align:center;}
+.award-title{position:relative;font-family:'Gothic A1','Noto Sans KR',sans-serif;font-weight:900;font-size:21px;color:#fff;text-align:center;margin:5px 0 1px;letter-spacing:-.3px;text-shadow:0 2px 8px rgba(0,0,0,.3);}
+.award-motto{position:relative;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:14px;color:rgba(255,255,255,.62);text-align:center;letter-spacing:.4px;}
+.award-div{position:relative;display:flex;align-items:center;gap:10px;margin:11px 0 4px;}
+.award-div::before,.award-div::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(232,199,106,.55),transparent);}
+.award-div span{font-size:15px;}
+.award-row{
+  position:relative;display:flex;align-items:center;gap:11px;
+  padding:9px 13px;border-radius:12px;margin-top:7px;
+  background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.13);
+}
+.award-medal{font-size:21px;flex-shrink:0;text-shadow:0 2px 6px rgba(0,0,0,.35);}
+.award-rank{font-family:'Cinzel',serif;font-size:10.5px;font-weight:700;letter-spacing:1.6px;color:rgba(232,199,106,.9);width:88px;flex-shrink:0;line-height:1.3;}
+.award-prize{flex:1;font-size:15.5px;font-weight:700;color:#fff;letter-spacing:-.2px;}
+
 /* ── ANALYSIS ── */
 .ana-tabs{display:flex;border-bottom:1px solid var(--line);margin-bottom:14px;}
 .ana-tab{flex:1;height:46px;background:none;border:none;border-bottom:2.5px solid transparent;
@@ -712,7 +739,8 @@ input.mc-score::-webkit-outer-spin-button,input.mc-score::-webkit-inner-spin-but
     </div>
     <div style="font-size:13px;color:var(--muted);margin-top:12px;line-height:1.6;">
       🏆 <strong style="color:var(--text2);">승부순</strong>: ①승률 → ②게임 다승 → ③득실차<br>
-      📅 <strong style="color:var(--text2);">출석순</strong>: 출석 횟수 많은 순 · 출석률 표시 (빠짐없이 출석하면 🌟개근)
+      📅 <strong style="color:var(--text2);">출석순</strong>: 출석 횟수 많은 순 · 출석률 표시 (빠짐없이 출석하면 🌟개근)<br>
+      <span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#3a9d5a;"></span> 이름 옆 점 = 최근 5경기 (초록 승 · 노랑 무 · 빨강 패) · 승률 옆 <span style="color:#2a9d5f;">▲</span><span style="color:#c0392b;">▼</span> = 최근 5경기 승률이 전체보다 높음/낮음
     </div>
   </div>
   <div id="rank-award"></div>
@@ -936,13 +964,17 @@ var isPopping=false;
 var league='baekse';        // 편성 폼 선택값 (기본: 백세리그)
 var histLg='baekse';        // 기록 탭 필터
 var anaLg='baekse';         // 분석 탭 필터
-var AWARDS={baekse:{title:'🏆 26년 백세리그 시상',items:['🥇 1위 — 테니스화','🥈 2위 — 테니스복(상의)','🥉 3위 — 테니스모자']}};
+var AWARDS={baekse:{eyebrow:'CENTURY TENNIS CLUB · 2026',title:'백세리그 시상',motto:'Honor for the champions of the year',items:[
+  {medal:'🥇',en:'CHAMPION',prize:'1위 · 테니스화'},
+  {medal:'🥈',en:'RUNNER-UP',prize:'2위 · 테니스복(상의)'},
+  {medal:'🥉',en:'3RD PLACE',prize:'3위 · 테니스모자'}
+]}};
 function lgOf(s){return (s&&s.league)==='general'?'general':'baekse';}
 function lgIco(s){return lgOf(s)==='baekse'?'💯':'🎾';}
 function lgName(s){return lgOf(s)==='baekse'?'백세리그':'일반리그';}
 
 /* ── FIREBASE ── */
-var APP_VER='3.7 (2026-09-19)';
+var APP_VER='3.8 (2026-09-19)';
 var fbApp=null,fbDB=null,fbRef=null,isOnline=false;
 var FB_KEY='btc_firebase_cfg';
 var lastSavedSnapshot='';   // 자기가 저장한 데이터 추적 (echo 방지)
@@ -1409,7 +1441,7 @@ function loadTrash(){
       var del=t.ts?new Date(t.ts):null;
       var delStr=del?(del.getMonth()+1)+'.'+del.getDate()+' 삭제':'';
       return'<div class="row" style="cursor:default;"><div class="row-ico">📅</div>'
-        +'<div class="row-body"><span class="row-title" style="font-size:15px;">'+(ses.date||'?')+' 모임</span><span class="row-sub">'+mc+'경기 · '+delStr+'</span></div>'
+        +'<div class="row-body"><span class="row-title" style="font-size:15px;">'+(ses.date?dstr(ses.date):'?')+' 모임</span><span class="row-sub">'+mc+'경기 · '+delStr+'</span></div>'
         +'<button onclick="restoreTrash(\''+k+'\')" style="background:var(--brand-l);border:1px solid var(--brand);border-radius:8px;color:var(--brand);font-size:13px;padding:6px 13px;cursor:pointer;font-weight:700;font-family:inherit;">복원</button></div>';
     }).join('');
   }).catch(function(e){w.innerHTML='<div style="padding:10px 0;color:var(--red);font-size:14px;">불러오기 실패: '+e.message+'</div>';});
@@ -1483,6 +1515,13 @@ function uid(){return'_'+Math.random().toString(36).slice(2,9)+Date.now().toStri
 function gn(id){return(DB.members.find(function(m){return m.id===id;})||{name:'?'}).name;}
 function shuffle(a){var b=[].concat(a);for(var i=b.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=b[i];b[i]=b[j];b[j]=t;}return b;}
 function today(){return new Date().toISOString().slice(0,10);}
+var DAYS=['일','월','화','수','목','금','토'];
+function dstr(d){ // 'YYYY-MM-DD' → 'YYYY-MM-DD (금)'
+  if(!d)return'';
+  var dt=new Date(d+'T00:00:00');
+  if(isNaN(dt.getTime()))return d;
+  return d+' ('+DAYS[dt.getDay()]+')';
+}
 function toast(msg){var t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},2500);}
 var AB=['#fff5f5','#eef7f2','#eef3ff','#fdf8e8','#f5eeff'];
 var AC=['#b03020','#2a5e42','#2856a0','#7a5a00','#6a2890'];
@@ -1613,7 +1652,7 @@ function rHome(){
   if(!DB.sessions.length){card.style.display='none';return;}
   card.style.display='block';
   list.innerHTML=[].concat(DB.sessions).reverse().slice(0,4).map(function(s){
-    return'<div class="row" onclick="openSes(\''+s.id+'\')"><div class="row-ico">'+lgIco(s)+'</div><div class="row-body"><span class="row-title">'+s.date+'</span><span class="row-sub">'+lgName(s)+' · '+s.matches.length+'경기 · '+(s.matchType==='doubles'?'복식':s.matchType==='singles'?'단식':'혼합')+'</span></div><span class="tag '+(s.resultsLocked?'tg':'tr')+'">'+(s.resultsLocked?'완료':'진행중')+'</span></div>';
+    return'<div class="row" onclick="openSes(\''+s.id+'\')"><div class="row-ico">'+lgIco(s)+'</div><div class="row-body"><span class="row-title">'+dstr(s.date)+'</span><span class="row-sub">'+lgName(s)+' · '+s.matches.length+'경기 · '+(s.matchType==='doubles'?'복식':s.matchType==='singles'?'단식':'혼합')+'</span></div><span class="tag '+(s.resultsLocked?'tg':'tr')+'">'+(s.resultsLocked?'완료':'진행중')+'</span></div>';
   }).join('');
 }
 function openSes(id){activeId=id;goTab('session');}
@@ -1684,7 +1723,7 @@ function doCreate(){
 }
 function showPrev(){
   ['ses-form','ses-prev','ses-active'].forEach(function(id,i){document.getElementById(id).style.display=i===1?'block':'none';});
-  document.getElementById('prev-title').textContent='편성 미리보기 · '+pending.date;
+  document.getElementById('prev-title').textContent='편성 미리보기 · '+dstr(pending.date);
   document.getElementById('prev-sub').textContent=lgIco(pending)+' '+lgName(pending)+' · '+sfName(pending.surface||'grass')+' · '+(pending.matchType==='doubles'?'복식':pending.matchType==='singles'?'단식':'혼합')+' · 코트 '+pending.courts+'개 · '+pending.totalMin+'분 · 총 '+pending.matches.length+'경기';
   var byR={};pending.matches.forEach(function(m){byR[m.round]=byR[m.round]||[];byR[m.round].push(m);});
   var h='';Object.keys(byR).sort(function(a,b){return a-b;}).forEach(function(r){
@@ -1712,7 +1751,7 @@ function showActive(){
   }
   document.getElementById('ses-list').innerHTML=[].concat(DB.sessions).reverse().map(function(s){
     return'<div class="row" style="'+(s.id===activeId?'border-left:3px solid var(--brand);padding-left:12px;':'')+'" onclick="selSes(\''+s.id+'\')">'
-      +'<div class="row-ico">'+lgIco(s)+'</div><div class="row-body"><span class="row-title">'+s.date+'</span><span class="row-sub">'+lgName(s)+' · '+s.matches.length+'경기</span></div>'
+      +'<div class="row-ico">'+lgIco(s)+'</div><div class="row-body"><span class="row-title">'+dstr(s.date)+'</span><span class="row-sub">'+lgName(s)+' · '+s.matches.length+'경기</span></div>'
       +'<span class="tag '+(s.resultsLocked?'tg':'tr')+'">'+(s.resultsLocked?'완료':'진행중')+'</span>'
       +'<button class="ic-btn" onclick="event.stopPropagation();delSes(\''+s.id+'\')" style="color:var(--red);">🗑️</button>'
       +'</div>';
@@ -1791,7 +1830,7 @@ function rScore(){
   }else{
     bottomBtns+='<button class="btn btn-ghost mt8" onclick="unlockS(\''+sess.id+'\')">🔓 결과 수정하기</button>';
   }
-  se.innerHTML='<div class="card"><div class="card-title" style="display:flex;align-items:center;justify-content:space-between;">'+lgIco(sess)+' '+sess.date+' 결과 입력 <span style="font-size:12.5px;font-weight:600;color:var(--muted);">'+lgName(sess)+'</span>'
+  se.innerHTML='<div class="card"><div class="card-title" style="display:flex;align-items:center;justify-content:space-between;">'+lgIco(sess)+' '+dstr(sess.date)+' 결과 입력 <span style="font-size:12.5px;font-weight:600;color:var(--muted);">'+lgName(sess)+'</span>'
     +(sess.resultsLocked?'<span class="tag tg">✅ 확정</span>':'')
     +'</div>'+mh+bottomBtns+'</div>';
 }
@@ -1955,10 +1994,9 @@ function rHistory(){
     }).join('');
     return'<div class="hs">'
       +'<div class="hs-hdr" onclick="toggleHist(\''+s.id+'\')">'
-        +'<div class="hs-left"><span class="hs-chev" id="hist-c-'+s.id+'">'+(open?'▾':'▸')+'</span><span class="hs-date">'+lgIco(s)+' '+s.date+'</span></div>'
+        +'<div class="hs-left"><span class="hs-chev" id="hist-c-'+s.id+'">'+(open?'▾':'▸')+'</span><span class="hs-date">'+lgIco(s)+' '+dstr(s.date)+'</span></div>'
         +'<div class="hs-meta">'
           +'<div class="hs-cell"><span class="hs-cl">코트</span><span class="hs-cv sf-'+surf+'">'+sfName(surf)+'</span></div>'
-          +'<div class="hs-cell"><span class="hs-cl">유형</span><span class="hs-cv">'+(s.matchType==='doubles'?'복식':s.matchType==='singles'?'단식':'혼합')+'</span></div>'
           +'<div class="hs-cell"><span class="hs-cl">경기</span><span class="hs-cv">'+s.matches.length+'</span></div>'
           +'<div class="hs-cell"><span class="hs-cl">상태</span><span class="hs-cv '+(s.resultsLocked?'st-done':'st-prog')+'">'+(s.resultsLocked?'완료':'진행')+'</span></div>'
         +'</div>'
@@ -2001,7 +2039,7 @@ function setRF(btn){rf=btn.dataset.v;document.getElementById('tg-rank').querySel
 function setRB(btn){rankBy=btn.dataset.v;document.getElementById('tg-rankby').querySelectorAll('.tog').forEach(function(b){b.classList.remove('on');});btn.classList.add('on');rRanking();}
 function setRL(btn){rankLg=btn.dataset.v;document.getElementById('tg-ranklg').querySelectorAll('.tog').forEach(function(b){b.classList.remove('on');});btn.classList.add('on');rRanking();}
 function calcRanks(f){
-  var stats={};DB.members.forEach(function(m){stats[m.id]={id:m.id,name:m.name,wins:0,draws:0,losses:0,played:0,gf:0,ga:0,att:0};});
+  var stats={};DB.members.forEach(function(m){stats[m.id]={id:m.id,name:m.name,wins:0,draws:0,losses:0,played:0,gf:0,ga:0,att:0,form:[]};});
   var now=new Date(),attTotal=0;
   DB.sessions.forEach(function(s){
     if(rankLg!=='all'&&lgOf(s)!==rankLg)return;   // 리그 필터
@@ -2024,14 +2062,26 @@ function calcRanks(f){
       if(sc1===0&&sc2===0)return;                  // 0:0 미진행 제외
       var res=sc1>sc2?1:sc2>sc1?2:0;               // 0=무승부(동점, 결과보존)
       [].concat(m.team1,m.team2).forEach(function(id){if(stats[id])stats[id].played++;});
-      // 팀1: 득(게임 승)=score1, 실=score2
-      m.team1.forEach(function(id){if(stats[id]){stats[id].gf+=sc1;stats[id].ga+=sc2;if(res===1)stats[id].wins++;else if(res===2)stats[id].losses++;else stats[id].draws++;}});
+      // 팀1: 득(게임 승)=score1, 실=score2 (form: 시간순 승무패 이력 — 최근 폼 표시용)
+      m.team1.forEach(function(id){if(stats[id]){stats[id].gf+=sc1;stats[id].ga+=sc2;stats[id].form.push(res===1?'W':res===2?'L':'D');if(res===1)stats[id].wins++;else if(res===2)stats[id].losses++;else stats[id].draws++;}});
       // 팀2: 득(게임 승)=score2, 실=score1
-      m.team2.forEach(function(id){if(stats[id]){stats[id].gf+=sc2;stats[id].ga+=sc1;if(res===2)stats[id].wins++;else if(res===1)stats[id].losses++;else stats[id].draws++;}});
+      m.team2.forEach(function(id){if(stats[id]){stats[id].gf+=sc2;stats[id].ga+=sc1;stats[id].form.push(res===2?'W':res===1?'L':'D');if(res===2)stats[id].wins++;else if(res===1)stats[id].losses++;else stats[id].draws++;}});
     });
   });
   var arr=Object.values(stats).filter(function(s){return s.played>0||s.att>0;});
-  arr.forEach(function(s){s.attTotal=attTotal;});
+  arr.forEach(function(s){
+    s.attTotal=attTotal;
+    // 최근 승률 추세: 최근 5경기(승부난 것) 승률 vs 전체 승률 (표본 6경기 이상일 때만)
+    s.trend='';
+    var dec=s.form.filter(function(x){return x!=='D';});
+    if(dec.length>=6){
+      var rec=dec.slice(-5);
+      var rw=rec.filter(function(x){return x==='W';}).length/rec.length;
+      var ow=s.wins/(s.wins+s.losses);
+      if(rw-ow>=0.1)s.trend='up';
+      else if(ow-rw>=0.1)s.trend='down';
+    }
+  });
   arr.sort(function(a,b){
     if(rankBy==='att'){
       // 출석순: ①출석 많은 순 → ②승수 → ③게임 다승 → ④이름
@@ -2060,11 +2110,16 @@ function rRanking(){
   var aw=document.getElementById('rank-award');
   if(aw){
     if(rankLg==='baekse'&&AWARDS.baekse){
-      aw.innerHTML='<div class="card" style="background:linear-gradient(135deg,#fdf6e0,#f8ecc3);border:1.5px solid #e0c25e;">'
-        +'<div style="font-size:16.5px;font-weight:800;color:#7a5a00;margin-bottom:9px;">'+AWARDS.baekse.title+'</div>'
-        +'<div style="display:flex;flex-direction:column;gap:7px;">'
-        +AWARDS.baekse.items.map(function(it){return'<div style="font-size:15px;font-weight:700;color:#6b5410;background:rgba(255,255,255,.55);border-radius:9px;padding:8px 12px;">'+it+'</div>';}).join('')
-        +'</div></div>';
+      var A=AWARDS.baekse;
+      aw.innerHTML='<div class="award-hero">'
+        +'<div class="award-eyebrow">'+A.eyebrow+'</div>'
+        +'<div class="award-title">'+A.title+'</div>'
+        +'<div class="award-motto">'+A.motto+'</div>'
+        +'<div class="award-div"><span>🏆</span></div>'
+        +A.items.map(function(it){
+          return'<div class="award-row"><span class="award-medal">'+it.medal+'</span><span class="award-rank">'+it.en+'</span><span class="award-prize">'+it.prize+'</span></div>';
+        }).join('')
+        +'</div>';
     }else{aw.innerHTML='';}
   }
   var list=document.getElementById('rank-list'),ranks=calcRanks(rf);
@@ -2090,14 +2145,20 @@ function rRanking(){
       stat='<span style="font-size:12.5px;color:var(--muted);font-weight:600;margin-right:2px;">출석률</span>'
         +'<span class="rpct" style="font-size:15px;min-width:52px;">'+attPct+'%</span>';
     }else{
-      // 승부순: 경기수 · 게임 승/패(득실)를 또렷하게
-      sub='<b style="color:var(--text2);font-size:14.5px;">'+r.played+'경기</b>'
-        +' · 게임 <b style="color:var(--text2);font-size:14.5px;">'+r.gf+'승 '+r.ga+'패</b>'
-        +' <b style="font-size:14.5px;color:'+(diff>0?'#2a7d4f':diff<0?'#c0392b':'var(--muted)')+';">('+diffStr+')</b>';
-      stat='<span class="rw">'+r.wins+'승</span>'
-        +'<span class="rd">'+r.draws+'무</span>'
-        +'<span class="rl">'+r.losses+'패</span>'
-        +'<span class="rpct">'+pct+'%</span>';
+      // 승부순: 이름 옆 최근 5경기 폼(점), 아래 줄에 전적 한 줄, 오른쪽 큰 승률+추세
+      var dots=(r.form||[]).slice(-5).map(function(x){
+        var c=x==='W'?'#3a9d5a':x==='D'?'#d5a92c':'#dc8a84';
+        return'<span style="display:inline-block;width:8px;height:8px;border-radius:50%;margin-left:3.5px;background:'+c+';"></span>';
+      }).join('');
+      if(dots)nameHtml+='<span style="margin-left:6px;white-space:nowrap;">'+dots+'</span>';
+      sub='<b style="color:var(--text2);">'+r.played+'경기</b> · '
+        +'<b style="color:#2a7d4f;">'+r.wins+'승</b> '
+        +(r.draws?'<b style="color:#b5851a;">'+r.draws+'무</b> ':'')
+        +'<b style="color:#98a19b;">'+r.losses+'패</b>'
+        +' · 게임 <b style="color:'+(diff>0?'#2a7d4f':diff<0?'#c0392b':'var(--muted)')+';">'+diffStr+'</b>';
+      var arrow=r.trend==='up'?' <span style="color:#2a9d5f;font-size:12px;">▲</span>'
+               :r.trend==='down'?' <span style="color:#c0392b;font-size:12px;">▼</span>':'';
+      stat='<span class="rpct" style="font-size:16.5px;min-width:60px;padding:8px 6px;border-radius:10px;">'+pct+'%'+arrow+'</span>';
     }
     return'<div class="rank-row">'
       +'<span class="rank-n" style="color:'+rankColor+';">'+(i+1)+'</span>'
@@ -2201,8 +2262,8 @@ function normalizeWinners(){
   load();
   normalizeWinners();
   var av=document.getElementById('app-ver');if(av)av.textContent='v'+APP_VER;
-  var d=new Date(),days=['일','월','화','수','목','금','토'];
-  var hd=document.getElementById('hdr-date');if(hd)hd.textContent=(d.getMonth()+1)+'.'+d.getDate()+'('+days[d.getDay()]+')';
+  var d=new Date();
+  var hd=document.getElementById('hdr-date');if(hd)hd.textContent=(d.getMonth()+1)+'.'+d.getDate()+'('+DAYS[d.getDay()]+')';
   updCalc();updAS();
   window.history.replaceState({tab:'home',sub:null},'',window.location.pathname);
   rHome();
