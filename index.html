@@ -378,6 +378,7 @@ textarea{resize:none;font-size:16px;line-height:1.6;}
 /* ── ROUND DIV ── */
 .rdiv{color:#2f8159;display:flex;align-items:center;gap:8px;padding:10px 0 6px;font-size:16px;font-weight:700;letter-spacing:.3px;}
 .rdiv::after{content:'';flex:1;height:1px;background:var(--line);}
+.rest-line{font-size:12.5px;color:var(--muted);margin:-3px 2px 8px;line-height:1.5;}
 
 /* ── MATCH CARD ── */
 .mc{background:var(--bg3);border-radius:12px;border:none;padding:14px;margin-bottom:8px;}
@@ -678,6 +679,7 @@ input.mc-score::-webkit-outer-spin-button,input.mc-score::-webkit-inner-spin-but
         <button class="tog on" data-v="baekse" onclick="setTog(this,'tg-lg')">💯 백세리그</button>
         <button class="tog" data-v="general" onclick="setTog(this,'tg-lg')">🎾 일반리그</button>
       </div>
+      <div id="lg-note" style="font-size:12.5px;color:var(--muted);margin-top:8px;line-height:1.5;"></div>
       <label class="f-lbl">경기 유형</label>
       <div class="tog-wrap" id="tg-mt">
         <button class="tog on" data-v="doubles" onclick="setTog(this,'tg-mt')">🤝 복식</button>
@@ -715,6 +717,7 @@ input.mc-score::-webkit-outer-spin-button,input.mc-score::-webkit-inner-spin-but
     <div class="card">
       <div class="card-title" id="prev-title">편성 미리보기</div>
       <div style="font-size:16px;color:var(--muted);margin-bottom:12px;" id="prev-sub"></div>
+      <div id="prev-fair"></div>
       <div id="prev-matches"></div>
     </div>
     <div style="padding:0 0 8px;">
@@ -1066,7 +1069,7 @@ function lgIco(s){return lgOf(s)==='baekse'?'💯':'🎾';}
 function lgName(s){return lgOf(s)==='baekse'?'백세리그':'일반리그';}
 
 /* ── FIREBASE ── */
-var APP_VER='3.9 (2026-09-19)';
+var APP_VER='4.0 (2026-09-19)';
 var fbApp=null,fbDB=null,fbRef=null,isOnline=false;
 var FB_KEY='btc_firebase_cfg';
 var lastSavedSnapshot='';   // 자기가 저장한 데이터 추적 (echo 방지)
@@ -1370,6 +1373,7 @@ function sanitizeDB(db){
     s.presentIds=toArr(s.presentIds);
     s.matches.forEach(function(m){
       m.team1=toArr(m.team1);m.team2=toArr(m.team2);
+      if(m.type==='mixed')m.type='doubles';   // '혼합'도 2:2 경기 — 예전엔 단식으로 표시·집계되던 오류 보정
       if(m.score1==null)m.score1='';if(m.score2==null)m.score2='';
       if(m.winner===undefined)m.winner=null;
     });
@@ -1637,7 +1641,13 @@ function setTog(btn,gid){
   btn.classList.add('on');
   if(gid==='tg-mt')mtype=btn.dataset.v;
   if(gid==='tg-sf')surface=btn.dataset.v;
-  if(gid==='tg-lg')league=btn.dataset.v;
+  if(gid==='tg-lg'){league=btn.dataset.v;updLgNote();}
+}
+function updLgNote(){
+  var n=document.getElementById('lg-note');if(!n)return;
+  n.textContent=league==='baekse'
+    ?'💯 시즌 누적 파트너·상대 균형, 코트 배정, 휴식까지 가장 엄격하게 공평 편성합니다.'
+    :'🎾 모임 단위로 출전·파트너·상대를 고르게 편성합니다. (백세리그 기록과 분리)';
 }
 function syncTog(gid,val){
   var g=document.getElementById(gid);if(!g)return;
@@ -1645,48 +1655,349 @@ function syncTog(gid,val){
 }
 function sfName(s){return s==='hard'?'하드':s==='clay'?'클레이':'잔디';}
 
-/* ── MATCH GENERATION ── */
-function buildMat(sessions,ids){
-  var P={},O={};
-  ids.forEach(function(id){P[id]={};O[id]={};});
-  sessions.forEach(function(s){s.matches.forEach(function(m){
-    var t1=m.team1,t2=m.team2;
-    for(var i=0;i<t1.length;i++)for(var j=i+1;j<t1.length;j++){P[t1[i]]=P[t1[i]]||{};P[t1[j]]=P[t1[j]]||{};P[t1[i]][t1[j]]=(P[t1[i]][t1[j]]||0)+1;P[t1[j]][t1[i]]=(P[t1[j]][t1[i]]||0)+1;}
-    for(var i=0;i<t2.length;i++)for(var j=i+1;j<t2.length;j++){P[t2[i]]=P[t2[i]]||{};P[t2[j]]=P[t2[j]]||{};P[t2[i]][t2[j]]=(P[t2[i]][t2[j]]||0)+1;P[t2[j]][t2[i]]=(P[t2[j]][t2[i]]||0)+1;}
-    t1.forEach(function(a){t2.forEach(function(b){O[a]=O[a]||{};O[b]=O[b]||{};O[a][b]=(O[a][b]||0)+1;O[b][a]=(O[b][a]||0)+1;});});
-  });});
-  return{P:P,O:O};
-}
+/* ── MATCH GENERATION ──
+   목표: ①출전 횟수 균등 ②휴식 분산 ③파트너 고르게 ④상대 고르게 ⑤동일 편성 반복 방지 ⑥(백세) 코트 배정 고르게
+   1) 출전자: 라운드별 휴식자를 "같이 뛰는 횟수가 고르게" 배정 (모두의 휴식 횟수는 최대 1 차이)
+   2) 배치: 라운드별 코트·팀을 파트너/상대 횟수 제곱합이 최소가 되도록 탐색(멀티스타트 힐클라이밍)
+   3) 전역 다듬기: 라운드 단위 재최적화(좌표하강) + 여러 번 시도해 최선 선택
+   리그별 프로필: 같은 리그의 지난 모임만 이력으로 반영. 백세리그는 시즌 누적 균형·코트 배정까지 더 엄격하게 */
+var LEAGUE_PROFILE = {
+  baekse: { kappa: 0.8, repeatPen: 40, histQuad: 2, histMatch: 8, seasonBye: true, maxAtt: 8, patience: 3, sweeps: 2, timeMs: 450, verify: true, verifyAtt: 24, verifyMs: 1000 },
+  general: { kappa: 0.8, repeatPen: 12, histQuad: 1, histMatch: 4, seasonBye: true, maxAtt: 6, patience: 3, sweeps: 2, timeMs: 300 }
+};
+function genMatches(pIds, sessions, mt, totalGames, courtsN, lg, opt) {
+  opt = opt || {};
+  lg = (lg === 'general') ? 'general' : 'baekse';
+  var prof = {}, pk0;
+  for (pk0 in LEAGUE_PROFILE[lg]) prof[pk0] = LEAGUE_PROFILE[lg][pk0];
+  for (pk0 in opt) prof[pk0] = opt[pk0];
+  var N = pIds.length, pM = (mt === 'singles') ? 2 : 4, dbl = (pM === 4);
+  courtsN = Math.max(1, courtsN | 0);
+  var C = Math.min(courtsN, Math.floor(N / pM));
+  var rounds = Math.floor(totalGames / courtsN);
+  if (C < 1 || rounds < 1) return [];
+  var K = C * pM, B = N - K, NN = N * N;
+  var WP = 2, WO = 1, WQ = 4, WM = 12, WQH = prof.histQuad, WMH = prof.histMatch;
+  var KAPPA = prof.kappa, RP = prof.repeatPen, CAP = 8;
+  var SW = prof.sweeps, RS = prof.restarts || Math.max(6, Math.round(28 - K));
+  var t0 = Date.now(), i, j;
 
-function genMatches(pIds,sessions,mt,totalGames){
-  var mat=buildMat(sessions,pIds),P=mat.P,O=mat.O;
-  var lP={},lO={};
-  pIds.forEach(function(id){lP[id]={};lO[id]={};pIds.forEach(function(id2){lP[id][id2]=0;lO[id][id2]=0;});});
-  function cc(t1,t2){
-    var c=0;
-    if(t1.length>1)for(var i=0;i<t1.length;i++)for(var j=i+1;j<t1.length;j++)c+=((P[t1[i]]&&P[t1[i]][t1[j]]||0)+(lP[t1[i]]&&lP[t1[i]][t1[j]]||0)*3)*2;
-    if(t2.length>1)for(var i=0;i<t2.length;i++)for(var j=i+1;j<t2.length;j++)c+=((P[t2[i]]&&P[t2[i]][t2[j]]||0)+(lP[t2[i]]&&lP[t2[i]][t2[j]]||0)*3)*2;
-    t1.forEach(function(a){t2.forEach(function(b){c+=(O[a]&&O[a][b]||0)+(lO[a]&&lO[a][b]||0)*3;});});
-    return c;
+  var idx = {};
+  for (i = 0; i < N; i++) idx[pIds[i]] = i;
+
+  /* 같은 리그 이력 집계 */
+  var hP = new Float64Array(NN), hO = new Float64Array(NN), hG = new Float64Array(N), hA = new Float64Array(N), hCo = new Float64Array(NN);
+  var hCt = new Float64Array(N * C), hQ = {}, hM = {};
+  function pk(a, b) { return a < b ? a * N + b : b * N + a; }
+  function quadKey(a, b, c, d) {
+    var t;
+    if (a > b) { t = a; a = b; b = t; } if (c > d) { t = c; c = d; d = t; }
+    if (a > c) { t = a; a = c; c = t; } if (b > d) { t = b; b = d; d = t; }
+    if (b > c) { t = b; b = c; c = t; }
+    return ((a * N + b) * N + c) * N + d;
   }
-  function rec(t1,t2){
-    if(t1.length>1)for(var i=0;i<t1.length;i++)for(var j=i+1;j<t1.length;j++){lP[t1[i]][t1[j]]=(lP[t1[i]][t1[j]]||0)+1;lP[t1[j]][t1[i]]=(lP[t1[j]][t1[i]]||0)+1;}
-    if(t2.length>1)for(var i=0;i<t2.length;i++)for(var j=i+1;j<t2.length;j++){lP[t2[i]][t2[j]]=(lP[t2[i]][t2[j]]||0)+1;lP[t2[j]][t2[i]]=(lP[t2[j]][t2[i]]||0)+1;}
-    t1.forEach(function(a){t2.forEach(function(b){lO[a][b]=(lO[a][b]||0)+1;lO[b][a]=(lO[b][a]||0)+1;});});
-  }
-  var matches=[],pM=mt==='singles'?2:4,rounds=Math.floor(totalGames/courts);
-  for(var r=0;r<rounds;r++){
-    var pool=shuffle([].concat(pIds)),used=[];
-    for(var c=0;c<courts;c++){
-      var av=pool.filter(function(x){return used.indexOf(x)<0;});
-      if(av.length<pM)break;
-      var best=null,bC=Infinity,tr=Math.min(80,Math.max(30,av.length*av.length));
-      for(var t=0;t<tr;t++){
-        var s=shuffle(av),g=s.slice(0,pM);
-        if(mt==='singles'){var cv=cc([g[0]],[g[1]]);if(cv<bC){bC=cv;best={team1:[g[0]],team2:[g[1]],players:g.slice(0,2)};}}
-        else{[[[g[0],g[1]],[g[2],g[3]]],[[g[0],g[2]],[g[1],g[3]]],[[g[0],g[3]],[g[1],g[2]]]].forEach(function(sp){var cv=cc(sp[0],sp[1]);if(cv<bC){bC=cv;best={team1:sp[0],team2:sp[1],players:g};}});}
+  function matchKey(a, b, c, d) { var x = pk(a, b), y = pk(c, d); return x < y ? x * NN + y : y * NN + x; }
+  (sessions || []).forEach(function (s) {
+    if (lgOf(s) !== lg) return;
+    var seen = {}, sk;
+    (s.presentIds || []).forEach(function (id) { if (idx[id] !== undefined) seen[idx[id]] = 1; });   // 그 모임 출석자
+    (s.matches || []).forEach(function (m) {
+      var t1 = [], t2 = [], k, l;
+      (m.team1 || []).forEach(function (id) { if (idx[id] !== undefined) t1.push(idx[id]); });
+      (m.team2 || []).forEach(function (id) { if (idx[id] !== undefined) t2.push(idx[id]); });
+      var all = t1.concat(t2);
+      all.forEach(function (x) { seen[x] = 1; hG[x]++; if (m.court >= 1 && m.court <= C) hCt[x * C + m.court - 1]++; });
+      if (t1.length > 1) hP[t1[0] * N + t1[1]]++, hP[t1[1] * N + t1[0]]++;
+      if (t2.length > 1) hP[t2[0] * N + t2[1]]++, hP[t2[1] * N + t2[0]]++;
+      for (k = 0; k < t1.length; k++) for (l = 0; l < t2.length; l++) { hO[t1[k] * N + t2[l]]++; hO[t2[l] * N + t1[k]]++; }
+      for (k = 0; k < all.length; k++) for (l = k + 1; l < all.length; l++) { hCo[all[k] * N + all[l]]++; hCo[all[l] * N + all[k]]++; }
+      if (dbl && t1.length === 2 && t2.length === 2) {
+        var qk = quadKey(t1[0], t1[1], t2[0], t2[1]), mk = matchKey(t1[0], t1[1], t2[0], t2[1]);
+        hQ[qk] = (hQ[qk] || 0) + 1; hM[mk] = (hM[mk] || 0) + 1;
       }
-      if(best){best.players.forEach(function(x){used.push(x);});rec(best.team1,best.team2);matches.push({id:uid(),round:r+1,court:c+1,type:mt,team1:best.team1,team2:best.team2,score1:'',score2:'',winner:null});}
+    });
+    for (sk in seen) hA[sk]++;
+  });
+  /* 지난 모임 누적 횟수 = "이번 모임에서 이미 그만큼 만난 것"의 KAPPA배 (제곱합 목적함수의 선형 항, 상한 CAP) */
+  var minHP = Infinity, minHO = Infinity;
+  for (i = 0; i < N; i++) for (j = i + 1; j < N; j++) { if (hP[i * N + j] < minHP) minHP = hP[i * N + j]; if (hO[i * N + j] < minHO) minHO = hO[i * N + j]; }
+  var sP = new Float64Array(NN), sO = new Float64Array(NN);
+  for (i = 0; i < N; i++) for (j = 0; j < N; j++) {
+    if (i === j) continue;
+    sP[i * N + j] = 2 * KAPPA * WP * Math.min(hP[i * N + j] - minHP, CAP);
+    sO[i * N + j] = 2 * KAPPA * WO * Math.min(hO[i * N + j] - minHO, CAP);
+  }
+
+  /* 현재 편성 상태(카운트) */
+  var cP = new Int32Array(NN), cO = new Int32Array(NN), cCo = new Int32Array(NN), cQ = {}, cM = {};
+  var mp = new Float64Array(NN), mo = new Float64Array(NN);
+
+  function addRound(s, sign) {
+    for (var c = 0; c < C; c++) {
+      var b = c * pM, a1 = s[b], a2 = s[b + 1], b1, b2, k, l, x, y;
+      if (dbl) {
+        b1 = s[b + 2]; b2 = s[b + 3];
+        cP[a1 * N + a2] += sign; cP[a2 * N + a1] += sign; cP[b1 * N + b2] += sign; cP[b2 * N + b1] += sign;
+        var t1 = [a1, a2], t2 = [b1, b2];
+        for (k = 0; k < 2; k++) for (l = 0; l < 2; l++) { x = t1[k]; y = t2[l]; cO[x * N + y] += sign; cO[y * N + x] += sign; }
+        var q = [a1, a2, b1, b2];
+        for (k = 0; k < 4; k++) for (l = k + 1; l < 4; l++) { cCo[q[k] * N + q[l]] += sign; cCo[q[l] * N + q[k]] += sign; }
+        var qk = quadKey(a1, a2, b1, b2), mk = matchKey(a1, a2, b1, b2);
+        cQ[qk] = (cQ[qk] || 0) + sign; cM[mk] = (cM[mk] || 0) + sign;
+      } else {
+        b1 = s[b + 1];
+        cO[a1 * N + b1] += sign; cO[b1 * N + a1] += sign;
+        cCo[a1 * N + b1] += sign; cCo[b1 * N + a1] += sign;
+      }
+    }
+  }
+
+  /* 코트 1개의 추가 비용(다른 라운드 카운트 기준) */
+  function courtCost(s, c) {
+    var b = c * pM, a = s[b], d = s[b + 1], cost;
+    if (!dbl) {
+      return mo[a * N + d];
+    }
+    var e = s[b + 2], f = s[b + 3];
+    cost = mp[a * N + d] + mp[e * N + f] + mo[a * N + e] + mo[a * N + f] + mo[d * N + e] + mo[d * N + f];
+    if (cCo[a * N + d] > 0 && cCo[a * N + e] > 0 && cCo[a * N + f] > 0 && cCo[d * N + e] > 0 && cCo[d * N + f] > 0 && cCo[e * N + f] > 0) {
+      var qk = quadKey(a, d, e, f);
+      var qc = cQ[qk] || 0, qh = hQ[qk] || 0;
+      if (qc || qh) {
+        cost += WQ * qc + WQH * qh;
+        var mk = matchKey(a, d, e, f);
+        cost += WM * (cM[mk] || 0) + WMH * (hM[mk] || 0);
+      }
+    }
+    return cost;
+  }
+
+  function buildTables(play) {
+    var x, y, u;
+    for (x = 0; x < play.length; x++) {
+      for (y = 0; y < play.length; y++) {
+        if (x === y) continue;
+        u = play[x] * N + play[y];
+        mp[u] = WP * (2 * cP[u] + 1) + sP[u] + (cP[u] >= 1 ? RP : 0);   // 같은 모임 안 파트너 재결성은 강한 벌점
+        mo[u] = WO * (2 * cO[u] + 1) + sO[u];
+      }
+    }
+  }
+
+  function hillclimb(s, cc) {
+    var improved = true, a, b, ca, cb, oldC, nca, ncb, t;
+    for (var c = 0; c < C; c++) cc[c] = courtCost(s, c);
+    var guard = 0;
+    while (improved && guard++ < 60) {
+      improved = false;
+      for (a = 0; a < K - 1; a++) for (b = a + 1; b < K; b++) {
+        if ((dbl ? (a >> 1) === (b >> 1) : a === b)) continue;   // 같은 팀 안에서의 교환은 무의미
+        ca = (a / pM) | 0; cb = (b / pM) | 0;
+        oldC = cc[ca] + (ca !== cb ? cc[cb] : 0);
+        t = s[a]; s[a] = s[b]; s[b] = t;
+        nca = courtCost(s, ca); ncb = (ca !== cb) ? courtCost(s, cb) : 0;
+        if (nca + ncb < oldC - 1e-9) {
+          cc[ca] = nca; if (ca !== cb) cc[cb] = ncb;
+          improved = true;
+        } else { t = s[a]; s[a] = s[b]; s[b] = t; }
+      }
+    }
+  }
+
+  var ccBuf = new Float64Array(C);
+  function optimizeRound(play, cur) {
+    buildTables(play);
+    var best = null, bestCost = Infinity, ties = 0, st, s, cost, c;
+    var starts = RS + (cur ? 1 : 0);
+    for (st = 0; st < starts; st++) {
+      s = (cur && st === 0) ? cur.slice() : shuffle(play);
+      hillclimb(s, ccBuf);
+      cost = 0; for (c = 0; c < C; c++) cost += ccBuf[c];
+      if (cost < bestCost - 1e-9) { bestCost = cost; best = s.slice(); ties = 1; }
+      else if (Math.abs(cost - bestCost) <= 1e-9) { ties++; if (Math.random() < 1 / ties) best = s.slice(); }
+    }
+    return best;
+  }
+
+  /* 전체 편성 목적함수(작을수록 고름) */
+  function objective() {
+    var o = 0, x, y, u;
+    for (x = 0; x < N; x++) for (y = x + 1; y < N; y++) {
+      u = x * N + y;
+      o += WP * cP[u] * cP[u] + sP[u] * cP[u] + (cP[u] > 1 ? RP * (cP[u] - 1) : 0) + WO * cO[u] * cO[u] + sO[u] * cO[u];
+    }
+    var k;
+    for (k in cQ) if (cQ[k] > 0) o += WQ * cQ[k] * (cQ[k] - 1) / 2 + WQH * cQ[k] * (hQ[k] || 0);
+    for (k in cM) if (cM[k] > 0) o += WM * cM[k] * (cM[k] - 1) / 2 + WMH * cM[k] * (hM[k] || 0);
+    return o;
+  }
+
+  /* 라운드별 출전자: 순환 휴식으로 시작 → 휴식 역할 교환으로 "같이 뛰는 횟수" 균등화 + 연속 휴식 축소 */
+  function planPlaySets(lam) {
+    var rnd = [], order = [];
+    for (i = 0; i < N; i++) { rnd[i] = Math.random(); order.push(i); }
+    // (백세) 출석 1회당 경기 수가 많았던 사람이 휴식을 한 번 더 — 출석 대비 덜 뛴 사람에게 한 경기 더
+    var rate = [];
+    for (i = 0; i < N; i++) rate[i] = hA[i] ? hG[i] / hA[i] : 0;
+    order.sort(function (x, y) { return (prof.seasonBye ? (rate[y] - rate[x]) : 0) || (rnd[x] - rnd[y]); });
+    var r, k, x, y, z;
+    var isBye = [];                                  // isBye[r][i] : r라운드에 i가 쉬는가
+    for (r = 0; r < rounds; r++) {
+      var row = new Array(N); for (i = 0; i < N; i++) row[i] = 0;
+      for (k = 0; k < B; k++) row[order[(r * B + k) % N]] = 1;
+      isBye.push(row);
+    }
+    if (B > 0 && rounds > 1) {
+      var co = new Int32Array(NN);
+      for (r = 0; r < rounds; r++) for (x = 0; x < N; x++) if (!isBye[r][x]) for (y = x + 1; y < N; y++) if (!isBye[r][y]) { co[x * N + y]++; co[y * N + x]++; }
+      var consec = function (p) { var n = 0; for (var q = 0; q + 1 < rounds; q++) if (isBye[q][p] && isBye[q + 1][p]) n++; return n; };
+      var improved = true, guard = 0, r1, r2, d, cx, cy, delta, before, after;
+      while (improved && guard++ < 30) {
+        improved = false;
+        for (r1 = 0; r1 < rounds; r1++) for (r2 = r1 + 1; r2 < rounds; r2++) {
+          for (x = 0; x < N; x++) {
+            if (!(isBye[r1][x] && !isBye[r2][x])) continue;
+            for (y = 0; y < N; y++) {
+              if (!(!isBye[r1][y] && isBye[r2][y])) continue;
+              delta = 0;
+              for (z = 0; z < N; z++) {
+                if (z === x || z === y) continue;
+                d = (isBye[r1][z] ? 0 : 1) - (isBye[r2][z] ? 0 : 1);
+                if (!d) continue;
+                cx = co[x * N + z]; cy = co[y * N + z];
+                delta += (cx + d) * (cx + d) - cx * cx + (cy - d) * (cy - d) - cy * cy;
+              }
+              before = consec(x) + consec(y);
+              isBye[r1][x] = 0; isBye[r1][y] = 1; isBye[r2][x] = 1; isBye[r2][y] = 0;
+              after = consec(x) + consec(y);
+              if (delta + lam * (after - before) < -1e-9) {
+                for (z = 0; z < N; z++) {
+                  if (z === x || z === y) continue;
+                  d = (isBye[r1][z] ? 0 : 1) - (isBye[r2][z] ? 0 : 1);
+                  if (!d) continue;
+                  co[x * N + z] += d; co[z * N + x] += d; co[y * N + z] -= d; co[z * N + y] -= d;
+                }
+                improved = true;
+                break;                               // x의 역할이 바뀌었으므로 다음 x로
+              } else { isBye[r1][x] = 1; isBye[r1][y] = 0; isBye[r2][x] = 0; isBye[r2][y] = 1; }
+            }
+          }
+        }
+      }
+    }
+    var sets = [];
+    for (r = 0; r < rounds; r++) { var play = []; for (i = 0; i < N; i++) if (!isBye[r][i]) play.push(i); sets.push(play); }
+    if (Math.random() < 0.5) sets.reverse();
+    return sets;
+  }
+
+  /* 편성 기준 검증(백세): 피할 수 있는 같은 날 파트너 중복이 없고, 같은 상대 반복이 이론 하한+1 이내 */
+  function strictPass() {
+    var gMax = Math.ceil(rounds * K / N), forced = gMax > N - 1, x, y, u, oMax = 0, pRep = 0;
+    for (x = 0; x < N; x++) for (y = x + 1; y < N; y++) { u = x * N + y; if (cP[u] > 1) pRep++; if (cO[u] > oMax) oMax = cO[u]; }
+    var ideal = Math.ceil(gMax * (dbl ? 2 : 1) / Math.max(1, N - 1));
+    return (!dbl || pRep === 0 || forced) && oMax <= ideal + 1;
+  }
+  /* 한 번의 시도: 출전자 배정 → 라운드별 배치 → 라운드 단위 재최적화(sweeps) */
+  function runAttempt(att, heavy) {
+    cP.fill(0); cO.fill(0); cQ = {}; cM = {};
+    for (i = 0; i < NN; i++) cCo[i] = hCo[i] > 0 ? 1e6 : 0;   // 이력에 함께 뛴 적 있는 쌍은 "동일 4인 가능성" 검사 대상
+    // 시도마다 연속휴식 벌점을 번갈아 사용: 크게(3) / 작게(0.05 — 고름 우선, 동점일 때만 연속휴식 회피)
+    var lam = (prof.lambda !== undefined) ? prof.lambda : (att % 2 === 0 ? 3 : 0.05);
+    var sets = planPlaySets(lam), arr = new Array(rounds), r, sw, oi, savedRS = RS;
+    if (heavy) RS = RS + 4;
+    for (r = 0; r < rounds; r++) { arr[r] = optimizeRound(sets[r], null); addRound(arr[r], 1); }
+    for (sw = 0; sw < SW + (heavy ? 2 : 0); sw++) {
+      var ord = []; for (r = 0; r < rounds; r++) ord.push(r);
+      ord = shuffle(ord);
+      for (oi = 0; oi < ord.length; oi++) {
+        r = ord[oi];
+        addRound(arr[r], -1);
+        arr[r] = optimizeRound(sets[r], arr[r]);
+        addRound(arr[r], 1);
+      }
+    }
+    RS = savedRS;
+    // 최종 점수 = 고름 목적함수 + 연속 휴식 약한 벌점(고름이 같을 때 연속 휴식이 적은 편성 선택)
+    var ob = objective(), consecRest = 0, pl, pl2, q2;
+    for (r = 0; r + 1 < rounds; r++) {
+      pl = {}; for (q2 = 0; q2 < sets[r].length; q2++) pl[sets[r][q2]] = 1;
+      pl2 = {}; for (q2 = 0; q2 < sets[r + 1].length; q2++) pl2[sets[r + 1][q2]] = 1;
+      for (i = 0; i < N; i++) if (!pl[i] && !pl2[i]) consecRest++;
+    }
+    return { arr: arr.map(function (x) { return x.slice(); }), ob: ob + 0.25 * consecRest, pass: strictPass() };
+  }
+  var bestArr = null, bestObj = Infinity, passArr = null, passObj = Infinity, attempt, r, sinceBest = 0;
+  function consider(res) {
+    if (res.ob < bestObj - 1e-9) { bestObj = res.ob; bestArr = res.arr; sinceBest = 0; } else sinceBest++;
+    if (res.pass && res.ob < passObj - 1e-9) { passObj = res.ob; passArr = res.arr; }
+  }
+  for (attempt = 0; attempt < prof.maxAtt; attempt++) {
+    if (attempt >= 3 && (Date.now() - t0 > prof.timeMs || sinceBest >= prof.patience)) break;   // 수렴/느린 기기 보호
+    consider(runAttempt(attempt, false));
+  }
+  /* 백세리그: 기준을 통과하는 편성이 나올 때까지 더 깊게 탐색 (시간 한도 내) */
+  if (prof.verify && !passArr) {
+    for (attempt = 0; attempt < prof.verifyAtt && Date.now() - t0 < prof.verifyMs; attempt++) {
+      consider(runAttempt(attempt, true));
+      if (passArr) break;
+    }
+  }
+  if (prof.verify && passArr) bestArr = passArr;
+
+  /* 코트 번호 배정 — 한 라운드 안에서 경기를 어느 코트에 놓아도 파트너·상대 구성은 그대로이므로
+     선수별 코트 이용 횟수(이번 모임 + 같은 리그 이력)가 고르게 되도록 "경기↔코트" 배정만 따로 최적화 */
+  function assignCourts(arr) {
+    if (C < 2) return arr;
+    var cnt = new Float64Array(N * C), hRel = new Float64Array(N * C), x, c, r, k, sweep, perms = null;
+    for (x = 0; x < N; x++) {
+      var mn = Infinity; for (c = 0; c < C; c++) if (hCt[x * C + c] < mn) mn = hCt[x * C + c];
+      for (c = 0; c < C; c++) hRel[x * C + c] = Math.min(hCt[x * C + c] - mn, 6);
+    }
+    if (C <= 6) {
+      perms = [];
+      (function gen(cur, used) { if (cur.length === C) { perms.push(cur.slice()); return; } for (var v = 0; v < C; v++) if (!used[v]) { used[v] = 1; cur.push(v); gen(cur, used); cur.pop(); used[v] = 0; } })([], {});
+    }
+    function place(rr, sign) { for (var b = 0; b < C; b++) for (var q = 0; q < pM; q++) cnt[arr[rr][b * pM + q] * C + b] += sign; }
+    function reassign(rr) {
+      var blocks = [], cost = [], b, cc, q, sum, row, px;
+      for (b = 0; b < C; b++) {
+        blocks.push(arr[rr].slice(b * pM, b * pM + pM)); row = [];
+        for (cc = 0; cc < C; cc++) { sum = 0; for (q = 0; q < pM; q++) { px = blocks[b][q]; sum += 2 * cnt[px * C + cc] + 1 + hRel[px * C + cc]; } row.push(sum); }
+        cost.push(row);
+      }
+      var bestP = null, bestC = Infinity, ties = 0, p, tot;
+      if (perms) {
+        for (p = 0; p < perms.length; p++) {
+          tot = 0; for (b = 0; b < C; b++) tot += cost[b][perms[p][b]];
+          if (tot < bestC - 1e-9) { bestC = tot; bestP = perms[p]; ties = 1; }
+          else if (Math.abs(tot - bestC) <= 1e-9) { ties++; if (Math.random() < 1 / ties) bestP = perms[p]; }
+        }
+      } else {                                            // 코트가 많을 때(7~8)는 탐욕 배정
+        var free = {}, order2 = shuffle(blocks.map(function (_, i2) { return i2; })); bestP = [];
+        order2.forEach(function (bb) { var bc = -1, bv = Infinity; for (var c2 = 0; c2 < C; c2++) if (!free[c2] && cost[bb][c2] < bv) { bv = cost[bb][c2]; bc = c2; } free[bc] = 1; bestP[bb] = bc; });
+      }
+      var out = new Array(K);
+      for (b = 0; b < C; b++) for (q = 0; q < pM; q++) out[bestP[b] * pM + q] = blocks[b][q];
+      arr[rr] = out;
+    }
+    for (r = 0; r < rounds; r++) place(r, 1);
+    for (sweep = 0; sweep < 3; sweep++) {
+      var ord3 = []; for (r = 0; r < rounds; r++) ord3.push(r);
+      ord3 = shuffle(ord3);
+      for (k = 0; k < ord3.length; k++) { place(ord3[k], -1); reassign(ord3[k]); place(ord3[k], 1); }
+    }
+    return arr;
+  }
+
+  bestArr = assignCourts(bestArr);
+  var matches = [];
+  for (r = 0; r < rounds; r++) {
+    for (var c = 0; c < C; c++) {
+      var b = c * pM, t1, t2;
+      if (dbl) { t1 = [pIds[bestArr[r][b]], pIds[bestArr[r][b + 1]]]; t2 = [pIds[bestArr[r][b + 2]], pIds[bestArr[r][b + 3]]]; }
+      else { t1 = [pIds[bestArr[r][b]]]; t2 = [pIds[bestArr[r][b + 1]]]; }
+      matches.push({ id: uid(), round: r + 1, court: c + 1, type: dbl ? 'doubles' : 'singles', team1: t1, team2: t2, score1: '', score2: '', winner: null });
     }
   }
   return matches;
@@ -1792,7 +2103,7 @@ function showForm(){
     ?'<button class="btn btn-green" style="margin-bottom:4px;" onclick="showActive()">✏️ 기존 모임 점수 입력 ('+DB.sessions.length+'개) →</button>'
     :'';
   document.getElementById('ses-date').value=today();updCalc();rChips();
-  league='baekse';syncTog('tg-lg',league);   // 새 편성은 백세리그 기본
+  league='baekse';syncTog('tg-lg',league);updLgNote();   // 새 편성은 백세리그 기본
   if(!isPopping)window.history.pushState({tab:'session',sub:'form'},'',window.location.pathname);
 }
 function rChips(){
@@ -1805,21 +2116,80 @@ function rChips(){
 function togP(id){var i=pIds.indexOf(id);if(i>=0)pIds.splice(i,1);else pIds.push(id);rChips();}
 function selAll(){pIds=DB.members.map(function(m){return m.id;});rChips();}
 function selNone(){pIds=[];rChips();}
+/* 편성 계산은 기기에 따라 0.1~0.5초 걸릴 수 있어, 안내를 먼저 그린 뒤 실행(중복 터치 방지) */
+var genBusy=false;
+function runGen(fn){
+  if(genBusy)return;
+  genBusy=true;toast('⚙️ 공평하게 편성하는 중...');
+  setTimeout(function(){try{fn();}catch(e){console.error(e);toast('❌ 편성 중 오류: '+e.message);}genBusy=false;},40);
+}
 function doCreate(){
   var minP=mtype==='singles'?2:4;
   if(pIds.length<minP){toast((mtype==='singles'?'단식은 최소 2명':'복식은 최소 4명')+' 필요합니다.');return;}
-  var ms=genMatches(pIds,DB.sessions,mtype,calcG());
-  if(!ms.length){toast('편성 가능한 경기가 없습니다.');return;}
-  pending={id:uid(),ts:Date.now(),league:league,date:document.getElementById('ses-date').value||today(),matchType:mtype,surface:surface,courts:courts,totalMin:totalMin,gameMin:gameMin,totalGames:calcG(),presentIds:[].concat(pIds),matches:ms,resultsLocked:false};
-  showPrev();
+  runGen(function(){
+    var ms=genMatches(pIds,DB.sessions,mtype,calcG(),courts,league);
+    if(!ms.length){toast('편성 가능한 경기가 없습니다.');return;}
+    pending={id:uid(),ts:Date.now(),league:league,date:document.getElementById('ses-date').value||today(),matchType:mtype,surface:surface,courts:courts,totalMin:totalMin,gameMin:gameMin,totalGames:calcG(),presentIds:[].concat(pIds),matches:ms,resultsLocked:false};
+    showPrev();
+  });
+}
+function esc(s){return String(s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+/* 라운드에서 쉬는 사람 안내 줄 (참석자 중 그 라운드 경기에 없는 사람) */
+function restLine(ids,rms){
+  if(!ids||!ids.length)return'';
+  var inR={};rms.forEach(function(m){m.team1.concat(m.team2).forEach(function(x){inR[x]=1;});});
+  var rest=ids.filter(function(id){return!inR[id];});
+  if(!rest.length)return'';
+  return'<div class="rest-line">😴 휴식 '+rest.length+'명 · '+rest.map(function(id){return esc(gn(id));}).join(', ')+'</div>';
+}
+/* 편성 균형 점검: 경기 수·파트너·상대·휴식·코트 배정을 실제 편성 결과로 계산 */
+function fairStats(ms,ids){
+  var g={},P={},O={},cc={},byR={},rounds=0,maxCourt=0;
+  ids.forEach(function(id){g[id]=0;cc[id]={};});
+  function inc(map,a,b){var k=a<b?a+'|'+b:b+'|'+a;map[k]=(map[k]||0)+1;}
+  ms.forEach(function(m){
+    var all=m.team1.concat(m.team2);
+    all.forEach(function(x){g[x]=(g[x]||0)+1;cc[x]=cc[x]||{};cc[x][m.court]=(cc[x][m.court]||0)+1;});
+    if(m.team1.length>1)inc(P,m.team1[0],m.team1[1]);
+    if(m.team2.length>1)inc(P,m.team2[0],m.team2[1]);
+    m.team1.forEach(function(a){m.team2.forEach(function(b){inc(O,a,b);});});
+    byR[m.round]=(byR[m.round]||[]).concat(all);
+    if(m.round>rounds)rounds=m.round;if(m.court>maxCourt)maxCourt=m.court;
+  });
+  var gv=ids.map(function(id){return g[id]||0;});
+  var pRep=0,oMax=0,k,restP=0;
+  for(k in P)if(P[k]>1)pRep++;
+  for(k in O)if(O[k]>oMax)oMax=O[k];
+  ids.forEach(function(id){var run=0,mx=0;for(var r=1;r<=rounds;r++){if(byR[r]&&byR[r].indexOf(id)>=0)run=0;else{run++;if(run>mx)mx=run;}}if(mx>=2)restP++;});
+  var cGap=0;
+  if(maxCourt>1)ids.forEach(function(id){var mn=1e9,mx=0;for(var c=1;c<=maxCourt;c++){var v=(cc[id]&&cc[id][c])||0;if(v<mn)mn=v;if(v>mx)mx=v;}if(mx-mn>cGap)cGap=mx-mn;});
+  return{gMin:Math.min.apply(null,gv),gMax:Math.max.apply(null,gv),pRep:pRep,oMax:oMax,restP:restP,cGap:cGap,courts:maxCourt,rounds:rounds,n:ids.length,dbl:ms.length&&ms[0].team1.length>1};
+}
+function fairCard(sess){
+  if(!sess.matches.length)return'';
+  var f=fairStats(sess.matches,sess.presentIds),rows=[];
+  function row(ok,label,val,info){rows.push('<div style="display:flex;align-items:flex-start;gap:6px;padding:3px 0;font-size:13.5px;line-height:1.45;"><span style="width:20px;flex-shrink:0;">'+(info?'ℹ️':ok?'✅':'⚠️')+'</span><span style="color:var(--muted);width:46px;flex-shrink:0;">'+label+'</span><span style="color:var(--text);">'+val+'</span></div>');}
+  row(f.gMax-f.gMin<=1,'경기 수',f.gMin===f.gMax?'전원 '+f.gMax+'경기':f.gMin+'~'+f.gMax+'경기 (최대 1경기 차이)');
+  var forced=f.gMax>f.n-1;
+  if(f.dbl)row(f.pRep===0||forced,'파트너',f.pRep?'같은 파트너 '+f.pRep+'쌍 반복'+(forced?' (라운드가 많아 불가피)':''):'모임 내 같은 파트너 없음');
+  var ideal=Math.ceil(f.gMax*(f.dbl?2:1)/Math.max(1,f.n-1));
+  row(f.oMax<=ideal+1,'상대','같은 상대 최대 '+f.oMax+'회 만남');
+  var noBye=f.gMin===f.rounds;
+  row(f.restP===0,'휴식',noBye?'전원 매 라운드 출전':(f.restP?'2라운드 연속 휴식 '+f.restP+'명':'연속 휴식 없음'));
+  if(f.courts>1)row(f.cGap<=1,'코트',f.cGap<=1?'코트 배정 고름':'이번 모임 코트 편중 최대 '+f.cGap+'회 (시즌 누적으로 보정)',f.cGap>1);
+  var note=lgOf(sess)==='baekse'?'백세리그 · 시즌 누적 파트너·상대 균형까지 반영':'일반리그 · 모임 단위 균형';
+  return'<div style="background:var(--bg2);border-radius:12px;padding:11px 13px;margin-bottom:12px;">'
+    +'<div style="font-size:14.5px;font-weight:800;color:var(--text);">⚖️ 편성 균형 점검</div><div style="font-size:11.5px;color:var(--muted);margin:1px 0 5px;">'+note+'</div>'
+    +rows.join('')+'</div>';
 }
 function showPrev(){
   ['ses-form','ses-prev','ses-active'].forEach(function(id,i){document.getElementById(id).style.display=i===1?'block':'none';});
   document.getElementById('prev-title').textContent='편성 미리보기 · '+dstr(pending.date);
   document.getElementById('prev-sub').textContent=lgIco(pending)+' '+lgName(pending)+' · '+sfName(pending.surface||'grass')+' · '+(pending.matchType==='doubles'?'복식':pending.matchType==='singles'?'단식':'혼합')+' · 코트 '+pending.courts+'개 · '+pending.totalMin+'분 · 총 '+pending.matches.length+'경기';
+  document.getElementById('prev-fair').innerHTML=fairCard(pending);
   var byR={};pending.matches.forEach(function(m){byR[m.round]=byR[m.round]||[];byR[m.round].push(m);});
   var h='';Object.keys(byR).sort(function(a,b){return a-b;}).forEach(function(r){
-    h+='<div class="rdiv">▸ '+r+'라운드</div>';
+    h+='<div class="rdiv">▸ '+r+'라운드</div>'+restLine(pending.presentIds,byR[r]);
     var sf=pending.surface||'grass';
     var nm=function(arr){return arr.map(function(id){return'<span class="mc-name">'+gn(id)+'</span>';}).join('');};
     byR[r].forEach(function(m){h+='<div class="mc-cap">코트 '+m.court+' · '+(m.type==='doubles'?'복식':'단식')+'</div>'
@@ -1832,7 +2202,13 @@ function showPrev(){
   document.getElementById('prev-matches').innerHTML=h;
   if(!isPopping)window.history.pushState({tab:'session',sub:'prev'},'',window.location.pathname);
 }
-function doRegen(){pending.matches=genMatches(pending.presentIds,DB.sessions,pending.matchType,pending.totalGames);showPrev();toast('🔀 재편성 완료!');}
+function doRegen(){
+  if(!pending)return;
+  runGen(function(){
+    pending.matches=genMatches(pending.presentIds,DB.sessions,pending.matchType,pending.totalGames,pending.courts,pending.league);
+    showPrev();toast('🔀 재편성 완료!');
+  });
+}
 function doConfirm(){DB.sessions.push(pending);activeId=pending.id;pending=null;save();showActive();toast('✅ 경기 편성 확정!');}
 function cancelPrev(){pending=null;showForm();}
 function showActive(){
@@ -1843,7 +2219,7 @@ function showActive(){
   }
   document.getElementById('ses-list').innerHTML=[].concat(DB.sessions).reverse().map(function(s){
     return'<div class="row" style="'+(s.id===activeId?'border-left:3px solid var(--brand);padding-left:12px;':'')+'" onclick="selSes(\''+s.id+'\')">'
-      +'<div class="row-ico">'+lgIco(s)+'</div><div class="row-body"><span class="row-title">'+dstr(s.date)+'</span><span class="row-sub">'+lgName(s)+' · '+s.matches.length+'경기</span></div>'
+      +'<div class="row-ico">'+lgIco(s)+'</div><div class="row-body"><span class="row-title" style="font-size:15.5px;white-space:nowrap;">'+dstr(s.date)+'</span><span class="row-sub">'+lgName(s)+' · '+s.matches.length+'경기</span></div>'
       +'<span class="tag '+(s.resultsLocked?'tg':'tr')+'">'+(s.resultsLocked?'완료':'진행중')+'</span>'
       +'<button class="ic-btn" onclick="event.stopPropagation();delSes(\''+s.id+'\')" style="color:var(--red);">🗑️</button>'
       +'</div>';
@@ -1881,15 +2257,15 @@ function rScore(){
   if(!sess){se.innerHTML='';return;}
   var byR={};sess.matches.forEach(function(m){byR[m.round]=byR[m.round]||[];byR[m.round].push(m);});
   var mh='';Object.keys(byR).sort(function(a,b){return a-b;}).forEach(function(r){
-    mh+='<div class="rdiv">▸ '+r+'라운드</div>';
+    mh+='<div class="rdiv">▸ '+r+'라운드</div>'+restLine(sess.presentIds,byR[r]);
     byR[r].forEach(function(m){
       // 경기 카드 헤더 (코트 정보 + 수정/삭제 버튼)
       var cardHdr='<div class="sc-lbl" style="display:flex;align-items:center;justify-content:space-between;">'
-        +'<span>코트 '+m.court+' <span class="sc-type">'+(m.type==='doubles'?'복식':'단식')+'</span> <span class="sc-surf s-'+(sess.surface||'grass')+'">'+sfName(sess.surface||'grass')+'</span></span>'
+        +'<span style="white-space:nowrap;">코트 '+m.court+' <span class="sc-type">'+(m.type==='doubles'?'복식':'단식')+'</span> <span class="sc-surf s-'+(sess.surface||'grass')+'">'+sfName(sess.surface||'grass')+'</span></span>'
         +(!sess.resultsLocked
-          ?'<span style="display:flex;gap:6px;">'
-            +'<button onclick="editMatch(\''+sess.id+'\',\''+m.id+'\')" style="background:var(--brand-l);border:1px solid var(--brand);border-radius:7px;color:var(--brand);font-size:13px;padding:4px 10px;cursor:pointer;font-weight:600;">✏️ 수정</button>'
-            +'<button onclick="delMatch(\''+sess.id+'\',\''+m.id+'\')" style="background:var(--red-l);border:1px solid var(--red);border-radius:7px;color:var(--red);font-size:13px;padding:4px 10px;cursor:pointer;font-weight:600;">🗑️ 삭제</button>'
+          ?'<span style="display:flex;gap:5px;flex-shrink:0;">'
+            +'<button onclick="editMatch(\''+sess.id+'\',\''+m.id+'\')" style="background:var(--brand-l);border:1px solid var(--brand);border-radius:7px;color:var(--brand);font-size:12.5px;padding:4px 8px;cursor:pointer;font-weight:600;white-space:nowrap;">✏️ 수정</button>'
+            +'<button onclick="delMatch(\''+sess.id+'\',\''+m.id+'\')" style="background:var(--red-l);border:1px solid var(--red);border-radius:7px;color:var(--red);font-size:12.5px;padding:4px 8px;cursor:pointer;font-weight:600;white-space:nowrap;">🗑️ 삭제</button>'
             +'</span>'
           :'')
         +'</div>';
@@ -1922,8 +2298,8 @@ function rScore(){
   }else{
     bottomBtns+='<button class="btn btn-ghost mt8" onclick="unlockS(\''+sess.id+'\')">🔓 결과 수정하기</button>';
   }
-  se.innerHTML='<div class="card"><div class="card-title" style="display:flex;align-items:center;justify-content:space-between;">'+lgIco(sess)+' '+dstr(sess.date)+' 결과 입력 <span style="font-size:12.5px;font-weight:600;color:var(--muted);">'+lgName(sess)+'</span>'
-    +(sess.resultsLocked?'<span class="tag tg">✅ 확정</span>':'')
+  se.innerHTML='<div class="card"><div class="card-title" style="display:flex;align-items:center;justify-content:space-between;gap:8px;"><span>'+lgIco(sess)+' '+dstr(sess.date)+' 결과 입력</span>'
+    +(sess.resultsLocked?'<span class="tag tg" style="white-space:nowrap;">✅ 확정</span>':'')
     +'</div>'+mh+bottomBtns+'</div>';
 }
 
@@ -2032,7 +2408,7 @@ function addMatch(sid){
   var nextRound=maxRound;
   if(courtsInLastRound>=sess.courts){nextRound=maxRound+1;nextCourt=1;}
 
-  var newMatch={id:uid(),round:nextRound,court:nextCourt,type:sess.matchType||'doubles',team1:[],team2:[],score1:'',score2:'',winner:null};
+  var newMatch={id:uid(),round:nextRound,court:nextCourt,type:sess.matchType==='singles'?'singles':'doubles',team1:[],team2:[],score1:'',score2:'',winner:null};
   sess.matches.push(newMatch);
   save();
   // 바로 수정 화면으로
