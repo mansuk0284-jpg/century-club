@@ -1,4 +1,4 @@
-const CACHE_NAME = 'century-tennis-v7';
+const CACHE_NAME = 'century-tennis-v8';
 const ASSETS = [
   './',
   './index.html',

@@ -160,24 +160,24 @@ body{
 
 /* ── 바로가기 카드 그리드 (참고 UI 스타일) ── */
 .quick-grid{
-  display:grid;grid-template-columns:1fr 1fr;
-  gap:12px;
+  display:grid;grid-template-columns:1fr;
+  gap:10px;
   padding:0 18px 0;
 }
 .qg-card{
   background:#fff;
   border:1px solid rgba(20,45,32,.05);border-radius:16px;
-  padding:16px;
+  padding:14px 16px;
   text-align:left;cursor:pointer;font-family:inherit;
-  display:flex;flex-direction:column;align-items:flex-start;gap:12px;
-  min-height:120px;
+  display:flex;flex-direction:row;align-items:center;gap:13px;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 1px 2px rgba(20,45,32,.06),0 12px 30px rgba(20,45,32,.07);
   transition:transform .14s, box-shadow .14s;
   animation:qgIn .4s ease backwards;
 }
-.qg-card:active{transform:scale(.96);box-shadow:0 1px 5px rgba(0,0,0,.2);}
+.qg-card::after{content:'›';margin-left:auto;font-size:22px;color:var(--muted);font-weight:300;flex-shrink:0;}
+.qg-card:active{transform:scale(.98);box-shadow:0 1px 5px rgba(0,0,0,.2);}
 .qg-ic{width:46px;height:46px;border-radius:13px;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
-.qg-txt{flex:none;width:100%;}
+.qg-txt{flex:1;min-width:0;}
 .qg-arr{display:none;}
 .qg-t{font-family:'Gothic A1','Noto Sans KR',sans-serif;font-size:17px;font-weight:800;color:var(--text);letter-spacing:-.4px;line-height:1.25;}
 .qg-s{font-size:13px;color:var(--muted);margin-top:3px;line-height:1.35;}
@@ -235,28 +235,7 @@ body{
   .qg-card:hover{transform:translateY(-2px);box-shadow:0 2px 6px rgba(20,45,32,.08),0 16px 34px rgba(20,45,32,.1);}
 }
 
-/* ── 회원 관리 별도 카드 ── */
-.member-card{
-  display:flex;align-items:center;gap:13px;width:calc(100% - 36px);
-  margin:22px 18px 0;position:relative;overflow:hidden;
-  background:#fff;
-  border:1px solid rgba(20,45,32,.05);border-radius:16px;padding:14px 18px;
-  cursor:pointer;font-family:inherit;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 1px 2px rgba(20,45,32,.06),0 12px 30px rgba(20,45,32,.07);
-  transition:transform .14s, box-shadow .14s;
-  animation:qgIn .4s ease backwards;animation-delay:.18s;
-}
-.member-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:#3fb3a6;}
-.member-card:active{transform:scale(.98);box-shadow:0 1px 6px rgba(0,0,0,.3);}
-.mbc-ico{
-  width:46px;height:46px;border-radius:13px;flex-shrink:0;
-  background:#2f9e92;border:none;
-  display:flex;align-items:center;justify-content:center;
-}
-.mbc-body{flex:1;text-align:left;}
-.mbc-t{font-family:'Gothic A1','Noto Sans KR',sans-serif;font-size:18px;font-weight:800;color:var(--text);letter-spacing:-.4px;}
-.mbc-s{font-size:13px;color:var(--muted);margin-top:1px;}
-.mbc-arrow{font-size:22px;color:var(--muted);font-weight:300;}
+/* (회원 관리 카드 제거됨 — 상단 '회원' 탭에서 관리) */
 @media(hover:hover){
   .member-card:hover{transform:translateY(-2px);box-shadow:0 2px 6px rgba(20,45,32,.08),0 16px 34px rgba(20,45,32,.1);}
 }
@@ -611,16 +590,6 @@ input.mc-score::-webkit-outer-spin-button,input.mc-score::-webkit-inner-spin-but
     </button>
   </div>
 
-  <!-- 회원 관리 (별도 전체폭 카드) -->
-  <button class="member-card" onclick="goTab('members')">
-    <div class="mbc-ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M3.5 19.5a5.5 5.5 0 0 1 11 0"/><path d="M15.5 5.3a3 3 0 0 1 0 5.4M16.6 19.5a5.5 5.5 0 0 0-2.8-4.8"/></svg></div>
-    <div class="mbc-body">
-      <div class="mbc-t">회원 관리</div>
-      <div class="mbc-s">회원 등록 · 수정</div>
-    </div>
-    <span class="mbc-arrow">›</span>
-  </button>
-
   <!-- 섹션: 최근 모임 -->
   <div id="home-rec" style="display:none">
     <div class="sec-label">📅 최근 모임</div>
@@ -974,7 +943,7 @@ function lgIco(s){return lgOf(s)==='baekse'?'💯':'🎾';}
 function lgName(s){return lgOf(s)==='baekse'?'백세리그':'일반리그';}
 
 /* ── FIREBASE ── */
-var APP_VER='3.4 (2026-09-19)';
+var APP_VER='3.5 (2026-09-19)';
 var fbApp=null,fbDB=null,fbRef=null,isOnline=false;
 var FB_KEY='btc_firebase_cfg';
 var lastSavedSnapshot='';   // 자기가 저장한 데이터 추적 (echo 방지)
