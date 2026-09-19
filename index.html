@@ -726,8 +726,8 @@ input.mc-score::-webkit-outer-spin-button,input.mc-score::-webkit-inner-spin-but
       <button class="tog" data-v="att" onclick="setRB(this)">📅 출석순</button>
     </div>
     <div style="font-size:13px;color:var(--muted);margin-top:12px;line-height:1.6;">
-      🏆 <strong style="color:var(--text2);">승부순</strong>: ①승수 → ②게임 다승 → ③득실차<br>
-      📅 <strong style="color:var(--text2);">출석순</strong>: 모임 출석 횟수가 많은 순 (빠짐없이 출석하면 🌟개근)
+      🏆 <strong style="color:var(--text2);">승부순</strong>: ①승률 → ②게임 다승 → ③득실차<br>
+      📅 <strong style="color:var(--text2);">출석순</strong>: 출석 횟수 많은 순 · 출석률 표시 (빠짐없이 출석하면 🌟개근)
     </div>
   </div>
   <div class="card" id="rank-list"><div class="empty"><span class="empty-ico">🏆</span>확정된 결과가 없습니다.</div></div>
@@ -942,7 +942,7 @@ var courts=2,totalMin=120,gameMin=30,mtype='doubles',surface='grass',pIds=[];
 var isPopping=false;
 
 /* ── FIREBASE ── */
-var APP_VER='3.1 (2026-09-19)';
+var APP_VER='3.2 (2026-09-19)';
 var fbApp=null,fbDB=null,fbRef=null,isOnline=false;
 var FB_KEY='btc_firebase_cfg';
 var lastSavedSnapshot='';   // 자기가 저장한 데이터 추적 (echo 방지)
@@ -2025,18 +2025,18 @@ function calcRanks(f){
       if(b.gf!==a.gf)return b.gf-a.gf;
       return (a.name||'')<(b.name||'')?-1:1;
     }
-    // 1순위: 승수(매치 승) 많은 순
-    if(b.wins!==a.wins)return b.wins-a.wins;
+    // 1순위: 승률 높은 순 (무승부 제외 = 승/(승+패))
+    var pa=(a.wins+a.losses)?a.wins/(a.wins+a.losses):0, pb=(b.wins+b.losses)?b.wins/(b.wins+b.losses):0;
+    if(pb!==pa)return pb-pa;
     // 2순위: 총 게임 승수(게임 다승) — 4:6 패배여도 4게임 승 인정
     if(b.gf!==a.gf)return b.gf-a.gf;
     // 3순위: 게임 득실차 (득-실) 높은 순
     var da=a.gf-a.ga, db=b.gf-b.ga;
     if(db!==da)return db-da;
-    // 4순위: 패가 적은 순
-    if(a.losses!==b.losses)return a.losses-b.losses;
-    // 5순위: 승률(무승부 제외 = 승/(승+패))
-    var pa=(a.wins+a.losses)?a.wins/(a.wins+a.losses):0, pb=(b.wins+b.losses)?b.wins/(b.wins+b.losses):0;
-    return pb-pa;
+    // 4순위: 승수 많은 순
+    if(b.wins!==a.wins)return b.wins-a.wins;
+    // 5순위: 이름순
+    return (a.name||'')<(b.name||'')?-1:1;
   });
   return arr;
 }
@@ -2050,23 +2050,33 @@ function rRanking(){
     var diff=r.gf-r.ga;
     var diffStr=(diff>0?'+':'')+diff;  // 득실차 표기
     var rankColor=i<3?rankColors[i]:'#94a3b8';
-    var perfect=(r.attTotal>0&&r.att===r.attTotal)
-      ?' <span style="font-size:11.5px;background:rgba(200,150,10,.14);color:#a07708;border:1px solid rgba(200,150,10,.35);border-radius:6px;padding:1px 6px;font-weight:700;">🌟개근</span>':'';
-    var sub=rankBy==='att'
-      ?'출석 '+r.att+'/'+r.attTotal+'회 · '+r.played+'경기'
-      :r.played+'경기 · 출석 '+r.att+'회 · 게임 '+r.gf+'/'+r.ga+'('+diffStr+')';
+    var nameHtml=r.name,sub,stat;
+    if(rankBy==='att'){
+      // 출석순: 모임 N회 중 M회 출석 · 출석률 · 개근
+      var attPct=r.attTotal>0?Math.round(r.att/r.attTotal*100):0;
+      if(r.attTotal>0&&r.att===r.attTotal){
+        nameHtml+=' <span style="font-size:11.5px;background:rgba(200,150,10,.14);color:#a07708;border:1px solid rgba(200,150,10,.35);border-radius:6px;padding:1px 6px;font-weight:700;">🌟개근</span>';
+      }
+      sub='모임 <b style="color:var(--text2);">'+r.attTotal+'회</b> 중 <b style="color:var(--text2);">'+r.att+'회</b> 출석';
+      stat='<span style="font-size:12.5px;color:var(--muted);font-weight:600;margin-right:2px;">출석률</span>'
+        +'<span class="rpct" style="font-size:15px;min-width:52px;">'+attPct+'%</span>';
+    }else{
+      // 승부순: 경기수 · 게임 승/패(득실)를 또렷하게
+      sub='<b style="color:var(--text2);font-size:14.5px;">'+r.played+'경기</b>'
+        +' · 게임 <b style="color:var(--text2);font-size:14.5px;">'+r.gf+'승 '+r.ga+'패</b>'
+        +' <b style="font-size:14.5px;color:'+(diff>0?'#2a7d4f':diff<0?'#c0392b':'var(--muted)')+';">('+diffStr+')</b>';
+      stat='<span class="rw">'+r.wins+'승</span>'
+        +'<span class="rd">'+r.draws+'무</span>'
+        +'<span class="rl">'+r.losses+'패</span>'
+        +'<span class="rpct">'+pct+'%</span>';
+    }
     return'<div class="rank-row">'
       +'<span class="rank-n" style="color:'+rankColor+';">'+(i+1)+'</span>'
       +'<div class="rank-info">'
-        +'<div class="rank-nm">'+r.name+perfect+'</div>'
+        +'<div class="rank-nm">'+nameHtml+'</div>'
         +'<div class="rank-sub">'+sub+'</div>'
       +'</div>'
-      +'<div class="rank-stat">'
-        +'<span class="rw">'+r.wins+'승</span>'
-        +'<span class="rd">'+r.draws+'무</span>'
-        +'<span class="rl">'+r.losses+'패</span>'
-        +'<span class="rpct">'+pct+'%</span>'
-      +'</div>'
+      +'<div class="rank-stat">'+stat+'</div>'
       +'</div>';
   }).join('');
 }
