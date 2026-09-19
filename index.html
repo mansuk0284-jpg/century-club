@@ -160,27 +160,26 @@ body{
 
 /* ── 바로가기 카드 그리드 (참고 UI 스타일) ── */
 .quick-grid{
-  display:grid;grid-template-columns:1fr;
-  gap:10px;
+  display:grid;grid-template-columns:repeat(4,1fr);
+  gap:8px;
   padding:0 18px 0;
 }
 .qg-card{
   background:#fff;
-  border:1px solid rgba(20,45,32,.05);border-radius:16px;
-  padding:14px 16px;
-  text-align:left;cursor:pointer;font-family:inherit;
-  display:flex;flex-direction:row;align-items:center;gap:13px;
+  border:1px solid rgba(20,45,32,.05);border-radius:15px;
+  padding:13px 4px 11px;
+  cursor:pointer;font-family:inherit;
+  display:flex;flex-direction:column;align-items:center;gap:8px;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 1px 2px rgba(20,45,32,.06),0 12px 30px rgba(20,45,32,.07);
   transition:transform .14s, box-shadow .14s;
   animation:qgIn .4s ease backwards;
 }
-.qg-card::after{content:'›';margin-left:auto;font-size:22px;color:var(--muted);font-weight:300;flex-shrink:0;}
-.qg-card:active{transform:scale(.98);box-shadow:0 1px 5px rgba(0,0,0,.2);}
-.qg-ic{width:46px;height:46px;border-radius:13px;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
-.qg-txt{flex:1;min-width:0;}
+.qg-card:active{transform:scale(.94);box-shadow:0 1px 5px rgba(0,0,0,.2);}
+.qg-ic{width:42px;height:42px;border-radius:12px;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+.qg-txt{width:100%;text-align:center;}
 .qg-arr{display:none;}
-.qg-t{font-family:'Gothic A1','Noto Sans KR',sans-serif;font-size:17px;font-weight:800;color:var(--text);letter-spacing:-.4px;line-height:1.25;}
-.qg-s{font-size:13px;color:var(--muted);margin-top:3px;line-height:1.35;}
+.qg-t{font-family:'Gothic A1','Noto Sans KR',sans-serif;font-size:12.5px;font-weight:800;color:var(--text);letter-spacing:-.6px;line-height:1.2;white-space:nowrap;}
+.qg-s{display:none;}
 /* 각 섹션별 색상 카드 (잔디 배경과 조화되는 딥톤) */
 .qg-card.c-session,
 .qg-card.c-history,
@@ -943,7 +942,7 @@ function lgIco(s){return lgOf(s)==='baekse'?'💯':'🎾';}
 function lgName(s){return lgOf(s)==='baekse'?'백세리그':'일반리그';}
 
 /* ── FIREBASE ── */
-var APP_VER='3.5 (2026-09-19)';
+var APP_VER='3.6 (2026-09-19)';
 var fbApp=null,fbDB=null,fbRef=null,isOnline=false;
 var FB_KEY='btc_firebase_cfg';
 var lastSavedSnapshot='';   // 자기가 저장한 데이터 추적 (echo 방지)
