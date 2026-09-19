@@ -151,12 +151,36 @@ body{
 .court-hero-motto{
   position:relative;font-family:'Cormorant Garamond',serif;font-style:italic;
   font-size:16px;color:rgba(255,255,255,.66);letter-spacing:.5px;margin-bottom:11px;
+  padding-right:92px;
 }
 .court-stats{position:relative;display:flex;}
 .cs-box{flex:1;text-align:center;}
 .cs-box+.cs-box{border-left:none;}
 .cs-num{font-size:29px;font-weight:800;color:#fff;font-variant-numeric:tabular-nums;line-height:1;letter-spacing:-1px;text-shadow:0 2px 8px rgba(0,0,0,.25);}
 .cs-cap{font-size:13.5px;color:rgba(255,255,255,.7);margin-top:4px;}
+.court-book-btn{
+  position:absolute;top:13px;right:16px;z-index:2;
+  display:flex;align-items:center;gap:4px;
+  background:rgba(255,255,255,.10);
+  border:1px solid rgba(255,255,255,.4);
+  border-radius:20px;padding:6px 12px 6px 10px;
+  font-family:'Noto Sans KR',sans-serif;font-size:12.5px;font-weight:700;
+  color:rgba(255,255,255,.92);cursor:pointer;white-space:nowrap;
+  transition:background .15s,transform .15s;
+}
+.court-book-btn:active{background:rgba(255,255,255,.28);transform:scale(.96);}
+
+/* ── 코트 예약 페이지 ── */
+.book-region-title{display:flex;align-items:center;gap:8px;font-size:16px;font-weight:800;color:var(--text);margin-bottom:12px;}
+.book-region-flag{font-size:18px;}
+.book-site{display:flex;align-items:center;gap:12px;padding:13px 12px;border-radius:13px;background:var(--bg2);margin-bottom:8px;text-decoration:none;color:inherit;}
+.book-site:last-child{margin-bottom:0;}
+.book-site-ico{width:42px;height:42px;border-radius:11px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:20px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.08);}
+.book-site-body{flex:1;min-width:0;}
+.book-site-name{font-size:15.5px;font-weight:700;color:var(--text);}
+.book-site-badge{display:inline-block;font-size:10.5px;font-weight:700;color:#fff;background:#d9822f;border-radius:6px;padding:1.5px 6px;margin-left:6px;vertical-align:2px;}
+.book-site-desc{font-size:12.5px;color:var(--muted);margin-top:2px;line-height:1.4;}
+.book-site-arrow{font-size:20px;color:var(--muted);font-weight:300;flex-shrink:0;}
 
 /* ── 바로가기 카드 그리드 (참고 UI 스타일) ── */
 .quick-grid{
@@ -576,6 +600,7 @@ input.mc-score::-webkit-outer-spin-button,input.mc-score::-webkit-inner-spin-but
 
   <!-- 코트 히어로 (모토 + 통계) -->
   <div class="court-hero">
+    <button class="court-book-btn" onclick="goTab('courtbook')">📍 코트예약</button>
     <div class="court-hero-motto">Healthy &amp; joyful tennis, for a hundred years</div>
     <div class="court-stats">
       <div class="cs-box">
@@ -769,6 +794,73 @@ input.mc-score::-webkit-outer-spin-button,input.mc-score::-webkit-inner-spin-but
     </div>
   </div>
   <div id="ana-empty"><div class="card"><div class="empty"><span class="empty-ico">📊</span>선수를 선택하면<br>분석이 표시됩니다.</div></div></div>
+</div>
+
+<!-- ══ 코트 예약 ══ -->
+<div id="pg-courtbook" class="pg">
+  <div class="card" style="display:flex;align-items:center;gap:10px;">
+    <button onclick="goTab('home')" style="background:none;border:none;font-size:20px;color:var(--muted);cursor:pointer;padding:2px 4px;">←</button>
+    <div>
+      <div style="font-size:17px;font-weight:800;color:var(--text);">📍 코트 예약 바로가기</div>
+      <div style="font-size:12.5px;color:var(--muted);margin-top:2px;">부산·김해·양산 지역 공공 테니스장 예약 사이트</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="book-region-title"><span class="book-region-flag">🌊</span>부산</div>
+    <a class="book-site" href="https://spo1.or.kr/park/park_02_01.do" target="_blank" rel="noopener">
+      <div class="book-site-ico">🎾</div>
+      <div class="book-site-body">
+        <div class="book-site-name">스포원파크 테니스장<span class="book-site-badge">최다 이용</span></div>
+        <div class="book-site-desc">부산시설공단 · 19면 규모 부산 최대 테니스코트</div>
+      </div>
+      <span class="book-site-arrow">›</span>
+    </a>
+    <a class="book-site" href="https://sajiktennis.kr/" target="_blank" rel="noopener">
+      <div class="book-site-ico">🏢</div>
+      <div class="book-site-body">
+        <div class="book-site-name">부산종합실내테니스장 (사직)</div>
+        <div class="book-site-desc">부산광역시체육회 운영 · 실내코트, 우천·혹서기 대안</div>
+      </div>
+      <span class="book-site-arrow">›</span>
+    </a>
+    <a class="book-site" href="https://reserve.busan.go.kr/rent/list.do?srchResveInsttCd=13" target="_blank" rel="noopener">
+      <div class="book-site-ico">🏛️</div>
+      <div class="book-site-body">
+        <div class="book-site-name">부산광역시 통합예약시스템</div>
+        <div class="book-site-desc">구덕운동장·강서체육공원 등 구·군별 공공코트</div>
+      </div>
+      <span class="book-site-arrow">›</span>
+    </a>
+  </div>
+
+  <div class="card">
+    <div class="book-region-title"><span class="book-region-flag">🏞️</span>김해</div>
+    <a class="book-site" href="https://www.gimhae.go.kr/yes/05561/05739/05766.web" target="_blank" rel="noopener">
+      <div class="book-site-ico">🏛️</div>
+      <div class="book-site-body">
+        <div class="book-site-name">김해시 공공예약포털<span class="book-site-badge">최다 이용</span></div>
+        <div class="book-site-desc">김해·삼계·진영 테니스장 · 온라인예약은 김해시테니스협회로 연결</div>
+      </div>
+      <span class="book-site-arrow">›</span>
+    </a>
+  </div>
+
+  <div class="card">
+    <div class="book-region-title"><span class="book-region-flag">⛰️</span>양산</div>
+    <a class="book-site" href="https://yssisul.or.kr/rent/" target="_blank" rel="noopener">
+      <div class="book-site-ico">🏛️</div>
+      <div class="book-site-body">
+        <div class="book-site-name">양산시 통합예약시스템<span class="book-site-badge">최다 이용</span></div>
+        <div class="book-site-desc">양산시시설관리공단 · 테니스장 등 전체 공공체육시설 대관</div>
+      </div>
+      <span class="book-site-arrow">›</span>
+    </a>
+  </div>
+
+  <div style="padding:2px 4px 20px;font-size:12px;color:var(--muted);line-height:1.6;">
+    ※ 공공기관 사이트는 개편·URL 변경이 잦습니다. 접속이 안 되면 각 지자체 체육시설 안내 페이지에서 다시 확인해주세요.
+  </div>
 </div>
 
 <!-- ══ Firebase 설정 ══ -->
@@ -974,7 +1066,7 @@ function lgIco(s){return lgOf(s)==='baekse'?'💯':'🎾';}
 function lgName(s){return lgOf(s)==='baekse'?'백세리그':'일반리그';}
 
 /* ── FIREBASE ── */
-var APP_VER='3.8 (2026-09-19)';
+var APP_VER='3.9 (2026-09-19)';
 var fbApp=null,fbDB=null,fbRef=null,isOnline=false;
 var FB_KEY='btc_firebase_cfg';
 var lastSavedSnapshot='';   // 자기가 저장한 데이터 추적 (echo 방지)
