@@ -49,7 +49,7 @@ html,body{height:100%;background:var(--bg);overscroll-behavior:none;}
 body{
   display:flex;flex-direction:column;align-items:center;
   font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;
-  font-size:15px;line-height:1.5;color:var(--text);
+  font-size:16px;line-height:1.5;color:var(--text);
   -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility;
   overscroll-behavior:none;
 }
@@ -65,13 +65,13 @@ b,strong{font-weight:700;}
 #hdr{background:var(--green);flex-shrink:0;position:relative;z-index:5;}
 #brand{display:flex;align-items:center;justify-content:center;gap:10px;padding:11px 16px;position:relative;}
 .brand-logo{width:34px;height:34px;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
-.brand-name{font-family:'Cinzel',serif;font-size:15px;font-weight:700;color:#fff;letter-spacing:2.2px;white-space:nowrap;}
+.brand-name{font-family:'Cinzel',serif;font-size:16px;font-weight:700;color:#fff;letter-spacing:2.2px;white-space:nowrap;}
 .brand-date{display:none;}
 .hdr-fb-dot{position:absolute;right:16px;top:50%;transform:translateY(-50%);width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.28);transition:background .4s;}
 
 /* ── NAV (밑줄형 탭) ── */
 #nav{background:#fff;border-bottom:1px solid var(--line);flex-shrink:0;display:flex;align-items:stretch;}
-#nav button{flex:1;padding:0 2px;height:46px;position:relative;background:none;border:none;color:var(--muted);font-family:inherit;font-size:14.5px;font-weight:500;letter-spacing:-.2px;cursor:pointer;white-space:nowrap;}
+#nav button{flex:1;padding:0 2px;height:46px;position:relative;background:none;border:none;color:var(--muted);font-family:inherit;font-size:15.5px;font-weight:500;letter-spacing:-.2px;cursor:pointer;white-space:nowrap;}
 #nav button.on{color:var(--accent);font-weight:700;}
 #nav button::after{content:'';position:absolute;left:12%;right:12%;bottom:-1px;height:2px;background:var(--accent);opacity:0;transition:opacity .15s;}
 #nav button.on::after{opacity:1;}
@@ -81,10 +81,10 @@ b,strong{font-weight:700;}
 #main > .pg{position:relative;z-index:1;}
 .pg{display:none}
 .pg.on{display:block}
-.sec-label{font-family:'Gothic A1','Noto Sans KR',sans-serif;font-size:15px;font-weight:800;color:var(--text);padding:18px 18px 8px;letter-spacing:-.3px;}
+.sec-label{font-family:'Gothic A1','Noto Sans KR',sans-serif;font-size:16px;font-weight:800;color:var(--text);padding:18px 18px 8px;letter-spacing:-.3px;}
 .sec-en{font-family:'Cinzel',serif;font-size:9.5px;font-weight:700;letter-spacing:2px;color:var(--accent);text-transform:uppercase;margin-left:9px;vertical-align:2px;}
 .pg-hd{display:flex;align-items:baseline;gap:10px;padding:16px 18px 9px;}
-.pg-hd .ko{font-family:'Gothic A1','Noto Sans KR',sans-serif;font-size:20px;font-weight:800;color:var(--text);letter-spacing:-.6px;line-height:1.1;}
+.pg-hd .ko{font-family:'Gothic A1','Noto Sans KR',sans-serif;font-size:21px;font-weight:800;color:var(--text);letter-spacing:-.6px;line-height:1.1;}
 .pg-hd .en{font-family:'Cinzel',serif;font-size:10.5px;font-weight:700;letter-spacing:2.4px;color:var(--accent);text-transform:uppercase;}
 .eyebrow-a{font-family:'Cinzel',serif;font-size:10px;font-weight:700;letter-spacing:2.4px;color:var(--accent);text-transform:uppercase;margin-bottom:5px;}
 .ah-en{font-family:'Cinzel',serif;font-size:9.5px;font-weight:700;letter-spacing:2.2px;color:var(--gold);text-transform:uppercase;margin-bottom:3px;}
@@ -107,12 +107,12 @@ b,strong{font-weight:700;}
 .court-stats{display:flex;padding-top:6px;}
 .cs-box{flex:1;text-align:center;}
 .cs-box+.cs-box{border-left:none;}
-.cs-num{font-family:'Gothic A1',sans-serif;font-size:26px;font-weight:800;color:#fff;font-variant-numeric:tabular-nums;line-height:1;letter-spacing:-.8px;text-shadow:0 2px 8px rgba(0,0,0,.22);}
-.cs-cap{font-size:12px;color:rgba(255,255,255,.8);margin-top:5px;letter-spacing:-.1px;}
+.cs-num{font-family:'Gothic A1',sans-serif;font-size:27.5px;font-weight:800;color:#fff;font-variant-numeric:tabular-nums;line-height:1;letter-spacing:-.8px;text-shadow:0 2px 8px rgba(0,0,0,.22);}
+.cs-cap{font-size:13px;color:rgba(255,255,255,.8);margin-top:5px;letter-spacing:-.1px;}
 .cs-en{font-family:'Cinzel',serif;font-size:8.5px;font-weight:700;letter-spacing:1.5px;color:var(--gold);text-transform:uppercase;margin-top:3px;line-height:1;}
-.court-book-btn{position:absolute;top:13px;right:16px;z-index:2;display:inline-flex;align-items:center;gap:5px;background:transparent;border:1px solid rgba(255,255,255,.5);border-radius:999px;padding:6px 12px 6px 9px;font-family:inherit;font-size:12.5px;font-weight:600;color:#fff;cursor:pointer;white-space:nowrap;}
+.court-book-btn{position:absolute;top:13px;right:16px;z-index:2;display:inline-flex;align-items:center;gap:5px;background:transparent;border:1px solid rgba(255,255,255,.5);border-radius:999px;padding:6px 12px 6px 9px;font-family:inherit;font-size:13.5px;font-weight:600;color:#fff;cursor:pointer;white-space:nowrap;}
 .court-book-btn:active{background:rgba(255,255,255,.14);}
-#home-alert{margin:0 18px 12px!important;padding:12px 14px!important;background:var(--red-l)!important;border:1px solid #F1B6AE!important;border-radius:8px!important;font-size:13.5px!important;color:#7A2016!important;line-height:1.6!important;}
+#home-alert{margin:0 18px 12px!important;padding:12px 14px!important;background:var(--red-l)!important;border:1px solid #F1B6AE!important;border-radius:8px!important;font-size:14.5px!important;color:#7A2016!important;line-height:1.6!important;}
 
 /* ── 홈 바로가기 (한 줄 4개) ── */
 .quick-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:0 18px;}
@@ -121,79 +121,79 @@ b,strong{font-weight:700;}
 .qg-ic{width:38px;height:38px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:var(--accent-l2)!important;color:var(--accent);}
 .qg-ic svg{width:21px;height:21px;stroke:currentColor;}
 .qg-txt{width:100%;text-align:center;}
-.qg-t{font-family:'Gothic A1','Noto Sans KR',sans-serif;font-size:12.5px;font-weight:800;color:var(--text);letter-spacing:-.5px;line-height:1.2;white-space:nowrap;}
+.qg-t{font-family:'Gothic A1','Noto Sans KR',sans-serif;font-size:13.5px;font-weight:800;color:var(--text);letter-spacing:-.5px;line-height:1.2;white-space:nowrap;}
 .qg-arr{display:none;}
 .qg-s{font-family:'Cinzel',serif;font-size:7.5px;font-weight:700;letter-spacing:.7px;color:var(--muted);text-transform:uppercase;margin-top:4px;line-height:1;white-space:nowrap;}
 
 /* ── CARD ── */
 .card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:15px 16px;margin:0 18px 10px;}
-.card-title{font-family:'Gothic A1','Noto Sans KR',sans-serif;font-size:16.5px;font-weight:800;color:var(--text);margin-bottom:12px;display:flex;align-items:center;gap:8px;letter-spacing:-.4px;}
-.card-hd{display:flex;align-items:center;justify-content:space-between;gap:8px;background:var(--gray-1);margin:-15px -16px 12px;padding:9px 14px;border-bottom:1px solid var(--line);border-radius:8px 8px 0 0;font-size:13px;color:var(--muted);}
+.card-title{font-family:'Gothic A1','Noto Sans KR',sans-serif;font-size:17.5px;font-weight:800;color:var(--text);margin-bottom:12px;display:flex;align-items:center;gap:8px;letter-spacing:-.4px;}
+.card-hd{display:flex;align-items:center;justify-content:space-between;gap:8px;background:var(--gray-1);margin:-15px -16px 12px;padding:9px 14px;border-bottom:1px solid var(--line);border-radius:8px 8px 0 0;font-size:14px;color:var(--muted);}
 
 /* ── ROWS ── */
 .row{display:flex;align-items:center;padding:12px 0;border-bottom:1px solid var(--line2);gap:12px;}
 .row:last-child{border-bottom:none;}
 .row-ico{width:36px;height:36px;border-radius:50%;background:var(--gray-1);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--accent);}
 .row-body{flex:1;min-width:0;}
-.row-title{font-size:15.5px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
-.row-sub{font-size:13px;color:var(--muted);margin-top:2px;display:block;}
+.row-title{font-size:16.5px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+.row-sub{font-size:14px;color:var(--muted);margin-top:2px;display:block;}
 .lg-tag{display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.3px;line-height:1;padding:4px 7px;border-radius:4px;vertical-align:1px;white-space:nowrap;}
 .lg-baekse{background:var(--green);color:#fff;}
 .lg-general{background:var(--gray-2);color:var(--text2);}
-.pill{display:inline-block;font-size:11.5px;font-weight:700;line-height:1;padding:5px 8px;border-radius:4px;border:1px solid var(--line);color:var(--text2);background:#fff;white-space:nowrap;}
+.pill{display:inline-block;font-size:12.5px;font-weight:700;line-height:1;padding:5px 8px;border-radius:4px;border:1px solid var(--line);color:var(--text2);background:#fff;white-space:nowrap;}
 .pill.ok{border-color:rgba(26,122,74,.35);color:var(--accent);background:var(--accent-l2);}
 .pill.up{border-color:rgba(26,122,74,.35);color:var(--accent);background:var(--accent-l2);}
 .pill.down{border-color:var(--gray-3);color:var(--muted);background:var(--gray-1);}
 
 /* ── TAG (완료/진행중) ── */
-.tag{display:inline-block;font-size:12px;font-weight:700;border-radius:4px;padding:5px 9px;flex-shrink:0;line-height:1;}
+.tag{display:inline-block;font-size:13px;font-weight:700;border-radius:4px;padding:5px 9px;flex-shrink:0;line-height:1;}
 .tg{background:var(--accent-l2);color:var(--accent);}
 .tr{background:var(--amber-l);color:var(--amber);}
 .td{background:var(--gray-1);color:var(--muted);}
 
 /* ── FORM ── */
-.f-lbl{display:block;font-size:12.5px;font-weight:700;color:var(--muted);margin:12px 0 5px;letter-spacing:.1px;}
-input[type=text],input[type=date],input[type=number],select,textarea{width:100%;padding:11px 12px;background:#fff;border:1px solid var(--gray-3);border-radius:6px;color:var(--text);font-family:inherit;font-size:16px;outline:none;-webkit-appearance:none;transition:border-color .15s;}
+.f-lbl{display:block;font-size:13.5px;font-weight:700;color:var(--muted);margin:12px 0 5px;letter-spacing:.1px;}
+input[type=text],input[type=date],input[type=number],select,textarea{width:100%;padding:11px 12px;background:#fff;border:1px solid var(--gray-3);border-radius:6px;color:var(--text);font-family:inherit;font-size:17px;outline:none;-webkit-appearance:none;transition:border-color .15s;}
 input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(26,122,74,.12);}
 input::placeholder,textarea::placeholder{color:#9AA3AE;}
-textarea{resize:none;font-size:14px;line-height:1.6;}
+textarea{resize:none;font-size:15px;line-height:1.6;}
 .row-inp{display:flex;gap:8px;}
 .row-inp input{flex:1;}
-.btn-add{padding:11px 16px;background:var(--accent);border:none;border-radius:6px;color:#fff;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;white-space:nowrap;}
+.btn-add{padding:11px 16px;background:var(--accent);border:none;border-radius:6px;color:#fff;font-family:inherit;font-size:16px;font-weight:700;cursor:pointer;white-space:nowrap;}
 
 /* ── TOGGLE (회색 칩 / 활성=진녹색) ── */
 .tog-wrap{display:flex;flex-wrap:wrap;gap:6px;}
-.tog{padding:8px 13px;background:var(--gray-2);border:1px solid transparent;border-radius:6px;color:var(--text2);font-family:inherit;font-size:14px;font-weight:500;cursor:pointer;transition:background .12s;line-height:1.2;}
+.tog{padding:8px 13px;background:var(--gray-2);border:1px solid transparent;border-radius:6px;color:var(--text2);font-family:inherit;font-size:15px;font-weight:500;cursor:pointer;transition:background .12s;line-height:1.2;}
 .tog.on{background:var(--green);color:#fff;font-weight:700;}
-#pg-analysis .tog{padding:7px 12px;font-size:14px;}
+#pg-analysis .tog{padding:7px 12px;font-size:15px;}
 
 /* ── 코트/시간 패널 ── */
 .ct-panel{border:1px solid var(--line);border-radius:6px;overflow:hidden;margin-top:6px;}
 .ct-row{display:flex;align-items:center;padding:9px 12px;gap:10px;}
 .ct-row+.ct-row{border-top:1px solid var(--line2);}
-.ct-lbl{flex:1;font-size:15px;font-weight:500;color:var(--text2);}
+.ct-lbl{flex:1;font-size:16px;font-weight:500;color:var(--text2);}
 .ct-ctrl{display:flex;align-items:center;gap:10px;}
-.ct-v{font-size:17px;font-weight:700;color:var(--text);font-variant-numeric:tabular-nums;min-width:56px;text-align:center;}
-.nb{width:38px;height:38px;border-radius:6px;background:var(--gray-2);border:none;color:var(--text);font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:inherit;}
+.ct-v{font-size:18px;font-weight:700;color:var(--text);font-variant-numeric:tabular-nums;min-width:56px;text-align:center;}
+.nb{width:38px;height:38px;border-radius:6px;background:var(--gray-2);border:none;color:var(--text);font-size:21px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:inherit;}
 .nb:active{background:var(--gray-3);}
 .gb{margin-top:10px;background:var(--green);border-radius:6px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;}
 .gb-l{display:flex;flex-direction:column;gap:2px;min-width:0;}
-.gb-cap{color:rgba(255,255,255,.7);font-size:12.5px;font-weight:600;letter-spacing:.2px;}
-.gb-sub{color:rgba(255,255,255,.85);font-size:13.5px;}
+.gb-cap{color:rgba(255,255,255,.7);font-size:13.5px;font-weight:600;letter-spacing:.2px;}
+.gb-sub{color:rgba(255,255,255,.85);font-size:14.5px;}
 .gb-sub strong{color:#fff;font-weight:800;}
 .gb-r{display:flex;align-items:baseline;gap:5px;flex-shrink:0;}
-.gb-n{font-family:'Gothic A1',sans-serif;font-size:32px;font-weight:800;color:#fff;font-variant-numeric:tabular-nums;line-height:1;}
-.gb-unit{color:rgba(255,255,255,.85);font-size:14px;font-weight:600;}
+.gb-n{font-family:'Gothic A1',sans-serif;font-size:34px;font-weight:800;color:#fff;font-variant-numeric:tabular-nums;line-height:1;}
+.gb-unit{color:rgba(255,255,255,.85);font-size:15px;font-weight:600;}
 
 /* ── 참석자 칩 ── */
-.sel-act{display:inline-flex;align-items:center;gap:5px;padding:7px 12px;border-radius:6px;border:1px solid var(--line);background:#fff;color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;}
+.sel-act{display:inline-flex;align-items:center;gap:5px;padding:7px 12px;border-radius:6px;border:1px solid var(--line);background:#fff;color:var(--text2);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;}
 .sel-act.all{color:var(--accent);border-color:rgba(26,122,74,.35);}
 .chip-grid{display:flex;flex-wrap:wrap;gap:7px;margin-top:8px;}
-.chip{padding:9px 14px;background:#fff;border:1px solid var(--gray-3);border-radius:6px;color:var(--text2);font-family:inherit;font-size:15px;font-weight:500;cursor:pointer;transition:all .12s;}
+.chip{padding:9px 14px;background:#fff;border:1px solid var(--gray-3);border-radius:6px;color:var(--text2);font-family:inherit;font-size:16px;font-weight:500;cursor:pointer;transition:all .12s;}
 .chip.sel{background:var(--green);border-color:var(--green);color:#fff;font-weight:700;}
 
 /* ── BUTTONS ── */
-.btn{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:13px;border:none;border-radius:6px;font-family:inherit;font-size:15.5px;font-weight:700;cursor:pointer;text-align:center;transition:opacity .12s;line-height:1.2;}
+.btn{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:13px;border:none;border-radius:6px;font-family:inherit;font-size:16.5px;font-weight:700;cursor:pointer;text-align:center;transition:opacity .12s;line-height:1.2;}
 .btn:active{opacity:.85;}
 .btn-green{background:var(--accent);color:#fff;}
 .btn-ghost{background:#fff;border:1px solid var(--gray-3);color:var(--text2);}
@@ -201,22 +201,22 @@ textarea{resize:none;font-size:14px;line-height:1.6;}
 .btn-row{display:flex;gap:8px;}
 .btn-row .btn{flex:1;}
 .mt8{margin-top:8px;}.mt12{margin-top:12px;}.mt16{margin-top:16px;}
-.cnt{font-size:12.5px;background:var(--gray-2);color:var(--text2);border-radius:4px;padding:3px 7px;font-weight:700;margin-left:2px;}
+.cnt{font-size:13.5px;background:var(--gray-2);color:var(--text2);border-radius:4px;padding:3px 7px;font-weight:700;margin-left:2px;}
 .ic-btn{background:none;border:none;cursor:pointer;padding:6px;color:var(--muted);display:inline-flex;align-items:center;justify-content:center;border-radius:6px;}
 .ic-btn:active{background:var(--gray-1);}
-.sbtn{display:inline-flex;align-items:center;gap:4px;padding:5px 9px;border-radius:5px;border:1px solid var(--line);background:#fff;color:var(--text2);font-family:inherit;font-size:12.5px;font-weight:600;cursor:pointer;white-space:nowrap;line-height:1.2;}
+.sbtn{display:inline-flex;align-items:center;gap:4px;padding:5px 9px;border-radius:5px;border:1px solid var(--line);background:#fff;color:var(--text2);font-family:inherit;font-size:13.5px;font-weight:600;cursor:pointer;white-space:nowrap;line-height:1.2;}
 .sbtn.danger{color:var(--red);border-color:#F1B6AE;}
 .sbtn.primary{background:var(--accent);border-color:var(--accent);color:#fff;}
 
 /* ── 라운드 구분 · 휴식 ── */
-.rdiv{color:var(--muted);display:flex;align-items:center;gap:10px;padding:12px 0 8px;font-family:'Cinzel',serif;font-size:11px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;}
+.rdiv{color:var(--muted);display:flex;align-items:center;gap:10px;padding:12px 0 8px;font-family:'Cinzel',serif;font-size:12px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;}
 .rdiv::after{content:'';flex:1;height:1px;background:var(--line);}
-.rest-line{font-size:12.5px;color:var(--muted);margin:-4px 0 8px;line-height:1.5;}
+.rest-line{font-size:13.5px;color:var(--muted);margin:-4px 0 8px;line-height:1.5;}
 .rest-line b{color:var(--text2);font-weight:600;}
 
 /* ── 경기 카드 (Wimbledon 결과 카드 규격) ── */
 .mtc{border:1px solid var(--line);border-radius:6px;overflow:hidden;margin-bottom:8px;background:#fff;}
-.mtc-hd{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;padding:7px 10px 7px 12px;background:var(--gray-1);border-bottom:1px solid var(--line);font-size:12.5px;color:var(--muted);}
+.mtc-hd{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;padding:7px 10px 7px 12px;background:var(--gray-1);border-bottom:1px solid var(--line);font-size:13.5px;color:var(--muted);}
 .mtc-hd b,.mtc-hd>span{white-space:nowrap;}
 .mtc-hd b{color:var(--text2);font-weight:700;}
 .mtc-meta{margin-left:auto;white-space:nowrap;}
@@ -227,43 +227,43 @@ textarea{resize:none;font-size:14px;line-height:1.6;}
 .mtc-row.win{background:var(--accent-l);}
 .mtc-row.draw{background:var(--amber-l);}
 .mtc-names{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;}
-.mtc-names span{font-size:15px;font-weight:500;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3;}
+.mtc-names span{font-size:16px;font-weight:500;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3;}
 .mtc-row.win .mtc-names span{color:var(--text);font-weight:700;}
-.mtc-sc{font-family:'Gothic A1',sans-serif;font-size:20px;font-weight:800;color:var(--muted);font-variant-numeric:tabular-nums;min-width:30px;text-align:center;flex-shrink:0;}
+.mtc-sc{font-family:'Gothic A1',sans-serif;font-size:21px;font-weight:800;color:var(--muted);font-variant-numeric:tabular-nums;min-width:30px;text-align:center;flex-shrink:0;}
 .mtc-row.win .mtc-sc{color:var(--text);}
 .mtc-chk{width:22px;height:22px;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:var(--accent);}
-input.mc-score{width:46px;height:38px;padding:0;text-align:center;font-family:'Gothic A1',sans-serif;font-size:19px;font-weight:800;border:1px solid var(--gray-3);border-radius:6px;background:#fff;color:var(--text);outline:none;-webkit-appearance:none;-moz-appearance:textfield;flex-shrink:0;}
+input.mc-score{width:46px;height:38px;padding:0;text-align:center;font-family:'Gothic A1',sans-serif;font-size:20px;font-weight:800;border:1px solid var(--gray-3);border-radius:6px;background:#fff;color:var(--text);outline:none;-webkit-appearance:none;-moz-appearance:textfield;flex-shrink:0;}
 input.mc-score:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(26,122,74,.12);}
 input.mc-score.win{border-color:var(--accent);background:#fff;}
 input.mc-score:disabled{background:transparent;border-color:transparent;color:var(--text);}
 input.mc-score::-webkit-outer-spin-button,input.mc-score::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
 .mtc-vs{font-size:10.5px;font-weight:700;letter-spacing:1.5px;color:var(--muted);text-align:center;padding:2px 0;background:var(--gray-1);border-top:1px solid var(--line2);border-bottom:1px solid var(--line2);}
-.rule-note{font-size:12.5px;color:var(--muted);margin-top:4px;}
+.rule-note{font-size:13.5px;color:var(--muted);margin-top:4px;}
 .surf{display:inline-flex;align-items:center;gap:5px;}
 .surf::before{content:'';width:7px;height:7px;border-radius:2px;background:var(--accent);flex-shrink:0;}
 .surf.s-hard::before{background:#2F6F9E;}
 .surf.s-clay::before{background:#B5552F;}
 /* 팀 편집 버튼(A/B팀) */
-.team-btn{padding:8px 13px;border-radius:6px;border:1px solid var(--gray-3);font-size:13.5px;font-weight:700;cursor:pointer;font-family:inherit;background:#fff;color:var(--text2);}
+.team-btn{padding:8px 13px;border-radius:6px;border:1px solid var(--gray-3);font-size:14.5px;font-weight:700;cursor:pointer;font-family:inherit;background:#fff;color:var(--text2);}
 .team-btn.on{background:var(--green);border-color:var(--green);color:#fff;}
 
 /* ── 회원 ── */
 .mem-row{display:flex;align-items:center;padding:10px 0;border-bottom:1px solid var(--line2);gap:10px;}
 .mem-row:last-child{border-bottom:none;}
-.mem-no{font-size:12.5px;color:var(--muted);width:22px;text-align:center;flex-shrink:0;font-variant-numeric:tabular-nums;}
-.mem-nm{flex:1;font-size:15.5px;font-weight:500;color:var(--text);}
-.av{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;flex-shrink:0;}
+.mem-no{font-size:13.5px;color:var(--muted);width:22px;text-align:center;flex-shrink:0;font-variant-numeric:tabular-nums;}
+.mem-nm{flex:1;font-size:16.5px;font-weight:500;color:var(--text);}
+.av{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;flex-shrink:0;}
 
 /* ── 기록 ── */
 .hs{background:var(--card);border:1px solid var(--line);border-radius:8px;margin:0 18px 10px;overflow:hidden;}
 .hs-hdr{display:flex;align-items:stretch;gap:8px;cursor:pointer;-webkit-user-select:none;user-select:none;padding:9px 8px 9px 12px;}
 .hs-left{display:flex;align-items:center;gap:6px;flex:1;min-width:0;}
 .hs-chev{color:var(--muted);flex-shrink:0;width:16px;display:flex;align-items:center;justify-content:center;}
-.hs-date{font-size:14.5px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:flex;align-items:center;gap:6px;}
+.hs-date{font-size:15.5px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:flex;align-items:center;gap:6px;}
 .hs-meta{display:flex;align-items:stretch;flex-shrink:0;}
 .hs-cell{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:2px 7px;border-left:1px solid var(--line);min-width:36px;}
 .hs-cl{font-size:10.5px;color:var(--muted);line-height:1;}
-.hs-cv{font-size:13px;font-weight:700;color:var(--text);line-height:1.1;white-space:nowrap;}
+.hs-cv{font-size:14px;font-weight:700;color:var(--text);line-height:1.1;white-space:nowrap;}
 .hs-cv.sf-grass{color:var(--accent);}.hs-cv.sf-hard{color:#2F6F9E;}.hs-cv.sf-clay{color:#B5552F;}
 .hs-cv.st-done{color:var(--accent);}.hs-cv.st-prog{color:var(--amber);}
 .hs-detail{border-top:1px solid var(--line);padding:4px 14px 14px;background:#fff;}
@@ -272,11 +272,11 @@ input.mc-score::-webkit-outer-spin-button,input.mc-score::-webkit-inner-spin-but
 /* ── 랭킹 ── */
 .rank-row{display:flex;align-items:center;padding:11px 0;border-bottom:1px solid var(--line2);gap:10px;}
 .rank-row:last-child{border-bottom:none;}
-.rank-n{width:26px;font-family:'Gothic A1',sans-serif;font-size:16px;font-weight:800;text-align:center;flex-shrink:0;color:var(--muted);font-variant-numeric:tabular-nums;}
+.rank-n{width:26px;font-family:'Gothic A1',sans-serif;font-size:17px;font-weight:800;text-align:center;flex-shrink:0;color:var(--muted);font-variant-numeric:tabular-nums;}
 .rank-n.top{color:var(--accent);}
-.rank-av{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;flex-shrink:0;}
+.rank-av{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;flex-shrink:0;}
 .rank-info{flex:1;min-width:0;}
-.rank-nm{font-size:16px;font-weight:700;color:var(--text);display:flex;align-items:center;flex-wrap:wrap;gap:3px 8px;min-width:0;}
+.rank-nm{font-size:17px;font-weight:700;color:var(--text);display:flex;align-items:center;flex-wrap:wrap;gap:3px 8px;min-width:0;}
 .rk-name{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;}
 /* 최근 5경기 폼 바: 승=진녹 · 무=골드 · 패=회색 (왼→오 = 과거→최근) */
 .fdots{display:inline-flex;gap:3px;flex-shrink:0;align-items:center;}
@@ -284,23 +284,23 @@ input.mc-score::-webkit-outer-spin-button,input.mc-score::-webkit-inner-spin-but
 .fd-W{background:var(--accent);}
 .fd-D{background:var(--gold-d);}
 .fd-L{background:var(--gray-3);}
-.res-tag{display:inline-block;font-size:11px;font-weight:700;line-height:1;padding:4px 6px;border-radius:3px;min-width:26px;text-align:center;}
+.res-tag{display:inline-block;font-size:12px;font-weight:700;line-height:1;padding:4px 6px;border-radius:3px;min-width:26px;text-align:center;}
 .rt-W{background:var(--accent-l);color:var(--accent-d);}
 .rt-D{background:var(--amber-l);color:var(--amber);}
 .rt-L{background:var(--gray-2);color:var(--muted);}
-.rank-sub{font-size:12.5px;color:var(--muted);margin-top:3px;line-height:1.5;}
+.rank-sub{font-size:13.5px;color:var(--muted);margin-top:3px;line-height:1.5;}
 .rank-sub b{white-space:nowrap;}
 .rank-sub b{font-weight:700;}
 .rank-stat{display:flex;gap:3px;align-items:center;flex-shrink:0;}
 .rw{color:var(--accent);}.rd{color:var(--amber);}.rl{color:var(--muted);}
-.rpct{display:inline-flex;align-items:center;justify-content:center;gap:3px;font-family:'Gothic A1',sans-serif;font-size:15px;font-weight:800;color:var(--text);background:var(--gray-2);border-radius:6px;padding:7px 8px;min-width:58px;text-align:center;font-variant-numeric:tabular-nums;}
+.rpct{display:inline-flex;align-items:center;justify-content:center;gap:3px;font-family:'Gothic A1',sans-serif;font-size:16px;font-weight:800;color:var(--text);background:var(--gray-2);border-radius:6px;padding:7px 8px;min-width:58px;text-align:center;font-variant-numeric:tabular-nums;}
 .rpct.hi{background:var(--accent-l);color:var(--accent-d);}
 .rpct.lo{background:var(--gray-1);color:var(--muted);}
 .rpct.dim{opacity:.55;}
 .trend{display:inline-flex;align-items:center;}
 .trend.up{color:var(--accent);}
 .trend.down{color:var(--red);}
-.legend{font-size:12.5px;color:var(--muted);margin-top:12px;line-height:1.7;}
+.legend{font-size:13.5px;color:var(--muted);margin-top:12px;line-height:1.7;}
 .legend b{color:var(--text2);}
 .legend .fdots{vertical-align:-3px;margin:0 3px;}
 
@@ -308,55 +308,55 @@ input.mc-score::-webkit-outer-spin-button,input.mc-score::-webkit-inner-spin-but
 .award-hero{position:relative;overflow:hidden;border-radius:8px;margin:0 18px 10px;padding:18px 16px 14px;background:var(--hero);color:#fff;}
 .award-hero>*{position:relative;}
 .award-eyebrow{font-family:'Cinzel',serif;font-size:10.5px;font-weight:700;letter-spacing:3px;color:var(--gold);text-align:center;}
-.award-title{font-family:'Gothic A1','Noto Sans KR',sans-serif;font-weight:900;font-size:22px;color:#fff;text-align:center;margin:6px 0 2px;letter-spacing:-.5px;}
-.award-motto{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:14px;color:rgba(255,255,255,.6);text-align:center;letter-spacing:.3px;}
+.award-title{font-family:'Gothic A1','Noto Sans KR',sans-serif;font-weight:900;font-size:23.5px;color:#fff;text-align:center;margin:6px 0 2px;letter-spacing:-.5px;}
+.award-motto{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:rgba(255,255,255,.6);text-align:center;letter-spacing:.3px;}
 .award-div{display:flex;align-items:center;gap:10px;margin:12px 0 4px;color:var(--gold);}
 .award-div::before,.award-div::after{content:'';flex:1;height:1px;background:rgba(214,199,122,.45);}
 .award-row{display:flex;align-items:center;gap:12px;padding:10px 12px;border-top:1px solid rgba(255,255,255,.12);}
 .award-row:first-of-type{border-top:none;}
-.award-medal{width:26px;height:26px;border-radius:50%;border:1px solid var(--gold);color:var(--gold);font-family:'Cinzel',serif;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.award-medal{width:26px;height:26px;border-radius:50%;border:1px solid var(--gold);color:var(--gold);font-family:'Cinzel',serif;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 .award-rank{font-family:'Cinzel',serif;font-size:10px;font-weight:700;letter-spacing:1.8px;color:var(--gold);width:92px;flex-shrink:0;line-height:1.3;}
-.award-prize{flex:1;font-size:15px;font-weight:700;color:#fff;letter-spacing:-.2px;}
+.award-prize{flex:1;font-size:16px;font-weight:700;color:#fff;letter-spacing:-.2px;}
 
 /* ── 분석 ── */
-.sub-title{font-family:'Gothic A1','Noto Sans KR',sans-serif;font-size:14px;font-weight:800;color:var(--text);margin:14px 0 6px;padding-bottom:6px;border-bottom:1px solid var(--line);letter-spacing:-.3px;}
-.sub-hint{font-size:12px;font-weight:500;color:var(--muted);margin-left:6px;}
-.ana-note{font-size:12.5px;color:var(--muted);margin-top:12px;line-height:1.6;}
+.sub-title{font-family:'Gothic A1','Noto Sans KR',sans-serif;font-size:15px;font-weight:800;color:var(--text);margin:14px 0 6px;padding-bottom:6px;border-bottom:1px solid var(--line);letter-spacing:-.3px;}
+.sub-hint{font-size:13px;font-weight:500;color:var(--muted);margin-left:6px;}
+.ana-note{font-size:13.5px;color:var(--muted);margin-top:12px;line-height:1.6;}
 .ana-note b{color:var(--text2);}
 .ana-chips-wrap{position:sticky;top:0;z-index:6;padding:6px 0 4px;margin-bottom:6px;background:var(--bg);border-bottom:1px solid var(--line);}
 .ana-chips{display:flex;gap:6px;overflow-x:auto;padding:0 18px 4px;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
 .ana-chips::-webkit-scrollbar{display:none;}
-.ana-chip{flex-shrink:0;display:inline-flex;align-items:center;gap:7px;height:38px;padding:0 13px 0 5px;background:var(--gray-2);border:1px solid transparent;border-radius:6px;font-family:inherit;font-size:14.5px;font-weight:600;color:var(--text2);cursor:pointer;white-space:nowrap;}
+.ana-chip{flex-shrink:0;display:inline-flex;align-items:center;gap:7px;height:38px;padding:0 13px 0 5px;background:var(--gray-2);border:1px solid transparent;border-radius:6px;font-family:inherit;font-size:15.5px;font-weight:600;color:var(--text2);cursor:pointer;white-space:nowrap;}
 .ana-chip.on{background:var(--green);color:#fff;font-weight:700;}
-.ana-av{width:28px;height:28px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0;background:#fff;color:var(--accent);}
+.ana-av{width:28px;height:28px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;flex-shrink:0;background:#fff;color:var(--accent);}
 .ana-chip.on .ana-av{background:rgba(255,255,255,.18)!important;color:#fff!important;}
 .ana-hero{position:relative;overflow:hidden;border-radius:8px;margin:0 18px 10px;padding:16px 16px 14px;color:#fff;background:var(--hero);}
 .ana-hero>*{position:relative;}
 .ah-top{display:flex;align-items:center;gap:13px;}
-.ah-av{width:50px;height:50px;border-radius:50%;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.4);display:flex;align-items:center;justify-content:center;font-family:'Gothic A1',sans-serif;font-size:22px;font-weight:800;flex-shrink:0;color:#fff;}
+.ah-av{width:50px;height:50px;border-radius:50%;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.4);display:flex;align-items:center;justify-content:center;font-family:'Gothic A1',sans-serif;font-size:23.5px;font-weight:800;flex-shrink:0;color:#fff;}
 .ah-id{min-width:0;}
-.ah-name{font-family:'Gothic A1','Noto Sans KR',sans-serif;font-size:22px;font-weight:900;letter-spacing:-.5px;line-height:1.2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.ah-sub{font-size:12.5px;color:rgba(255,255,255,.7);margin-top:3px;line-height:1.4;}
+.ah-name{font-family:'Gothic A1','Noto Sans KR',sans-serif;font-size:23.5px;font-weight:900;letter-spacing:-.5px;line-height:1.2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.ah-sub{font-size:13.5px;color:rgba(255,255,255,.7);margin-top:3px;line-height:1.4;}
 .ah-sub b{color:var(--gold);}
 .ah-kpis{display:flex;margin-top:14px;padding-top:12px;border-top:1px solid rgba(255,255,255,.14);}
 .ah-kpi{flex:1;text-align:center;}
 .ah-kpi+.ah-kpi{border-left:1px solid rgba(255,255,255,.14);}
-.ah-kpi b{display:block;font-family:'Gothic A1',sans-serif;font-size:25px;font-weight:800;line-height:1.1;font-variant-numeric:tabular-nums;letter-spacing:-.5px;}
-.ah-kpi span{font-size:12px;color:rgba(255,255,255,.65);}
+.ah-kpi b{display:block;font-family:'Gothic A1',sans-serif;font-size:26.5px;font-weight:800;line-height:1.1;font-variant-numeric:tabular-nums;letter-spacing:-.5px;}
+.ah-kpi span{font-size:13px;color:rgba(255,255,255,.65);}
 .ah-form{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:12px;}
 .ah-form .fdot{width:8px;height:18px;}
 .ah-form .fd-L{background:rgba(255,255,255,.35);}
 .ah-form .fd-W{background:#fff;}
 .ah-form .fd-D{background:var(--gold);}
-.ah-streak{font-size:12px;font-weight:700;border:1px solid rgba(255,255,255,.4);border-radius:4px;padding:5px 9px;white-space:nowrap;color:#fff;line-height:1;}
+.ah-streak{font-size:13px;font-weight:700;border:1px solid rgba(255,255,255,.4);border-radius:4px;padding:5px 9px;white-space:nowrap;color:#fff;line-height:1;}
 .ah-streak.down{color:rgba(255,255,255,.7);border-color:rgba(255,255,255,.25);}
 /* 분석 탭 (밑줄형) */
 .ana-seg{display:flex;margin:0 18px 10px;border-bottom:1px solid var(--line);}
-.ana-seg button{flex:1;height:42px;border:none;background:none;font-family:inherit;font-size:15px;font-weight:500;color:var(--muted);cursor:pointer;position:relative;}
+.ana-seg button{flex:1;height:42px;border:none;background:none;font-family:inherit;font-size:16px;font-weight:500;color:var(--muted);cursor:pointer;position:relative;}
 .ana-seg button.on{color:var(--accent);font-weight:700;}
 .ana-seg button.on::after{content:'';position:absolute;left:10%;right:10%;bottom:-1px;height:2px;background:var(--accent);}
 .mini-seg{display:inline-flex;margin-left:auto;border:1px solid var(--line);border-radius:6px;overflow:hidden;flex-shrink:0;}
-.mini-seg button{border:none;background:#fff;font-family:inherit;font-size:12px;font-weight:600;color:var(--muted);padding:6px 9px;cursor:pointer;white-space:nowrap;}
+.mini-seg button{border:none;background:#fff;font-family:inherit;font-size:13px;font-weight:600;color:var(--muted);padding:6px 9px;cursor:pointer;white-space:nowrap;}
 .mini-seg button+button{border-left:1px solid var(--line);}
 .mini-seg button.on{background:var(--green);color:#fff;font-weight:700;}
 /* 승·무·패 누적 막대 */
@@ -365,67 +365,67 @@ input.mc-score::-webkit-outer-spin-button,input.mc-score::-webkit-inner-spin-but
 .wdl-nums{display:flex;margin-top:10px;}
 .wdl-nums div{flex:1;text-align:center;}
 .wdl-nums div+div{border-left:1px solid var(--line2);}
-.wdl-nums b{display:block;font-family:'Gothic A1',sans-serif;font-size:24px;font-weight:800;line-height:1.1;font-variant-numeric:tabular-nums;}
-.wdl-nums span{font-size:12px;color:var(--muted);font-weight:600;}
+.wdl-nums b{display:block;font-family:'Gothic A1',sans-serif;font-size:25.5px;font-weight:800;line-height:1.1;font-variant-numeric:tabular-nums;}
+.wdl-nums span{font-size:13px;color:var(--muted);font-weight:600;}
 .ana-tiles{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px;}
 .ana-tile{border:1px solid var(--line);border-radius:6px;padding:11px 12px;background:#fff;}
-.ana-tile .tl{font-size:12px;font-weight:700;color:var(--muted);}
-.ana-tile .tv{font-family:'Gothic A1',sans-serif;font-size:24px;font-weight:800;line-height:1.15;margin:3px 0;font-variant-numeric:tabular-nums;}
-.ana-tile .ts{font-size:11.5px;color:var(--muted);line-height:1.35;}
+.ana-tile .tl{font-size:13px;font-weight:700;color:var(--muted);}
+.ana-tile .tv{font-family:'Gothic A1',sans-serif;font-size:25.5px;font-weight:800;line-height:1.15;margin:3px 0;font-variant-numeric:tabular-nums;}
+.ana-tile .ts{font-size:12.5px;color:var(--muted);line-height:1.35;}
 .cat-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line2);}
 .cat-row:last-child{border-bottom:none;}
-.cat-l{width:64px;flex-shrink:0;font-size:14px;font-weight:700;color:var(--text);}
+.cat-l{width:64px;flex-shrink:0;font-size:15px;font-weight:700;color:var(--text);}
 .cat-b{flex:1;min-width:0;}
-.cat-s{font-size:12px;color:var(--muted);margin-top:4px;white-space:nowrap;}
-.kv-row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line2);font-size:14.5px;color:var(--text2);}
+.cat-s{font-size:13px;color:var(--muted);margin-top:4px;white-space:nowrap;}
+.kv-row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line2);font-size:15.5px;color:var(--text2);}
 .kv-row:last-child{border-bottom:none;}
-.kv-row small{color:var(--muted);font-size:12px;}
+.kv-row small{color:var(--muted);font-size:13px;}
 .kv-row b{color:var(--text);font-weight:800;text-align:right;}
 .ana-hl{display:flex;align-items:center;gap:11px;padding:11px 12px;margin-top:8px;border-radius:6px;border:1px solid var(--line);border-left-width:4px;background:#fff;}
 .hl-ico{width:30px;height:30px;border-radius:50%;background:var(--gray-1);color:var(--text2);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 .hl-body{flex:1;min-width:0;}
-.hl-t{font-size:12px;color:var(--muted);font-weight:600;}
+.hl-t{font-size:13px;color:var(--muted);font-weight:600;}
 .hl-t small{font-weight:500;}
-.hl-n{font-family:'Gothic A1',sans-serif;font-size:16.5px;font-weight:800;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.hl-n{font-family:'Gothic A1',sans-serif;font-size:17.5px;font-weight:800;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .hl-r{text-align:right;flex-shrink:0;}
-.hl-r b{display:block;font-family:'Gothic A1',sans-serif;font-size:19px;font-weight:800;line-height:1.15;}
-.hl-r span{font-size:11.5px;color:var(--muted);}
+.hl-r b{display:block;font-family:'Gothic A1',sans-serif;font-size:20px;font-weight:800;line-height:1.15;}
+.hl-r span{font-size:12.5px;color:var(--muted);}
 .ana-detail{background:var(--gray-1);border:1px solid var(--line);border-radius:6px;padding:2px 12px;margin:0 0 8px 36px;}
-.ad-line{display:flex;align-items:center;gap:8px;padding:8px 0;font-size:13px;border-bottom:1px solid var(--line);}
+.ad-line{display:flex;align-items:center;gap:8px;padding:8px 0;font-size:14px;border-bottom:1px solid var(--line);}
 .ad-line:last-child{border-bottom:none;}
 .ad-d{width:62px;color:var(--muted);flex-shrink:0;}
 .ad-s{font-family:'Gothic A1',sans-serif;font-weight:800;font-variant-numeric:tabular-nums;width:36px;flex-shrink:0;}
 .ad-w{color:var(--text2);min-width:0;line-height:1.35;}
 .ana-chev{margin-left:auto;padding-left:6px;color:var(--muted);flex-shrink:0;display:inline-flex;}
 .ana-chart{width:100%;height:auto;display:block;}
-.ana-chart-s{display:flex;justify-content:space-around;margin-top:8px;font-size:12.5px;color:var(--muted);}
-.ana-chart-s b{font-size:14.5px;color:var(--text);}
+.ana-chart-s{display:flex;justify-content:space-around;margin-top:8px;font-size:13.5px;color:var(--muted);}
+.ana-chart-s b{font-size:15.5px;color:var(--text);}
 .tl-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line2);}
 .tl-row:last-child{border-bottom:none;}
 .tl-d{width:52px;flex-shrink:0;line-height:1.25;}
-.tl-d b{display:block;font-family:'Gothic A1',sans-serif;font-size:15px;color:var(--text);font-variant-numeric:tabular-nums;}
-.tl-d span{font-size:11px;color:var(--muted);}
+.tl-d b{display:block;font-family:'Gothic A1',sans-serif;font-size:16px;color:var(--text);font-variant-numeric:tabular-nums;}
+.tl-d span{font-size:12px;color:var(--muted);}
 .tl-mid{flex:1;min-width:0;}
-.tl-t{font-size:12px;color:var(--muted);margin-bottom:5px;}
+.tl-t{font-size:13px;color:var(--muted);margin-bottom:5px;}
 .tl-mid .fdots{flex-wrap:wrap;}
-.tl-r{font-size:13px;text-align:right;white-space:nowrap;flex-shrink:0;}
+.tl-r{font-size:14px;text-align:right;white-space:nowrap;flex-shrink:0;}
 .mo-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line2);}
 .mo-row:last-child{border-bottom:none;}
-.mo-l{width:44px;font-family:'Gothic A1',sans-serif;font-weight:800;font-size:14px;flex-shrink:0;}
+.mo-l{width:44px;font-family:'Gothic A1',sans-serif;font-weight:800;font-size:15px;flex-shrink:0;}
 .mo-b{flex:1;min-width:0;}
-.mo-s{font-size:12px;color:var(--muted);margin-top:4px;white-space:nowrap;}
+.mo-s{font-size:13px;color:var(--muted);margin-top:4px;white-space:nowrap;}
 
 /* ── 코트 예약 ── */
-.book-region-title{display:flex;align-items:center;gap:8px;font-family:'Gothic A1','Noto Sans KR',sans-serif;font-size:15px;font-weight:800;color:var(--text);margin-bottom:10px;letter-spacing:-.3px;}
+.book-region-title{display:flex;align-items:center;gap:8px;font-family:'Gothic A1','Noto Sans KR',sans-serif;font-size:16px;font-weight:800;color:var(--text);margin-bottom:10px;letter-spacing:-.3px;}
 .book-region-flag{display:none;}
 .book-site{display:flex;align-items:center;gap:12px;padding:12px 10px 12px 12px;border:1px solid var(--line);border-radius:6px;margin-bottom:8px;text-decoration:none;color:inherit;background:#fff;}
 .book-site:last-child{margin-bottom:0;}
 .book-site:active{background:var(--gray-1);}
 .book-site-ico{width:38px;height:38px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:var(--gray-1);color:var(--accent);}
 .book-site-body{flex:1;min-width:0;}
-.book-site-name{font-size:15px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+.book-site-name{font-size:16px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
 .book-site-badge{display:inline-block;font-size:10.5px;font-weight:700;color:var(--accent);border:1px solid rgba(26,122,74,.4);background:var(--accent-l2);border-radius:4px;padding:3px 6px;line-height:1;}
-.book-site-desc{font-size:12.5px;color:var(--muted);margin-top:2px;line-height:1.4;}
+.book-site-desc{font-size:13.5px;color:var(--muted);margin-top:2px;line-height:1.4;}
 .book-site-arrow{color:var(--muted);flex-shrink:0;display:flex;}
 
 /* ── 설정 ── */
@@ -434,36 +434,36 @@ input.mc-score::-webkit-outer-spin-button,input.mc-score::-webkit-inner-spin-but
 .fb-dot{width:12px;height:12px;border-radius:50%;background:rgba(255,255,255,.35);flex-shrink:0;transition:all .4s;}
 .fb-dot.on{background:#4ADE80;box-shadow:0 0 0 4px rgba(74,222,128,.25);}
 .fb-banner-texts{flex:1;}
-.fb-banner-title{font-size:15px;font-weight:700;color:#fff;}
-.fb-banner-sub{font-size:13px;color:rgba(255,255,255,.65);margin-top:3px;}
+.fb-banner-title{font-size:16px;font-weight:700;color:#fff;}
+.fb-banner-sub{font-size:14px;color:rgba(255,255,255,.65);margin-top:3px;}
 .fb-banner-ico{color:#fff;display:flex;}
 .fb-step{display:flex;gap:12px;padding:13px 0;border-bottom:1px solid var(--line2);}
 .fb-step:last-child{border-bottom:none;}
-.fb-step-n{width:26px;height:26px;border-radius:50%;background:var(--green);color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
-.fb-step-body{flex:1;font-size:14.5px;color:var(--text2);line-height:1.65;}
+.fb-step-n{width:26px;height:26px;border-radius:50%;background:var(--green);color:#fff;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+.fb-step-body{flex:1;font-size:15.5px;color:var(--text2);line-height:1.65;}
 .fb-step-body strong{color:var(--text);}
 .fb-step-body a{color:var(--accent);font-weight:700;text-decoration:none;}
-.fb-step-body code{background:var(--gray-1);padding:1px 6px;border-radius:4px;font-size:13px;font-family:monospace;}
+.fb-step-body code{background:var(--gray-1);padding:1px 6px;border-radius:4px;font-size:14px;font-family:monospace;}
 .fb-share-box{display:none;background:var(--accent-l2);border:1px solid rgba(26,122,74,.3);border-radius:6px;padding:14px;margin-top:14px;}
-.fb-share-title{font-size:15px;font-weight:700;color:var(--accent-d);margin-bottom:6px;}
-.fb-share-sub{font-size:14px;color:var(--accent-d);line-height:1.6;margin-bottom:10px;}
-.paste-area{width:100%;padding:12px;background:#1E2226;border:none;border-radius:6px;font-size:13px;font-family:monospace;color:#D4D4D4;height:110px;resize:none;outline:none;line-height:1.7;margin-top:8px;}
+.fb-share-title{font-size:16px;font-weight:700;color:var(--accent-d);margin-bottom:6px;}
+.fb-share-sub{font-size:15px;color:var(--accent-d);line-height:1.6;margin-bottom:10px;}
+.paste-area{width:100%;padding:12px;background:#1E2226;border:none;border-radius:6px;font-size:14px;font-family:monospace;color:#D4D4D4;height:110px;resize:none;outline:none;line-height:1.7;margin-top:8px;}
 .clear-btn{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--muted);cursor:pointer;padding:4px;display:flex;}
-.set-btn{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:12px;border-radius:6px;font-family:inherit;font-size:14.5px;font-weight:700;cursor:pointer;line-height:1.2;border:1px solid var(--gray-3);background:#fff;color:var(--text2);}
+.set-btn{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:12px;border-radius:6px;font-family:inherit;font-size:15.5px;font-weight:700;cursor:pointer;line-height:1.2;border:1px solid var(--gray-3);background:#fff;color:var(--text2);}
 .set-btn.primary{background:var(--accent);border-color:var(--accent);color:#fff;}
 .set-btn.danger{color:var(--red);border-color:#F1B6AE;}
 .set-btn+.set-btn{margin-top:8px;}
 .note-box{background:var(--gray-1);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:6px;padding:14px;margin-bottom:16px;}
-.note-box .nb-t{font-size:14px;font-weight:700;color:var(--text);margin-bottom:6px;}
-.note-box .nb-s{font-size:13.5px;color:var(--text2);line-height:1.6;margin-bottom:10px;}
-.req{color:var(--red);font-size:12px;font-weight:700;margin-left:4px;}
+.note-box .nb-t{font-size:15px;font-weight:700;color:var(--text);margin-bottom:6px;}
+.note-box .nb-s{font-size:14.5px;color:var(--text2);line-height:1.6;margin-bottom:10px;}
+.req{color:var(--red);font-size:13px;font-weight:700;margin-left:4px;}
 .warn-box{background:var(--red-l);border:1px solid #F1B6AE;border-radius:6px;padding:12px 14px;}
 
 /* ── 편성 균형 점검 ── */
 .fair{border:1px solid var(--line);border-radius:6px;padding:11px 13px;margin-bottom:12px;background:#fff;}
-.fair-t{font-family:'Gothic A1','Noto Sans KR',sans-serif;font-size:14px;font-weight:800;color:var(--text);letter-spacing:-.3px;}
-.fair-s{font-size:11.5px;color:var(--muted);margin:1px 0 6px;}
-.fair-row{display:flex;align-items:flex-start;gap:7px;padding:3px 0;font-size:13.5px;line-height:1.45;}
+.fair-t{font-family:'Gothic A1','Noto Sans KR',sans-serif;font-size:15px;font-weight:800;color:var(--text);letter-spacing:-.3px;}
+.fair-s{font-size:12.5px;color:var(--muted);margin:1px 0 6px;}
+.fair-row{display:flex;align-items:flex-start;gap:7px;padding:3px 0;font-size:14.5px;line-height:1.45;}
 .fair-row .ic{margin-top:1px;}
 .fair-row.ok .ic{color:var(--accent);}
 .fair-row.warn .ic{color:var(--amber);}
@@ -472,14 +472,14 @@ input.mc-score::-webkit-outer-spin-button,input.mc-score::-webkit-inner-spin-but
 .fair-v{color:var(--text);}
 
 /* ── EMPTY / TOAST ── */
-.empty{text-align:center;padding:28px 16px;color:var(--muted);font-size:15px;line-height:1.7;}
+.empty{text-align:center;padding:28px 16px;color:var(--muted);font-size:16px;line-height:1.7;}
 .empty-ico{display:flex;align-items:center;justify-content:center;width:52px;height:52px;border-radius:50%;background:var(--gray-1);color:var(--gray-3);margin:0 auto 10px;}
 .empty b{color:var(--text2);}
-#toast{position:absolute;bottom:20px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--text);color:#fff;padding:11px 18px;border-radius:6px;font-size:14px;font-weight:500;opacity:0;transition:all .25s;z-index:999;white-space:nowrap;pointer-events:none;max-width:88%;text-align:center;}
+#toast{position:absolute;bottom:20px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--text);color:#fff;padding:11px 18px;border-radius:6px;font-size:15px;font-weight:500;opacity:0;transition:all .25s;z-index:999;white-space:nowrap;pointer-events:none;max-width:88%;text-align:center;}
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 
 /* ── 기록 헤더 2줄 · 랭킹 번호 색 ── */
-.hs-sub{font-size:12px;color:var(--muted);margin-top:2px;display:flex;gap:6px;align-items:center;}
+.hs-sub{font-size:13px;color:var(--muted);margin-top:2px;display:flex;gap:6px;align-items:center;}
 .rank-n.up{color:var(--accent);}.rank-n.down{color:var(--red);}
 .qg-ic svg{fill:none;}
 </style>
@@ -538,7 +538,7 @@ input.mc-score::-webkit-outer-spin-button,input.mc-score::-webkit-inner-spin-but
   </div>
 
   <!-- 서버 공유 중단 경고 (보안규칙 만료 감지 시 표시) -->
-  <div id="home-alert" style="display:none;margin:14px 14px 0;padding:14px 16px;background:#fef2f2;border:2px solid #fca5a5;border-radius:12px;font-size:14px;color:#991b1b;line-height:1.65;"></div>
+  <div id="home-alert" style="display:none;margin:14px 14px 0;padding:14px 16px;background:#fef2f2;border:2px solid #fca5a5;border-radius:12px;font-size:15px;color:#991b1b;line-height:1.65;"></div>
 
   <!-- 바로가기 (2x2 카드) -->
   <div class="quick-grid">
@@ -599,7 +599,7 @@ input.mc-score::-webkit-outer-spin-button,input.mc-score::-webkit-inner-spin-but
         <button class="tog on" data-v="baekse" onclick="setTog(this,'tg-lg')">백세리그</button>
         <button class="tog" data-v="general" onclick="setTog(this,'tg-lg')">일반리그</button>
       </div>
-      <div id="lg-note" style="font-size:12.5px;color:var(--muted);margin-top:8px;line-height:1.5;"></div>
+      <div id="lg-note" style="font-size:13.5px;color:var(--muted);margin-top:8px;line-height:1.5;"></div>
       <label class="f-lbl">경기 유형</label>
       <div class="tog-wrap" id="tg-mt">
         <button class="tog on" data-v="doubles" onclick="setTog(this,'tg-mt')">복식</button>
@@ -636,7 +636,7 @@ input.mc-score::-webkit-outer-spin-button,input.mc-score::-webkit-inner-spin-but
   <div id="ses-prev" style="display:none;">
     <div class="card">
       <div class="card-title" id="prev-title">편성 미리보기</div>
-      <div style="font-size:13.5px;color:var(--muted);margin:-4px 0 12px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;" id="prev-sub"></div>
+      <div style="font-size:14.5px;color:var(--muted);margin:-4px 0 12px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;" id="prev-sub"></div>
       <div id="prev-fair"></div>
       <div id="prev-matches"></div>
     </div>
@@ -687,7 +687,7 @@ input.mc-score::-webkit-outer-spin-button,input.mc-score::-webkit-inner-spin-but
       <button class="tog on" data-v="match" onclick="setRB(this)">승부순</button>
       <button class="tog" data-v="att" onclick="setRB(this)">출석순</button>
     </div>
-    <div style="font-size:13px;color:var(--muted);margin-top:12px;line-height:1.6;">
+    <div style="font-size:14px;color:var(--muted);margin-top:12px;line-height:1.6;">
       <div class="legend"><b>승부순</b> ①승률 → ②게임 다승 → ③득실차<br><b>출석순</b> 출석 횟수 → 출석률<br>
       <span class="nw">최근 5경기 막대 (오른쪽이 최근):</span> <span class="nw">승 <span class="fdots"><span class="fdot fd-W"></span></span></span> <span class="nw">무 <span class="fdots"><span class="fdot fd-D"></span></span></span> <span class="nw">패 <span class="fdots"><span class="fdot fd-L"></span></span></span><br>
       <span class="nw">승률 옆 <i data-ic="trend-up" data-size="13" data-cls="trend up"></i> <i data-ic="trend-down" data-size="13" data-cls="trend down"></i></span> = 최근 5경기 승률이 전체보다 높음 / 낮음</div>
@@ -723,8 +723,8 @@ input.mc-score::-webkit-outer-spin-button,input.mc-score::-webkit-inner-spin-but
   <div class="card" style="display:flex;align-items:center;gap:10px;">
     <button class="ic-btn" onclick="goTab('home')"><i data-ic="arrow-left" data-size="20"></i></button>
     <div>
-      <div class="pg-hd" style="padding:0;"><span class="ko" style="font-size:18px;">코트 예약</span><span class="en">Court Booking</span></div>
-      <div style="font-size:12.5px;color:var(--muted);margin-top:3px;">부산·김해·양산 공공 테니스장 예약 사이트</div>
+      <div class="pg-hd" style="padding:0;"><span class="ko" style="font-size:19px;">코트 예약</span><span class="en">Court Booking</span></div>
+      <div style="font-size:13.5px;color:var(--muted);margin-top:3px;">부산·김해·양산 공공 테니스장 예약 사이트</div>
     </div>
   </div>
 
@@ -780,7 +780,7 @@ input.mc-score::-webkit-outer-spin-button,input.mc-score::-webkit-inner-spin-but
     </a>
   </div>
 
-  <div style="padding:2px 4px 20px;font-size:12px;color:var(--muted);line-height:1.6;">
+  <div style="padding:2px 4px 20px;font-size:13px;color:var(--muted);line-height:1.6;">
     ※ 공공기관 사이트는 개편·URL 변경이 잦습니다. 접속이 안 되면 각 지자체 체육시설 안내 페이지에서 다시 확인해주세요.
   </div>
 </div>
@@ -792,8 +792,8 @@ input.mc-score::-webkit-outer-spin-button,input.mc-score::-webkit-inner-spin-but
   <div id="fb-banner" class="fb-banner">
     <div id="fb-dot" class="fb-dot"></div>
     <div style="flex:1;">
-      <div id="fb-status-title" style="font-size:15px;font-weight:700;color:#fff;">연결 안 됨</div>
-      <div id="fb-status-sub" style="font-size:13px;color:rgba(255,255,255,.6);margin-top:3px;">아래에 Firebase 설정값을 입력하세요</div>
+      <div id="fb-status-title" style="font-size:16px;font-weight:700;color:#fff;">연결 안 됨</div>
+      <div id="fb-status-sub" style="font-size:14px;color:rgba(255,255,255,.6);margin-top:3px;">아래에 Firebase 설정값을 입력하세요</div>
     </div>
     <div id="fb-ico" class="fb-banner-ico"><i data-ic="cloud" data-size="26"></i></div>
   </div>
@@ -807,16 +807,16 @@ input.mc-score::-webkit-outer-spin-button,input.mc-score::-webkit-inner-spin-but
     <div class="note-box">
       <div class="nb-t">간편 입력</div>
       <div class="nb-s">
-        Firebase 콘솔의 <code style="background:rgba(0,0,0,.08);padding:2px 7px;border-radius:5px;font-size:13px;">firebaseConfig</code><br>코드 전체를 아래에 붙여넣으세요.
+        Firebase 콘솔의 <code style="background:rgba(0,0,0,.08);padding:2px 7px;border-radius:5px;font-size:14px;">firebaseConfig</code><br>코드 전체를 아래에 붙여넣으세요.
       </div>
-      <textarea id="fb-paste" placeholder="const firebaseConfig = {&#10;  apiKey: &quot;AIzaSy...&quot;,&#10;  authDomain: &quot;your-app.firebaseapp.com&quot;,&#10;  databaseURL: &quot;https://your-app-default-rtdb...&quot;,&#10;  projectId: &quot;your-app&quot;,&#10;  ...&#10;};" style="width:100%;height:120px;padding:12px;background:#1e1e1e;border:none;border-radius:10px;color:#d4d4d4;font-size:14px;font-family:monospace;line-height:1.7;resize:none;outline:none;margin-bottom:10px;"></textarea>
+      <textarea id="fb-paste" placeholder="const firebaseConfig = {&#10;  apiKey: &quot;AIzaSy...&quot;,&#10;  authDomain: &quot;your-app.firebaseapp.com&quot;,&#10;  databaseURL: &quot;https://your-app-default-rtdb...&quot;,&#10;  projectId: &quot;your-app&quot;,&#10;  ...&#10;};" style="width:100%;height:120px;padding:12px;background:#1e1e1e;border:none;border-radius:10px;color:#d4d4d4;font-size:15px;font-family:monospace;line-height:1.7;resize:none;outline:none;margin-bottom:10px;"></textarea>
       <button onclick="parseFB()" class="set-btn primary">자동 분석 후 입력</button>
     </div>
 
     <!-- 구분선 -->
     <div style="display:flex;align-items:center;gap:10px;margin:16px 0;">
       <div style="flex:1;height:1px;background:var(--line);"></div>
-      <span style="font-size:13px;color:var(--muted);font-weight:600;">또는 직접 입력</span>
+      <span style="font-size:14px;color:var(--muted);font-weight:600;">또는 직접 입력</span>
       <div style="flex:1;height:1px;background:var(--line);"></div>
     </div>
 
@@ -837,7 +837,7 @@ input.mc-score::-webkit-outer-spin-button,input.mc-score::-webkit-inner-spin-but
       <input type="text" id="fb-databaseURL" placeholder="https://your-app-default-rtdb.asia-southeast1.firebasedatabase.app" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" style="padding-right:46px;">
       <button onclick="document.getElementById('fb-databaseURL').value=''" class="clear-btn"><i data-ic="x" data-size="16"></i></button>
     </div>
-    <div style="font-size:13px;color:var(--muted);margin-top:5px;line-height:1.5;">Firebase 콘솔 → Realtime Database 화면 상단에서 확인</div>
+    <div style="font-size:14px;color:var(--muted);margin-top:5px;line-height:1.5;">Firebase 콘솔 → Realtime Database 화면 상단에서 확인</div>
 
     <!-- Project ID -->
     <label class="f-lbl">Project ID</label>
@@ -851,8 +851,8 @@ input.mc-score::-webkit-outer-spin-button,input.mc-score::-webkit-inner-spin-but
 
     <!-- 연결 성공 후 공유 박스 -->
     <div id="fb-share-box" class="fb-share-box">
-      <div style="font-size:15px;font-weight:700;color:var(--brand-d);margin-bottom:7px;">연결 성공! 회원들과 공유</div>
-      <div style="font-size:14px;color:var(--brand-d);line-height:1.65;margin-bottom:12px;">같은 설정값을 입력한 회원 모두에게<br>경기 결과가 <strong>실시간</strong>으로 공유됩니다.</div>
+      <div style="font-size:16px;font-weight:700;color:var(--brand-d);margin-bottom:7px;">연결 성공! 회원들과 공유</div>
+      <div style="font-size:15px;color:var(--brand-d);line-height:1.65;margin-bottom:12px;">같은 설정값을 입력한 회원 모두에게<br>경기 결과가 <strong>실시간</strong>으로 공유됩니다.</div>
       <button onclick="shareFB()" class="set-btn primary">설정값 카카오톡으로 공유</button>
     </div>
   </div>
@@ -860,11 +860,11 @@ input.mc-score::-webkit-outer-spin-button,input.mc-score::-webkit-inner-spin-but
   <!-- ③ 데이터 관리 -->
   <div class="card">
     <div class="card-title">데이터 관리</div>
-    <div style="font-size:15px;color:var(--text2);margin-bottom:14px;line-height:1.6;">Firebase 연결 후, 이 기기 데이터를<br>서버에 올리거나 받아올 수 있습니다.</div>
+    <div style="font-size:16px;color:var(--text2);margin-bottom:14px;line-height:1.6;">Firebase 연결 후, 이 기기 데이터를<br>서버에 올리거나 받아올 수 있습니다.</div>
     <button onclick="uploadFB()" class="set-btn primary">내 데이터 → Firebase 업로드</button>
     <button onclick="downloadFB()" class="set-btn">Firebase → 내 기기로 저장</button>
     <div style="margin-top:18px;padding-top:16px;border-top:1px solid var(--line2);">
-      <div style="font-size:13px;font-weight:700;color:var(--red);margin-bottom:8px;">주의</div>
+      <div style="font-size:14px;font-weight:700;color:var(--red);margin-bottom:8px;">주의</div>
       <button onclick="clearLocal()" class="set-btn danger">이 기기 데이터 전체 삭제</button>
     </div>
   </div>
@@ -872,7 +872,7 @@ input.mc-score::-webkit-outer-spin-button,input.mc-score::-webkit-inner-spin-but
   <!-- ③-1 백업 · 복원 -->
   <div class="card">
     <div class="card-title">백업 · 복원</div>
-    <div style="font-size:14px;color:var(--text2);line-height:1.65;margin-bottom:14px;">
+    <div style="font-size:15px;color:var(--text2);line-height:1.65;margin-bottom:14px;">
       Firebase 연결 시 <strong style="color:var(--text);">하루 1회 자동 백업</strong>됩니다 (최근 14개 보관).<br>
       백업파일 저장·복원은 연결 없이도 사용할 수 있습니다.
     </div>
@@ -884,11 +884,11 @@ input.mc-score::-webkit-outer-spin-button,input.mc-score::-webkit-inner-spin-but
       <button onclick="loadTrash()" class="set-btn" style="flex:1;">휴지통</button>
     </div>
     <div id="bk-list-wrap" style="display:none;margin-top:14px;padding-top:12px;border-top:1px solid var(--line2);">
-      <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:6px;">자동 백업 목록</div>
+      <div style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:6px;">자동 백업 목록</div>
       <div id="bk-list"></div>
     </div>
     <div id="trash-wrap" style="display:none;margin-top:14px;padding-top:12px;border-top:1px solid var(--line2);">
-      <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:6px;">최근 삭제된 모임 <span style="font-weight:500;color:var(--muted);">(60일 보관)</span></div>
+      <div style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:6px;">최근 삭제된 모임 <span style="font-weight:500;color:var(--muted);">(60일 보관)</span></div>
       <div id="trash-list"></div>
     </div>
   </div>
@@ -899,36 +899,36 @@ input.mc-score::-webkit-outer-spin-button,input.mc-score::-webkit-inner-spin-but
     <div style="display:flex;flex-direction:column;gap:0;">
 
       <div style="display:flex;gap:13px;padding:14px 0;border-bottom:1px solid var(--line2);">
-        <div style="width:30px;height:30px;border-radius:50%;background:var(--green);color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;">1</div>
-        <div style="font-size:15px;color:var(--text2);line-height:1.65;">
+        <div style="width:30px;height:30px;border-radius:50%;background:var(--green);color:#fff;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;">1</div>
+        <div style="font-size:16px;color:var(--text2);line-height:1.65;">
           <a href="https://console.firebase.google.com" target="_blank" style="color:var(--brand);font-weight:700;text-decoration:none;">console.firebase.google.com</a> 접속<br>구글 계정으로 로그인
         </div>
       </div>
 
       <div style="display:flex;gap:13px;padding:14px 0;border-bottom:1px solid var(--line2);">
-        <div style="width:30px;height:30px;border-radius:50%;background:var(--green);color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;">2</div>
-        <div style="font-size:15px;color:var(--text2);line-height:1.65;">
-          <strong style="color:var(--text);">프로젝트 추가</strong> 클릭<br>이름: <code style="background:var(--bg);padding:2px 7px;border-radius:5px;font-size:13px;">baekse-tennis</code>
+        <div style="width:30px;height:30px;border-radius:50%;background:var(--green);color:#fff;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;">2</div>
+        <div style="font-size:16px;color:var(--text2);line-height:1.65;">
+          <strong style="color:var(--text);">프로젝트 추가</strong> 클릭<br>이름: <code style="background:var(--bg);padding:2px 7px;border-radius:5px;font-size:14px;">baekse-tennis</code>
         </div>
       </div>
 
       <div style="display:flex;gap:13px;padding:14px 0;border-bottom:1px solid var(--line2);">
-        <div style="width:30px;height:30px;border-radius:50%;background:var(--green);color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;">3</div>
-        <div style="font-size:15px;color:var(--text2);line-height:1.65;">
-          왼쪽 메뉴 <strong style="color:var(--text);">빌드 → Realtime Database</strong><br>→ 데이터베이스 만들기<br>→ 위치: <code style="background:var(--bg);padding:2px 7px;border-radius:5px;font-size:13px;">asia-southeast1</code><br>→ <strong style="color:var(--text);">테스트 모드</strong> 선택
+        <div style="width:30px;height:30px;border-radius:50%;background:var(--green);color:#fff;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;">3</div>
+        <div style="font-size:16px;color:var(--text2);line-height:1.65;">
+          왼쪽 메뉴 <strong style="color:var(--text);">빌드 → Realtime Database</strong><br>→ 데이터베이스 만들기<br>→ 위치: <code style="background:var(--bg);padding:2px 7px;border-radius:5px;font-size:14px;">asia-southeast1</code><br>→ <strong style="color:var(--text);">테스트 모드</strong> 선택
         </div>
       </div>
 
       <div style="display:flex;gap:13px;padding:14px 0;border-bottom:1px solid var(--line2);">
-        <div style="width:30px;height:30px;border-radius:50%;background:var(--green);color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;">4</div>
-        <div style="font-size:15px;color:var(--text2);line-height:1.65;">
+        <div style="width:30px;height:30px;border-radius:50%;background:var(--green);color:#fff;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;">4</div>
+        <div style="font-size:16px;color:var(--text2);line-height:1.65;">
           <strong style="color:var(--text);">프로젝트 설정</strong> 클릭<br>→ 내 앱 → <strong style="color:var(--text);">웹 앱 추가 &lt;/&gt;</strong>
         </div>
       </div>
 
       <div style="display:flex;gap:13px;padding:14px 0;">
-        <div style="width:30px;height:30px;border-radius:50%;background:var(--green);color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;">5</div>
-        <div style="font-size:15px;color:var(--text2);line-height:1.65;">
+        <div style="width:30px;height:30px;border-radius:50%;background:var(--green);color:#fff;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;">5</div>
+        <div style="font-size:16px;color:var(--text2);line-height:1.65;">
           <strong style="color:var(--text);">firebaseConfig 코드 전체 복사</strong><br>→ 위 붙여넣기 박스에 입력<br>→ 자동 분석 후 입력 클릭<br>→ Firebase 연결 클릭
         </div>
       </div>
@@ -939,27 +939,27 @@ input.mc-score::-webkit-outer-spin-button,input.mc-score::-webkit-inner-spin-but
   <!-- ⑤ 보안 규칙 안내 (30일 만료 대비) -->
   <div class="card">
     <div class="card-title">테스트 모드 30일 만료 대비</div>
-    <div style="font-size:15px;color:var(--text2);line-height:1.7;margin-bottom:12px;">
+    <div style="font-size:16px;color:var(--text2);line-height:1.7;margin-bottom:12px;">
       테스트 모드는 <strong style="color:var(--red);">30일 후 자동 만료</strong>됩니다.<br>
       계속 사용하려면 Firebase 콘솔에서<br>
       <strong style="color:var(--text);">Realtime Database → 규칙</strong> 탭의<br>
       규칙을 아래처럼 변경하세요.
     </div>
     <div style="background:#1E2226;border-radius:6px;padding:14px;overflow-x:auto;">
-      <pre style="color:#A7F3C2;font-size:13px;font-family:monospace;line-height:1.8;margin:0;">{
+      <pre style="color:#A7F3C2;font-size:14px;font-family:monospace;line-height:1.8;margin:0;">{
   "rules": {
     ".read": true,
     ".write": true
   }
 }</pre>
     </div>
-    <div style="font-size:13px;color:var(--muted);margin-top:10px;line-height:1.6;">
+    <div style="font-size:14px;color:var(--muted);margin-top:10px;line-height:1.6;">
       위 규칙은 누구나 읽고 쓸 수 있게 합니다.<br>
       동호회 내부용으로는 충분하며, URL을 모르면 접근할 수 없습니다.
     </div>
   </div>
 
-  <div style="text-align:center;padding:8px 0 22px;font-size:12.5px;color:var(--muted);">Century Tennis Club · 백세 테니스 클럽 <span id="app-ver"></span></div>
+  <div style="text-align:center;padding:8px 0 22px;font-size:13.5px;color:var(--muted);">Century Tennis Club · 백세 테니스 클럽 <span id="app-ver"></span></div>
 
 </div><!-- pg-settings end -->
 
@@ -1080,7 +1080,7 @@ function lgIco(s){return lgTagH(s);}
 function lgName(s){return lgOf(s)==='baekse'?'백세리그':'일반리그';}
 
 /* ── FIREBASE ── */
-var APP_VER='5.1 (2026-09-19)';
+var APP_VER='5.2 (2026-09-22)';
 var fbApp=null,fbDB=null,fbRef=null,isOnline=false;
 var FB_KEY='btc_firebase_cfg';
 var lastSavedSnapshot='';   // 자기가 저장한 데이터 추적 (echo 방지)
@@ -1192,7 +1192,7 @@ function showRuleAlert(){
   if(ha){ha.style.display='block';ha.innerHTML=ic('alert',16)+' <strong>서버 공유가 중단되었습니다.</strong><br>'
     +'Firebase 보안규칙(테스트 모드 30일)이 만료된 것으로 보입니다.<br>'
     +'관리자가 <strong>Firebase 콘솔 → Realtime Database → 규칙</strong>을 수정하면 자동으로 다시 연결됩니다.<br>'
-    +'<span style="font-size:13px;">지금 입력하는 기록은 이 휴대폰에만 저장되며, 재연결되면 서버와 다시 합쳐집니다.</span>';}
+    +'<span style="font-size:14px;">지금 입력하는 기록은 이 휴대폰에만 저장되며, 재연결되면 서버와 다시 합쳐집니다.</span>';}
   if(firstTime)toast('서버 접근 거부 — 설정 탭을 확인하세요');
   // 1분마다 자동 재연결 시도 (규칙 수정 시 자동 복구)
   if(!fbRetryTimer){
@@ -1504,20 +1504,20 @@ function loadBackups(){
   if(!isOnline||!fbDB){toast('Firebase 연결 후 사용할 수 있습니다.');return;}
   var wrap=document.getElementById('bk-list-wrap'),w=document.getElementById('bk-list');
   wrap.style.display='block';
-  w.innerHTML='<div style="padding:10px 0;color:var(--muted);font-size:14px;">불러오는 중...</div>';
+  w.innerHTML='<div style="padding:10px 0;color:var(--muted);font-size:15px;">불러오는 중...</div>';
   fbDB.ref('baekse-tennis-backups').once('value').then(function(s){
     var v=s.val();window._bkCache=v||{};
-    if(!v){w.innerHTML='<div style="padding:10px 0;color:var(--muted);font-size:14px;">아직 백업이 없습니다.<br>연결 상태에서 하루 1회 자동 생성됩니다.</div>';return;}
+    if(!v){w.innerHTML='<div style="padding:10px 0;color:var(--muted);font-size:15px;">아직 백업이 없습니다.<br>연결 상태에서 하루 1회 자동 생성됩니다.</div>';return;}
     var keys=Object.keys(v).sort().reverse();
     w.innerHTML=keys.map(function(k){
       var b=v[k]||{};
       var mc=b.members?(Array.isArray(b.members)?b.members.length:Object.keys(b.members).length):0;
       var sc=b.sessions?(Array.isArray(b.sessions)?b.sessions.length:Object.keys(b.sessions).length):0;
       return'<div class="row" style="cursor:default;"><div class="row-ico">'+ic('cloud',17)+'</div>'
-        +'<div class="row-body"><span class="row-title" style="font-size:15px;">'+k+'</span><span class="row-sub">회원 '+mc+' · 모임 '+sc+'</span></div>'
+        +'<div class="row-body"><span class="row-title" style="font-size:16px;">'+k+'</span><span class="row-sub">회원 '+mc+' · 모임 '+sc+'</span></div>'
         +'<button class="sbtn primary" onclick="restoreBackup(\''+k+'\')">복원</button></div>';
     }).join('');
-  }).catch(function(e){w.innerHTML='<div style="padding:10px 0;color:var(--red);font-size:14px;">불러오기 실패: '+e.message+'</div>';});
+  }).catch(function(e){w.innerHTML='<div style="padding:10px 0;color:var(--red);font-size:15px;">불러오기 실패: '+e.message+'</div>';});
 }
 function restoreBackup(k){
   var v=window._bkCache&&window._bkCache[k];
@@ -1537,10 +1537,10 @@ function loadTrash(){
   if(!isOnline||!fbDB){toast('Firebase 연결 후 사용할 수 있습니다.');return;}
   var wrap=document.getElementById('trash-wrap'),w=document.getElementById('trash-list');
   wrap.style.display='block';
-  w.innerHTML='<div style="padding:10px 0;color:var(--muted);font-size:14px;">불러오는 중...</div>';
+  w.innerHTML='<div style="padding:10px 0;color:var(--muted);font-size:15px;">불러오는 중...</div>';
   fbDB.ref('baekse-tennis-trash').once('value').then(function(s){
     var v=s.val();window._trCache=v||{};
-    if(!v||!Object.keys(v).length){w.innerHTML='<div style="padding:10px 0;color:var(--muted);font-size:14px;">휴지통이 비어 있습니다.</div>';return;}
+    if(!v||!Object.keys(v).length){w.innerHTML='<div style="padding:10px 0;color:var(--muted);font-size:15px;">휴지통이 비어 있습니다.</div>';return;}
     var keys=Object.keys(v).sort(function(a,b){return(v[b].ts||0)-(v[a].ts||0);});
     w.innerHTML=keys.map(function(k){
       var t=v[k]||{},ses=t.session||{};
@@ -1548,10 +1548,10 @@ function loadTrash(){
       var del=t.ts?new Date(t.ts):null;
       var delStr=del?(del.getMonth()+1)+'.'+del.getDate()+' 삭제':'';
       return'<div class="row" style="cursor:default;"><div class="row-ico">'+ic('calendar',17)+'</div>'
-        +'<div class="row-body"><span class="row-title" style="font-size:15px;">'+(ses.date?dstr(ses.date):'?')+' 모임</span><span class="row-sub">'+mc+'경기 · '+delStr+'</span></div>'
+        +'<div class="row-body"><span class="row-title" style="font-size:16px;">'+(ses.date?dstr(ses.date):'?')+' 모임</span><span class="row-sub">'+mc+'경기 · '+delStr+'</span></div>'
         +'<button class="sbtn primary" onclick="restoreTrash(\''+k+'\')">복원</button></div>';
     }).join('');
-  }).catch(function(e){w.innerHTML='<div style="padding:10px 0;color:var(--red);font-size:14px;">불러오기 실패: '+e.message+'</div>';});
+  }).catch(function(e){w.innerHTML='<div style="padding:10px 0;color:var(--red);font-size:15px;">불러오기 실패: '+e.message+'</div>';});
 }
 function restoreTrash(k){
   var t=window._trCache&&window._trCache[k];
@@ -2098,7 +2098,7 @@ function delMem(id){
 }
 function editMem(id){
   var el=document.getElementById('mn-'+id),old=el.textContent;
-  el.innerHTML='<input type="text" style="flex:1;padding:5px 10px;background:var(--bg);border:1.5px solid var(--brand);border-radius:8px;color:var(--text);font-size:18px;font-family:inherit;outline:none;" value="'+old+'" onblur="saveMem(\''+id+'\',this.value,\''+old+'\')" onkeydown="if(event.key===\'Enter\')this.blur();" autofocus>';
+  el.innerHTML='<input type="text" style="flex:1;padding:5px 10px;background:var(--bg);border:1.5px solid var(--brand);border-radius:8px;color:var(--text);font-size:19px;font-family:inherit;outline:none;" value="'+old+'" onblur="saveMem(\''+id+'\',this.value,\''+old+'\')" onkeydown="if(event.key===\'Enter\')this.blur();" autofocus>';
   el.querySelector('input').focus();
 }
 function saveMem(id,nv,old){
@@ -2298,7 +2298,7 @@ function editMatch(sid,mid){
   var memberOpts=presIds.map(function(id){
     var inT1=m.team1.indexOf(id)>=0,inT2=m.team2.indexOf(id)>=0;
     return'<div style="display:flex;align-items:center;gap:8px;padding:9px 0;border-bottom:1px solid var(--line2);">'
-      +'<span style="flex:1;font-size:15px;font-weight:500;">'+esc(gn(id))+'</span>'
+      +'<span style="flex:1;font-size:16px;font-weight:500;">'+esc(gn(id))+'</span>'
       +'<button id="em-t1-'+id+'" class="team-btn'+(inT1?' on':'')+'" onclick="emToggle(\''+sid+'\',\''+mid+'\',\'t1\',\''+id+'\')">A팀</button>'
       +'<button id="em-t2-'+id+'" class="team-btn'+(inT2?' on':'')+'" onclick="emToggle(\''+sid+'\',\''+mid+'\',\'t2\',\''+id+'\')">B팀</button>'
       +'</div>';
@@ -2306,7 +2306,7 @@ function editMatch(sid,mid){
   var lbl=function(t){return'<span style="font-size:10.5px;color:var(--muted);font-weight:700;letter-spacing:1.2px;">'+t+'</span>';};
   se.innerHTML='<div class="card">'
     +'<div class="card-title" style="justify-content:space-between;">코트 '+m.court+' 경기 수정<button class="ic-btn" onclick="rScore()">'+ic('x',18)+'</button></div>'
-    +'<div style="font-size:13.5px;color:var(--muted);margin-bottom:12px;">팀 버튼을 눌러 선수를 배정하세요</div>'
+    +'<div style="font-size:14.5px;color:var(--muted);margin-bottom:12px;">팀 버튼을 눌러 선수를 배정하세요</div>'
     +'<div class="mtc" style="margin-bottom:12px;"><div class="mtc-row"><div class="mtc-names">'+lbl('A팀')+'<span id="em-a-preview">'+(m.team1.map(gn).join(', ')||'없음')+'</span></div></div><div class="mtc-vs">VS</div><div class="mtc-row"><div class="mtc-names">'+lbl('B팀')+'<span id="em-b-preview">'+(m.team2.map(gn).join(', ')||'없음')+'</span></div></div></div>'
     +memberOpts
     +'<div class="btn-row" style="margin-top:14px;"><button class="btn btn-green" onclick="saveEditMatch(\''+sid+'\',\''+mid+'\')">저장</button><button class="btn btn-ghost" onclick="rScore()">취소</button></div>'
@@ -2419,8 +2419,8 @@ function rHistory(){
       +'<div class="hs-detail" id="hist-d-'+s.id+'" style="display:'+(open?'block':'none')+';">'
         +mh
         +'<div style="display:flex;gap:8px;margin-top:12px;">'
-          +'<button class="btn btn-green" style="flex:1;padding:11px;font-size:14px;" onclick="openSes(\''+s.id+'\')">'+ic('edit',15)+'점수 입력·수정</button>'
-          +'<button class="btn btn-ghost" style="width:auto;padding:11px 14px;font-size:14px;color:var(--red);border-color:#F1B6AE;" onclick="delSes(\''+s.id+'\')">'+ic('trash',15)+'삭제</button>'
+          +'<button class="btn btn-green" style="flex:1;padding:11px;font-size:15px;" onclick="openSes(\''+s.id+'\')">'+ic('edit',15)+'점수 입력·수정</button>'
+          +'<button class="btn btn-ghost" style="width:auto;padding:11px 14px;font-size:15px;color:var(--red);border-color:#F1B6AE;" onclick="delSes(\''+s.id+'\')">'+ic('trash',15)+'삭제</button>'
         +'</div>'
       +'</div>'
     +'</div>';
@@ -2550,7 +2550,7 @@ function rRanking(){
       stat='<span class="rpct'+(attPct>=90?' hi':'')+'">'+attPct+'%</span>';
     }else{
       nameHtml+=fdotsH(r.form||[],5);
-      sub='<b>'+r.played+'경기</b> · <b class="rw">'+r.wins+'승</b>'+(r.draws?' <b class="rd">'+r.draws+'무</b>':'')+' <b class="rl">'+r.losses+'패</b> · 게임 <b>'+diffStr+'</b>';
+      sub='<b>'+r.played+'경기</b> · <b class="rw">'+r.wins+'승</b>'+(r.draws?' <b class="rd">'+r.draws+'무</b>':'')+' <b class="rl">'+r.losses+'패</b> · <span class="nw">게임 <b>'+diffStr+'</b></span>';
       stat='<span class="rpct'+(pct>=60?' hi':pct<=40?' lo':'')+'">'+pct+'%'+trendH(r.trend,13)+'</span>';
     }
     return'<div class="rank-row"><span class="rank-n'+(i<3?' top':'')+'">'+(i+1)+'</span><div class="rank-info"><div class="rank-nm">'+nameHtml+'</div><div class="rank-sub">'+sub+'</div></div><div class="rank-stat">'+stat+'</div></div>';
@@ -2740,7 +2740,7 @@ function catRow(label,c){
     +'<div class="cat-s">'+g+'경기 · '+wdlTxt(c.w,c.d,c.l)+'</div></div>'+pctBox(anaP(c),g<2)+'</div>';
 }
 function hlCard(ico,title,it,color,minTxt){
-  if(!it)return'<div class="ana-hl" style="border-left-color:#cbd5cf;"><div class="hl-ico" style="opacity:.45">'+ic(ico,16)+'</div><div class="hl-body"><div class="hl-t">'+title+'</div><div class="hl-n" style="color:var(--muted);font-weight:600;font-size:14.5px;">'+minTxt+'</div></div></div>';
+  if(!it)return'<div class="ana-hl" style="border-left-color:#cbd5cf;"><div class="hl-ico" style="opacity:.45">'+ic(ico,16)+'</div><div class="hl-body"><div class="hl-t">'+title+'</div><div class="hl-n" style="color:var(--muted);font-weight:600;font-size:15.5px;">'+minTxt+'</div></div></div>';
   return'<div class="ana-hl" style="border-left-color:'+color+';"><div class="hl-ico">'+ic(ico,16)+'</div><div class="hl-body"><div class="hl-t">'+title+'</div><div class="hl-n">'+esc(it.name)+'</div></div>'
     +'<div class="hl-r"><b style="color:'+color+'">'+Math.round(it.p*100)+'%</b><span>'+it.w+'승 '+(it.d?it.d+'무 ':'')+it.l+'패</span></div></div>';
 }
@@ -2751,7 +2751,7 @@ function anaOverview(P){
     +'<div class="ana-tile"><div class="tl">승률</div><div class="tv" style="color:var(--accent)">'+(P.pct==null?'-':P.pct+'%')+'</div><div class="ts">승 ÷ (승+패) · 무승부 제외</div></div>'
     +'<div class="ana-tile"><div class="tl">게임 득률</div><div class="tv">'+(P.gpct==null?'-':P.gpct+'%')+'</div><div class="ts">이긴 게임 '+P.gf+' / 전체 '+(P.gf+P.ga)+'</div></div>'
     +'<div class="ana-tile"><div class="tl">경기당 게임차</div><div class="tv" style="color:'+(P.avgDiff>0?'var(--accent)':'var(--text)')+'">'+(P.avgDiff>0?'+':'')+P.avgDiff.toFixed(1)+'</div><div class="ts">이긴 게임 − 진 게임</div></div>'
-    +'<div class="ana-tile"><div class="tl">출석</div><div class="tv">'+P.att+'<small style="font-size:15px;color:var(--muted);font-weight:700;"> / '+P.attTotal+'회</small></div><div class="ts">'+(P.attTotal?(P.att===P.attTotal?'개근':'출석률 '+Math.round(P.att/P.attTotal*100)+'%'):'-')+'</div></div>'
+    +'<div class="ana-tile"><div class="tl">출석</div><div class="tv">'+P.att+'<small style="font-size:16px;color:var(--muted);font-weight:700;"> / '+P.attTotal+'회</small></div><div class="ts">'+(P.attTotal?(P.att===P.attTotal?'개근':'출석률 '+Math.round(P.att/P.attTotal*100)+'%'):'-')+'</div></div>'
     +'</div>';
   h+=aCard('전적 요약',wdlBar(P.w,P.d,P.l,12)
     +'<div class="wdl-nums"><div><b style="color:'+COL.W+'">'+P.w+'</b><span>승</span></div><div><b style="color:'+COL.DT+'">'+P.d+'</b><span>무</span></div><div><b style="color:'+COL.L+'">'+P.l+'</b><span>패</span></div></div>'+tiles);
@@ -2769,7 +2769,7 @@ function anaOverview(P){
     +kv('현재 흐름',P.cur.n>=2?(P.cur.k==='W'?''+P.cur.n+'연승 중':''+P.cur.n+'연패 중'):P.cur.n===1?(P.cur.k==='W'?'직전 경기 승':'직전 경기 패'):(P.n&&P.list[P.n-1].r==='D'?'직전 경기 무승부':'-')));
   // ④ 베스트·천적
   var bp=anaPick(P.partners,'best',2),nm=anaPick(P.opps,'worst',2),fv=anaPick(P.opps,'best',2);
-  h+=aCard('베스트 &amp; 천적','<div style="font-size:12.5px;color:var(--muted);margin:-4px 0 2px;">함께·맞대결 2경기 이상 기준</div>'
+  h+=aCard('베스트 &amp; 천적','<div style="font-size:13.5px;color:var(--muted);margin:-4px 0 2px;">함께·맞대결 2경기 이상 기준</div>'
     +hlCard('users','최고의 파트너',bp,COL.W,'2경기 이상 뛴 파트너가 없어요')
     +hlCard('flag','천적 <small>(내가 약한 상대)</small>',nm,'var(--amber)','뚜렷한 천적은 아직 없어요')
     +hlCard('target','자신 있는 상대',fv,COL.W,'뚜렷한 상대는 아직 없어요'));
@@ -2781,8 +2781,8 @@ function anaListCard(P,kind){
   var title=isP?'파트너별 성적':'상대별 성적';
   var seg=isP?miniSeg([['best','잘 맞는 순'],['worst','안 맞는 순']],aSortP,'setSortP')
               :miniSeg([['worst','천적부터'],['best','자신 있는 순']],aSortO,'setSortO');
-  if(!arr.length)return aCard(title,'<div class="empty" style="padding:22px 8px;font-size:15px;"><span class="empty-ico">'+ic(isP?'users':'ball',26)+'</span>'+(isP?'복식 경기 기록이 없어요':'경기 기록이 없어요')+'</div>');
-  var note='<div style="font-size:12.5px;color:var(--muted);margin:-4px 0 4px;line-height:1.55;">'+(isP?'같은 편으로 뛴 경기':'맞대결한 경기')+' · 승률은 무승부 제외 · 경기 수가 적으면 순위 보정<br><b>행을 누르면</b> 경기 내역이 펼쳐져요</div>';
+  if(!arr.length)return aCard(title,'<div class="empty" style="padding:22px 8px;font-size:16px;"><span class="empty-ico">'+ic(isP?'users':'ball',26)+'</span>'+(isP?'복식 경기 기록이 없어요':'경기 기록이 없어요')+'</div>');
+  var note='<div style="font-size:13.5px;color:var(--muted);margin:-4px 0 4px;line-height:1.55;">'+(isP?'같은 편으로 뛴 경기':'맞대결한 경기')+' · 승률은 무승부 제외 · 경기 수가 적으면 순위 보정<br><b>행을 누르면</b> 경기 내역이 펼쳐져요</div>';
   var rows=arr.map(function(x,i){
     var id=(isP?'p':'o')+x.id;
     return aRow({n:i+1,nc:(sort==='best'&&i<3)?RCOL[i]:'#94a3b8',
@@ -2825,8 +2825,8 @@ function anaTrend(P){
   if(ch){
     var mx=Math.max.apply(null,pts),mn=Math.min.apply(null,pts);
     h+=aCard('누적 승률',ch+'<div class="ana-chart-s"><span>현재 <b style="color:'+COL.W+'">'+Math.round(pts[pts.length-1])+'%</b></span><span>최고 <b>'+Math.round(mx)+'%</b></span><span>최저 <b>'+Math.round(mn)+'%</b></span></div>'
-      +'<div style="font-size:12px;color:var(--muted);margin-top:6px;">경기마다 쌓인 승률 · 점 색: <b style="color:'+COL.W+'">승</b> <b style="color:'+COL.DT+'">무</b> <b style="color:'+COL.L+'">패</b></div>');
-  }else h+=aCard('누적 승률','<div class="empty" style="padding:20px 8px;font-size:15px;"><span class="empty-ico">'+ic('trend-up',26)+'</span>승부가 난 경기가 2경기 이상 쌓이면<br>추이 그래프가 표시돼요</div>');
+      +'<div style="font-size:13px;color:var(--muted);margin-top:6px;">경기마다 쌓인 승률 · 점 색: <b style="color:'+COL.W+'">승</b> <b style="color:'+COL.DT+'">무</b> <b style="color:'+COL.L+'">패</b></div>');
+  }else h+=aCard('누적 승률','<div class="empty" style="padding:20px 8px;font-size:16px;"><span class="empty-ico">'+ic('trend-up',26)+'</span>승부가 난 경기가 2경기 이상 쌓이면<br>추이 그래프가 표시돼요</div>');
   // 모임별 타임라인 (최근 모임부터)
   var tl=P.days.slice().reverse().map(function(dy){
     var w2=0,d2=0,l2=0;dy.res.forEach(function(k){if(k==='W')w2++;else if(k==='D')d2++;else l2++;});
@@ -2850,7 +2850,7 @@ function anaPlayerHtml(mid,recs,sess,attSess){
   var P=anaPlayer(mid,recs,attSess);
   var ranks=calcRanks(anaPf,anaLg,'match').filter(function(x){return x.played>0;});
   var h=anaHero(mem,P,ranks);
-  if(!P.n)return h+aEmpty('ball','이 조건에서 <b>'+esc(mem.name)+'</b> 선수의<br>확정된 경기 기록이 없어요.<br><span style="font-size:14px">리그·기간 필터를 바꿔보세요.</span>');
+  if(!P.n)return h+aEmpty('ball','이 조건에서 <b>'+esc(mem.name)+'</b> 선수의<br>확정된 경기 기록이 없어요.<br><span style="font-size:15px">리그·기간 필터를 바꿔보세요.</span>');
   h+=anaTabs();
   if(aTab==='partner')h+=anaListCard(P,'p');
   else if(aTab==='opponent')h+=anaListCard(P,'o');
@@ -2885,7 +2885,7 @@ function anaClubHtml(recs,sess,attSess){
   pairs.forEach(function(o){o.g=o.w+o.d+o.l;o.p=anaP(o);});
   var minG=pairs.filter(function(o){return o.g>=3;}).length>=4?3:2;
   var tp=pairs.filter(function(o){return o.g>=minG&&o.p>=0;}).sort(function(a,b){return anaS(b)-anaS(a)||b.w-a.w||b.g-a.g;}).slice(0,5);
-  if(tp.length)cards+=aCard('최강 복식 조합','<div style="font-size:12.5px;color:var(--muted);margin:-4px 0 4px;">함께 '+minG+'경기 이상 · 승률순 (경기 수가 적으면 순위 보정)</div>'
+  if(tp.length)cards+=aCard('최강 복식 조합','<div style="font-size:13.5px;color:var(--muted);margin:-4px 0 4px;">함께 '+minG+'경기 이상 · 승률순 (경기 수가 적으면 순위 보정)</div>'
     +tp.map(function(o,i){return aRow({n:i+1,nc:i<3?RCOL[i]:'#94a3b8',name:'<span class="rk-name">'+esc(gn(o.a))+' · '+esc(gn(o.b))+'</span>',
       sub:'<b style="color:var(--text2)">'+o.g+'경기</b> · '+wdlTxt(o.w,o.d,o.l),bar:wdlBar(o.w,o.d,o.l,6),stat:pctBox(o.p,false)});}).join(''));
   // ② 요즘 흐름 (랭킹과 같은 추세 기준)
@@ -2898,7 +2898,7 @@ function anaClubHtml(recs,sess,attSess){
   var trRow=function(t,i,isUp){return aRow({n:trendH(isUp?'up':'down',16),nc:isUp?COL.W:COL.L,name:'<span class="rk-name">'+esc(t.x.name)+'</span>'+fdotsH(t.x.form,5),
     sub:'최근 5경기 <b style="color:var(--text2)">'+Math.round(t.rw*100)+'%</b> · 전체 '+Math.round(t.ow*100)+'%',
     stat:'<span class="rpct'+(isUp?' hi':' lo')+'">'+(isUp?'+':'')+Math.round(t.dv*100)+'%p</span>'});};
-  if(up.length||dn.length)cards+=aCard('요즘 흐름','<div style="font-size:12.5px;color:var(--muted);margin:-4px 0 2px;">최근 5경기 승률 vs 전체 승률 (승부 6경기 이상)</div>'
+  if(up.length||dn.length)cards+=aCard('요즘 흐름','<div style="font-size:13.5px;color:var(--muted);margin:-4px 0 2px;">최근 5경기 승률 vs 전체 승률 (승부 6경기 이상)</div>'
     +(up.length?'<div class="sub-title" style="margin-top:8px;">상승세</div>'+up.map(function(t,i){return trRow(t,i,true);}).join(''):'')
     +(dn.length?'<div class="sub-title">하락세</div>'+dn.map(function(t,i){return trRow(t,i,false);}).join(''):''));
   // ③ 연승
@@ -2913,18 +2913,18 @@ function anaClubHtml(recs,sess,attSess){
   var minC=players.filter(function(p){return(p.P.close.w+p.P.close.l)>=3;}).length>=3?3:2;
   var ck=players.filter(function(p){return(p.P.close.w+p.P.close.l)>=minC;}).map(function(p){return{p:p,r:anaP(p.P.close),s:anaS(p.P.close),g:p.P.close.w+p.P.close.d+p.P.close.l};})
     .sort(function(a,b){return b.s-a.s||b.g-a.g;}).slice(0,3);
-  if(ck.length)cards+=aCard('접전왕','<div style="font-size:12.5px;color:var(--muted);margin:-4px 0 4px;">2게임 차 이내 접전 '+minC+'경기 이상 · 승률순</div>'
+  if(ck.length)cards+=aCard('접전왕','<div style="font-size:13.5px;color:var(--muted);margin:-4px 0 4px;">2게임 차 이내 접전 '+minC+'경기 이상 · 승률순</div>'
     +ck.map(function(c,i){return aRow({n:i+1,nc:i<3?RCOL[i]:'#94a3b8',name:'<span class="rk-name">'+esc(c.p.m.name)+'</span>',
       sub:'접전 <b style="color:var(--text2)">'+c.g+'경기</b> · '+wdlTxt(c.p.P.close.w,c.p.P.close.d,c.p.P.close.l),bar:wdlBar(c.p.P.close.w,c.p.P.close.d,c.p.P.close.l,6),stat:pctBox(c.r,false)});}).join(''));
   // ⑤ 라이벌 매치업
   var rvs=Object.keys(rv).map(function(k){return rv[k];}).filter(function(o){return isMem(o.a)&&isMem(o.b);});
   rvs.forEach(function(o){o.g=o.w+o.d+o.l;});
   var rl=rvs.filter(function(o){return o.g>=3&&o.w>=1&&o.l>=1;}).sort(function(a,b){return Math.abs(a.w-a.l)-Math.abs(b.w-b.l)||b.g-a.g;}).slice(0,4);
-  if(rl.length)cards+=aCard('라이벌 매치업','<div style="font-size:12.5px;color:var(--muted);margin:-4px 0 4px;">3번 이상 맞붙은 상대 중 전적이 가장 팽팽한 순</div>'
+  if(rl.length)cards+=aCard('라이벌 매치업','<div style="font-size:13.5px;color:var(--muted);margin:-4px 0 4px;">3번 이상 맞붙은 상대 중 전적이 가장 팽팽한 순</div>'
     +rl.map(function(o,i){return aRow({n:i+1,nc:'#94a3b8',name:'<span class="rk-name">'+esc(gn(o.a))+' <small style="color:var(--muted);font-weight:600;">vs</small> '+esc(gn(o.b))+'</span>',
       sub:esc(gn(o.a))+' 기준 · '+wdlTxt(o.w,o.d,o.l),bar:wdlBar(o.w,o.d,o.l,6),
       stat:'<span class="rpct">'+o.w+' : '+o.l+'</span>'});}).join(''));
-  if(!cards)cards=aEmpty('chart','경기 결과가 더 쌓이면<br>클럽 하이라이트가 표시돼요.<br><span style="font-size:14px">위에서 선수를 눌러 개인 분석도 볼 수 있어요.</span>');
+  if(!cards)cards=aEmpty('chart','경기 결과가 더 쌓이면<br>클럽 하이라이트가 표시돼요.<br><span style="font-size:15px">위에서 선수를 눌러 개인 분석도 볼 수 있어요.</span>');
   return h+cards;
 }
 
@@ -2951,8 +2951,8 @@ function renderAnaView(){
   if(aSel!=='club'&&!isMem(aSel))aSel='club';
   var sess=anaSess(true),attSess=anaSess(false),recs=anaRecords(sess);
   anaNote();
-  if(!DB.sessions.length){v.innerHTML=aEmpty('chart','아직 모임 기록이 없어요.<br><span style="font-size:14px">경기 탭에서 첫 모임을 편성해보세요.</span>');return;}
-  if(!recs.length&&aSel==='club'){v.innerHTML=aEmpty('ball','이 조건에서 확정된 경기 결과가 없어요.<br><span style="font-size:14px">경기 탭에서 점수를 입력하고 <b>결과 확정</b>을 누르면<br>분석이 표시돼요. (리그·기간 필터도 확인해보세요)</span>');return;}
+  if(!DB.sessions.length){v.innerHTML=aEmpty('chart','아직 모임 기록이 없어요.<br><span style="font-size:15px">경기 탭에서 첫 모임을 편성해보세요.</span>');return;}
+  if(!recs.length&&aSel==='club'){v.innerHTML=aEmpty('ball','이 조건에서 확정된 경기 결과가 없어요.<br><span style="font-size:15px">경기 탭에서 점수를 입력하고 <b>결과 확정</b>을 누르면<br>분석이 표시돼요. (리그·기간 필터도 확인해보세요)</span>');return;}
   v.innerHTML=aSel==='club'?anaClubHtml(recs,sess,attSess):anaPlayerHtml(aSel,recs,sess,attSess);
 }
 function rAna(){renderAnaChips();renderAnaView();}
