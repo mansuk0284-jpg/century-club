@@ -258,6 +258,7 @@ input.mc-score::-webkit-outer-spin-button,input.mc-score::-webkit-inner-spin-but
 .pill.warn{border-color:rgba(183,121,31,.45);color:var(--amber);background:var(--amber-l);}
 /* ── 회원 프로필 (라켓·스트링) ── */
 .prof-back{display:flex;align-items:center;gap:6px;padding:10px 12px 8px;}
+.prof-back .pg-hd{min-width:0;}.prof-back .pg-hd .ko{white-space:nowrap;}.prof-back .pg-hd .en{white-space:nowrap;}
 .ct-en{font-family:'Cinzel',serif;font-size:10px;font-weight:700;letter-spacing:2px;color:var(--accent);text-transform:uppercase;margin-left:2px;}
 .f-lbl{font-size:14px;font-weight:700;color:var(--text2);margin:12px 0 6px;}
 .f-lbl small{font-weight:500;color:var(--muted);}
@@ -332,7 +333,8 @@ input.mc-score::-webkit-outer-spin-button,input.mc-score::-webkit-inner-spin-but
 .st-more{font-size:13.5px;color:var(--accent);font-weight:600;background:none;border:none;padding:6px 0 2px 19px;cursor:pointer;font-family:inherit;}
 /* ── 코트 예약 현황 (홈) ── */
 .sec-row{display:flex;align-items:center;gap:8px;padding:18px 18px 8px;}
-.sec-row .sec-label{padding:0;flex:1;}
+.sec-row .sec-label{padding:0;flex:1;white-space:nowrap;min-width:0;overflow:hidden;}
+.sbtn.sq{width:34px;height:32px;padding:0;justify-content:center;flex-shrink:0;}
 .bk-nav{display:flex;align-items:center;gap:4px;margin:-4px 0 6px;}
 .bk-range{flex:1;text-align:center;font-family:'Gothic A1',sans-serif;font-size:16px;font-weight:800;color:var(--text);line-height:1.2;}
 .bk-range small{display:block;font-family:'Noto Sans KR',sans-serif;font-size:12.5px;color:var(--muted);font-weight:500;margin-top:2px;}
@@ -361,6 +363,49 @@ input.mc-score::-webkit-outer-spin-button,input.mc-score::-webkit-inner-spin-but
 .time-row{display:flex;gap:8px;align-items:center;}
 .time-row input{flex:1;}
 .time-row span{color:var(--muted);flex-shrink:0;}
+/* 예약 요약 행 (홈·달력) */
+.bkr{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line2);cursor:pointer;}
+.bkr:last-child{border-bottom:none;}
+.bkr.past{opacity:.58;}
+.bkr.today .bkr-d b{color:var(--accent);}
+.bkr-d{width:42px;flex-shrink:0;text-align:center;line-height:1.15;}
+.bkr-d b{display:block;font-family:'Gothic A1',sans-serif;font-size:16px;font-weight:800;color:var(--text);}
+.bkr-d span{font-size:12px;color:var(--muted);}
+.bkr-m{flex:1;min-width:0;}
+.bkr-t{font-size:15.5px;font-weight:700;color:var(--text);font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:flex;align-items:center;gap:8px;}
+.bkr-s{font-size:13.5px;color:var(--text2);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.bkr-n{flex-shrink:0;min-width:44px;text-align:center;font-family:'Gothic A1',sans-serif;font-size:16px;font-weight:800;color:var(--accent);background:var(--accent-l2);border-radius:6px;padding:6px 7px;line-height:1;}
+.bkr-n small{font-size:11px;font-weight:600;margin-left:1px;}
+.bkr-n.zero{color:var(--muted);background:var(--gray-1);}
+.bkr>.ic{color:var(--gray-3);}
+/* 월간 달력 */
+.cal-nav{display:flex;align-items:center;gap:4px;margin-bottom:8px;}
+.cal-title{flex:1;text-align:center;font-family:'Gothic A1',sans-serif;font-size:18px;font-weight:800;color:var(--text);line-height:1.15;}
+.cal-title small{display:block;font-family:'Noto Sans KR',sans-serif;font-size:12.5px;color:var(--muted);font-weight:500;margin-top:2px;}
+.cal-wd{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));font-size:12px;color:var(--muted);text-align:center;padding-bottom:4px;border-bottom:1px solid var(--line);}
+.cal-wd span:nth-child(6){color:#2F6F9E;}.cal-wd span:nth-child(7){color:var(--red);}
+.cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:2px;margin-top:4px;}
+.cal-c{min-height:58px;min-width:0;overflow:hidden;border-radius:6px;padding:3px 2px;cursor:pointer;display:flex;flex-direction:column;gap:2px;border:1px solid transparent;}
+.cal-c.other{cursor:default;}
+.cal-c.sel{border-color:var(--accent);background:var(--accent-l2);}
+.cal-n{font-size:13px;font-weight:700;color:var(--text);width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;align-self:flex-start;}
+.cal-c:nth-child(7n) .cal-n{color:var(--red);}.cal-c:nth-child(7n-1) .cal-n{color:#2F6F9E;}
+.cal-c.today .cal-n{background:var(--accent);color:#fff!important;}
+.cal-m{font-size:10px;font-weight:700;color:#fff;border-radius:3px;padding:2px 3px;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center;}
+.cal-m.s-grass{background:var(--accent);}.cal-m.s-hard{background:#2F6F9E;}.cal-m.s-clay{background:#B5552F;}
+.cal-more{font-size:10px;color:var(--muted);text-align:center;}
+@media (max-width:340px){.cal-v{display:none;}}
+.cal-legend{display:flex;gap:10px;align-items:center;font-size:12px;color:var(--muted);margin-top:8px;flex-wrap:wrap;}
+.cal-dot{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:4px;vertical-align:-1px;}
+/* 예약 상세 */
+.bkd-hd{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.bkd-day{font-family:'Gothic A1',sans-serif;font-size:22px;font-weight:800;color:var(--text);letter-spacing:-.5px;}
+.bkd-time{font-size:19px;font-weight:700;color:var(--accent);font-variant-numeric:tabular-nums;}
+.bkd-venue{font-size:17px;font-weight:700;color:var(--text);margin-top:8px;line-height:1.4;}
+.bkd-sec{margin-top:12px;padding-top:12px;border-top:1px solid var(--line2);}
+.bkd-sec .f-lbl{margin-top:0;}
+.att-line{font-size:14.5px;color:var(--text2);line-height:1.6;}
+.att-line b{color:var(--text);}
 .av{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;flex-shrink:0;}
 
 /* ── 기록 ── */
@@ -671,7 +716,7 @@ input.mc-score::-webkit-outer-spin-button,input.mc-score::-webkit-inner-spin-but
 
   <!-- 섹션: 코트 예약 현황 (주간) -->
   <div id="home-bk">
-    <div class="sec-row"><div class="sec-label">코트 예약 현황<span class="sec-en">Bookings</span></div><button class="sbtn primary" onclick="bkOpen('')"><i data-ic="plus" data-size="13"></i>예약 추가</button></div>
+    <div class="sec-row"><div class="sec-label">코트 예약 현황<span class="sec-en">Bookings</span></div><button class="sbtn sq" onclick="bkCal()" title="월간 달력"><i data-ic="calendar" data-size="16"></i></button><button class="sbtn sq primary" onclick="bkGo('form','')" title="예약 추가"><i data-ic="plus" data-size="16"></i></button></div>
     <div class="card" id="home-bk-card"></div>
   </div>
 
@@ -683,6 +728,9 @@ input.mc-score::-webkit-outer-spin-button,input.mc-score::-webkit-inner-spin-but
     </div>
   </div>
 </div>
+
+<!-- ══ 코트 예약 (달력 · 상세 · 입력) ══ -->
+<div id="pg-bk" class="pg"><div id="bk-page"></div></div>
 
 <!-- ══ 회원관리 ══ -->
 <div id="pg-members" class="pg">
@@ -1206,7 +1254,7 @@ function lgIco(s){return lgTagH(s);}
 function lgName(s){return lgOf(s)==='baekse'?'백세리그':'일반리그';}
 
 /* ── FIREBASE ── */
-var APP_VER='5.7 (2026-09-26)';
+var APP_VER='5.8 (2026-09-26)';
 var fbApp=null,fbDB=null,fbRef=null,isOnline=false;
 var FB_KEY='btc_firebase_cfg';
 var lastSavedSnapshot='';   // 자기가 저장한 데이터 추적 (echo 방지)
@@ -2176,7 +2224,7 @@ function goTab(tab,sub,push){
   var idx=TABS.indexOf(tab);
   var btn=document.querySelectorAll('#nav button')[idx];
   if(btn)btn.classList.add('on');
-  var fn={home:rHome,members:rMembers,session:rSession,history:rHistory,ranking:rRanking,analysis:rAna,settings:rSettings};
+  var fn={home:rHome,members:rMembers,session:rSession,history:rHistory,ranking:rRanking,analysis:rAna,settings:rSettings,bk:rBk};
   if(fn[tab])fn[tab]();
   if(push&&!isPopping)window.history.pushState({tab:tab,sub:sub||null},'',window.location.pathname);
 }
@@ -2185,7 +2233,7 @@ function refreshTab(){
   var idx=-1;
   document.querySelectorAll('#nav button').forEach(function(b,i){if(b.classList.contains('on'))idx=i;});
   var tab=TABS[idx]||'home';
-  var fn={home:rHome,members:rMembers,history:rHistory,ranking:rRanking,analysis:rAna,settings:rSettings};
+  var fn={home:rHome,members:rMembers,history:rHistory,ranking:rRanking,analysis:rAna,settings:rSettings,bk:rBk};
   if(fn[tab])fn[tab]();
 }
 
@@ -2198,6 +2246,7 @@ window.addEventListener('popstate',function(e){
       else if(state.sub==='prev'){if(pending)showPrev();else showForm();}
       else{showActive();}
     }else{
+      if(state.tab==='bk'){var bv=bkFromSub(state.sub);if(bv)bkView=bv;}
       if(state.tab==='members'&&state.sub==='prof'){var pid=null;try{pid=sessionStorage.getItem('btc_prof');}catch(e){}if(pid&&memById(pid))profId=pid;}
       else if(profId){profId=null;profForm=null;stSet('btc_prof','');}
       goTab(state.tab,null,false);
@@ -2226,69 +2275,128 @@ function rHome(){
 }
 function openSes(id){activeId=id;goTab('session');}
 
-/* ── 코트 예약 현황 (홈 · 주간 · 참여 여부) ── */
+/* ── 코트 예약: 홈 주간 요약 · 월간 달력 · 상세(참여 여부) · 입력 ── */
 ICONS['chevron-left']='<path d="m15 5.5-6.5 6.5L15 18.5"/>';
-var VENUES=[{n:'동래실내테니스장',s:'grass'},{n:'백운포테니스장',s:'grass'},{n:'스포원테니스장',s:'hard'},{n:'송정테니스장',s:'grass'}];   // 자주 가는 곳
+var VENUES=[{n:'동래실내테니스장',s:'grass',k:'동래'},{n:'백운포테니스장',s:'grass',k:'백운포'},{n:'스포원테니스장',s:'hard',k:'스포원'},{n:'송정테니스장',s:'grass',k:'송정'}];   // 자주 가는 곳
 var TIME_PRESETS=[['06:00','08:00'],['07:00','09:00'],['18:00','20:00'],['19:00','21:00'],['20:00','22:00']];
-var bkWeek=0,bkForm=null,bkRoster={},meId=null;   // 보는 주(0=이번 주) · 열린 입력 폼 · 명단 펼침 · 이 기기의 "나"
+var bkWeek=0,meId=null;                                   // 홈에서 보는 주(0=이번 주) · 이 기기의 "나"
+var bkView={mode:'cal',id:'',month:'',date:'',sel:''};    // 예약 페이지 상태: mode cal|detail|form
 try{meId=localStorage.getItem('btc_me')||null;}catch(e){}
 function bookings(){return toArr(DB.bookings);}
 function bkById(id){return bookings().filter(function(b){return b.id===id;})[0]||null;}
 function fmtD(dt){var m=dt.getMonth()+1,d=dt.getDate();return dt.getFullYear()+'-'+(m<10?'0':'')+m+'-'+(d<10?'0':'')+d;}
 function addDays(d,n){var dt=new Date(d+'T00:00:00');dt.setDate(dt.getDate()+n);return fmtD(dt);}
 function weekStart(d){var dt=new Date(d+'T00:00:00');dt.setDate(dt.getDate()-((dt.getDay()+6)%7));return fmtD(dt);}   // 월요일 시작
-function bkDay(d){var dt=new Date(d+'T00:00:00');return DAYS[dt.getDay()]+' '+(dt.getMonth()+1)+'/'+dt.getDate();}
+function dow(d){return DAYS[new Date(d+'T00:00:00').getDay()];}
 function md(d){var dt=new Date(d+'T00:00:00');return(dt.getMonth()+1)+'/'+dt.getDate();}
-function setMe(v){meId=(v&&memById(v))?v:null;try{if(meId)localStorage.setItem('btc_me',meId);else localStorage.removeItem('btc_me');}catch(e){}rBookings(true);}
+function bkShort(v){var p=VENUES.filter(function(x){return x.n===v;})[0];return p?p.k:String(v||'').replace(/테니스장|체육공원|실내/g,'').slice(0,3);}
+function bkByDate(){var m={};bookings().forEach(function(b){(m[b.date]=m[b.date]||[]).push(b);});return m;}
+function setMe(v){meId=(v&&memById(v))?v:null;try{if(meId)localStorage.setItem('btc_me',meId);else localStorage.removeItem('btc_me');}catch(e){}rBk(true);}
 function bkAttCount(b){var y=0,n=0;Object.keys(b.att||{}).forEach(function(k){if(!memById(k))return;if(b.att[k]===1)y++;else if(b.att[k]===0)n++;});return{yes:y,no:n};}
 function bkNames(b,v){return DB.members.filter(function(m){return b.att&&b.att[m.id]===v;}).map(function(m){return esc(m.name);});}
-function rBookings(force){
-  var card=document.getElementById('home-bk-card');if(!card)return;
-  if(bkForm&&!force)return;   // 입력 중엔 동기화로 화면을 덮지 않음
+/* 페이지 상태 ↔ history/sessionStorage */
+function bkSub(){return[bkView.mode,bkView.id||'',bkView.month||'',bkView.date||'',bkView.sel||''].join('|');}
+function bkFromSub(x){if(!x)return null;var p=String(x).split('|');if(!p[0])return null;return{mode:p[0],id:p[1]||'',month:p[2]||'',date:p[3]||'',sel:p[4]||''};}
+function bkGo(mode,id,opt){
+  opt=opt||{};
+  bkView={mode:mode,id:id||'',month:opt.month||bkView.month||today().slice(0,7),date:opt.date||'',sel:opt.sel!==undefined?opt.sel:(bkView.sel||'')};
+  stSet('btc_bk',JSON.stringify(bkView));
+  goTab('bk',bkSub(),!opt.replace&&opt.push!==false);
+  if(opt.replace&&!isPopping)window.history.replaceState({tab:'bk',sub:bkSub()},'',window.location.pathname);
+}
+function bkCal(){bkGo('cal','',{month:today().slice(0,7),sel:today()});}
+function bkBack(){if(window.history.state&&window.history.state.tab==='bk')window.history.back();else goTab('home');}
+function bkPageHd(ko,en,right){return'<div class="prof-back"><button class="ic-btn" onclick="bkBack()">'+ic('arrow-left',20)+'</button><span class="pg-hd" style="padding:0;"><span class="ko">'+ko+'</span><span class="en">'+en+'</span></span>'+(right?'<span style="margin-left:auto;">'+right+'</span>':'')+'</div>';}
+function rBk(force){
+  var el=document.getElementById('bk-page');if(!el)return;
   if(meId&&!memById(meId))meId=null;
-  if(bkForm){card.innerHTML=bkFormH(bkForm.id?bkById(bkForm.id):null);return;}
+  var sub=bkSub();
+  if(bkView.mode==='form'){if(!force&&el.getAttribute('data-sub')===sub)return;el.setAttribute('data-sub',sub);el.innerHTML=bkFormPageH();return;}   // 입력 중엔 동기화로 덮지 않음
+  el.setAttribute('data-sub',sub);
+  if(bkView.mode==='detail'){var b=bkById(bkView.id);el.innerHTML=b?bkDetailH(b):bkPageHd('예약 상세','Booking')+'<div class="card">'+emptyH('calendar','삭제되었거나 없는 예약입니다.')+'</div>';return;}
+  el.innerHTML=bkCalH();
+}
+/* ── 홈: 주간 요약 ── */
+function rBookings(){
+  var card=document.getElementById('home-bk-card');if(!card)return;
   var t=today(),ws=addDays(weekStart(t),bkWeek*7),we=addDays(ws,6);
   var list=bookings().filter(function(b){return b.date>=ws&&b.date<=we;});
   var lbl=bkWeek===0?'이번 주':bkWeek===1?'다음 주':bkWeek===-1?'지난 주':(bkWeek>0?bkWeek+'주 뒤':(-bkWeek)+'주 전');
-  var h='<div class="bk-nav"><button class="ic-btn" onclick="bkWeek--;rBookings(true)">'+ic('chevron-left',18)+'</button>'
-    +'<div class="bk-range">'+md(ws)+' – '+md(we)+'<small>'+lbl+'</small></div>'
-    +'<button class="ic-btn" onclick="bkWeek++;rBookings(true)">'+ic('chevron-right',18)+'</button></div>';
-  h+='<div class="me-sel"><span>나:</span><select onchange="setMe(this.value)"><option value="">이름 선택</option>'+DB.members.map(function(m){return'<option value="'+m.id+'"'+(m.id===meId?' selected':'')+'>'+esc(m.name)+'</option>';}).join('')+'</select>'
-    +'<span style="flex:1;"></span>'+(bkWeek!==0?'<button class="sbtn" onclick="bkWeek=0;rBookings(true)">이번 주로</button>':'<span style="font-size:12.5px;">참여·불참은 본인 이름 기준</span>')+'</div>';
+  var h='<div class="bk-nav"><button class="ic-btn" onclick="bkWeek--;rBookings()">'+ic('chevron-left',18)+'</button>'
+    +'<div class="bk-range">'+md(ws)+' – '+md(we)+'<small>'+lbl+(list.length?' · '+list.length+'건':'')+'</small></div>'
+    +'<button class="ic-btn" onclick="bkWeek++;rBookings()">'+ic('chevron-right',18)+'</button></div>';
   if(!list.length){
     var nx=bookings().filter(function(b){return b.date>=t;})[0];
-    h+='<div class="prof-note" style="text-align:center;padding:14px 0 8px;">이 주에는 예약이 없어요.'+(nx?'<br><span style="color:var(--muted);font-size:13.5px;">다음 예약 · '+bkDay(nx.date)+' '+esc(nx.start)+' '+esc(nx.venue)+'</span>':'<br><span style="color:var(--muted);font-size:13.5px;">[예약 추가]로 잡아둔 코트를 적어두세요.</span>')+'</div>';
-  }else h+=list.map(function(b){return bkCardH(b,t);}).join('');
+    h+='<div class="prof-note" style="text-align:center;padding:12px 0 8px;">이 주에는 예약이 없어요.'+(nx?'<br><span style="color:var(--muted);font-size:13.5px;">다음 예약 · '+dow(nx.date)+' '+md(nx.date)+' '+esc(nx.start)+' '+esc(nx.venue)+'</span>':'<br><span style="color:var(--muted);font-size:13.5px;">[예약 추가]로 잡아둔 코트를 적어두세요.</span>')
+      +(bkWeek!==0?'<div style="margin-top:8px;"><button class="sbtn" onclick="bkWeek=0;rBookings()">이번 주로</button></div>':'')+'</div>';
+  }else h+=list.map(function(b){return bkRowH(b,t);}).join('')+(bkWeek!==0?'<div style="text-align:center;padding-top:8px;"><button class="sbtn" onclick="bkWeek=0;rBookings()">이번 주로</button></div>':'');
   card.innerHTML=h;
 }
-function bkCardH(b,t){
-  var c=bkAttCount(b),mine=(meId&&b.att)?b.att[meId]:undefined,past=b.date<t,isT=b.date===t,yes=bkNames(b,1);
-  var h='<div class="bk'+(isT?' today':past?' past':'')+'"><div class="bk-hd"><span class="bk-day">'+bkDay(b.date)+'</span><span class="bk-time">'+esc(b.start)+'–'+esc(b.end)+'</span>'+surfH(b.surface)
-    +'<span class="bk-act"><button class="ic-btn" onclick="bkOpen(\''+b.id+'\')">'+ic('edit',16)+'</button><button class="ic-btn" style="color:var(--red);" onclick="delBk(\''+b.id+'\')">'+ic('trash',16)+'</button></span></div>'
-    +'<div class="bk-venue">'+esc(b.venue)+(b.court?'<span class="bk-court">'+esc(b.court)+'번 코트</span>':'')+'</div>'+(b.memo?'<div class="bk-memo">'+esc(b.memo)+'</div>':'')
-    +'<div class="bk-att">참여 <b>'+c.yes+'명</b>'+(c.no?' · 불참 '+c.no+'명':'')+(yes.length?'<div class="bk-names">'+yes.join(', ')+'</div>':'')+'</div>'
-    +'<div class="bk-btns"><button class="sbtn'+(mine===1?' on-yes':'')+'" onclick="bkMe(\''+b.id+'\',1)">'+ic('check',13)+'참여</button><button class="sbtn'+(mine===0?' on-no':'')+'" onclick="bkMe(\''+b.id+'\',0)">'+ic('x',13)+'불참</button>'
-    +'<button class="sbtn" onclick="bkRoster[\''+b.id+'\']=!bkRoster[\''+b.id+'\'];rBookings(true)">'+ic(bkRoster[b.id]?'chevron-up':'users',13)+'명단</button>'
-    +(c.yes>=2&&!past?'<button class="sbtn" onclick="bkToSession(\''+b.id+'\')">'+ic('shuffle',13)+'편성</button>':'')+'</div>';
-  if(bkRoster[b.id])h+='<div class="roster">'+DB.members.map(function(m){var v=b.att?b.att[m.id]:undefined;return'<button type="button" class="tog'+(v===1?' yes':v===0?' no':'')+'" onclick="bkCycle(\''+b.id+'\',\''+m.id+'\')">'+esc(m.name)+'</button>';}).join('')
-    +'<div style="width:100%;font-size:12.5px;color:var(--muted);">이름을 누를 때마다 미정 → 참여 → 불참 순으로 바뀝니다 (다른 회원 대신 입력할 때)</div></div>';
-  return h+'</div>';
+function bkRowH(b,t){   // 요약 행: 날짜 · 시간 · 코트 · 참여 인원 (누르면 상세)
+  var c=bkAttCount(b),past=b.date<t,isT=b.date===t;
+  return'<div class="bkr'+(isT?' today':past?' past':'')+'" onclick="bkGo(\'detail\',\''+b.id+'\')"><div class="bkr-d"><b>'+dow(b.date)+'</b><span>'+md(b.date)+'</span></div>'
+    +'<div class="bkr-m"><div class="bkr-t">'+esc(b.start)+'–'+esc(b.end)+surfH(b.surface)+'</div><div class="bkr-s">'+esc(b.venue)+(b.court?' · '+esc(b.court)+'번 코트':'')+'</div></div>'
+    +'<span class="bkr-n'+(c.yes?'':' zero')+'">'+c.yes+'<small>명</small></span>'+ic('chevron-right',16)+'</div>';
+}
+/* ── 월간 달력 ── */
+function bkCalH(){
+  var t=today(),m=bkView.month||t.slice(0,7),y=parseInt(m.slice(0,4),10),mo=parseInt(m.slice(5,7),10);
+  var first=new Date(y,mo-1,1),days=new Date(y,mo,0).getDate(),off=(first.getDay()+6)%7,rows=Math.ceil((off+days)/7);
+  var map=bkByDate(),sel=bkView.sel&&bkView.sel.slice(0,7)===m?bkView.sel:(t.slice(0,7)===m?t:'');
+  var pm=fmtD(new Date(y,mo-2,1)).slice(0,7),nm=fmtD(new Date(y,mo,1)).slice(0,7);
+  var cnt=Object.keys(map).filter(function(d){return d.slice(0,7)===m;}).reduce(function(a,d){return a+map[d].length;},0);
+  var h=bkPageHd('예약 달력','Calendar','<button class="sbtn sq primary" title="예약 추가" onclick="bkGo(\'form\',\'\',{date:\''+(sel||t)+'\'})">'+ic('plus',16)+'</button>');
+  h+='<div class="card"><div class="cal-nav"><button class="ic-btn" onclick="bkGo(\'cal\',\'\',{month:\''+pm+'\',sel:\'\',push:false})">'+ic('chevron-left',18)+'</button><div class="cal-title">'+y+'년 '+mo+'월<small>예약 '+cnt+'건'+(m!==t.slice(0,7)?' · <a href="#" onclick="bkCal();return false;" style="color:var(--accent);">이번 달</a>':'')+'</small></div><button class="ic-btn" onclick="bkGo(\'cal\',\'\',{month:\''+nm+'\',sel:\'\',push:false})">'+ic('chevron-right',18)+'</button></div>';
+  h+='<div class="cal-wd">'+['월','화','수','목','금','토','일'].map(function(x){return'<span>'+x+'</span>';}).join('')+'</div><div class="cal">';
+  for(var i=0;i<rows*7;i++){
+    var dn=i-off+1;
+    if(dn<1||dn>days){h+='<div class="cal-c other"></div>';continue;}
+    var d=m+'-'+(dn<10?'0':'')+dn,bs=map[d]||[];
+    h+='<div class="cal-c'+(d===t?' today':'')+(d===sel?' sel':'')+'" onclick="bkGo(\'cal\',\'\',{month:\''+m+'\',sel:\''+d+'\',push:false})"><span class="cal-n">'+dn+'</span>'
+      +bs.slice(0,2).map(function(b){return'<span class="cal-m s-'+((b.surface==='hard'||b.surface==='clay')?b.surface:'grass')+'">'+parseInt(b.start,10)+'시 <span class="cal-v">'+esc(bkShort(b.venue))+'</span></span>';}).join('')
+      +(bs.length>2?'<span class="cal-more">+'+(bs.length-2)+'</span>':'')+'</div>';
+  }
+  h+='</div><div class="cal-legend"><span><i class="cal-dot s-grass" style="background:var(--accent);"></i>잔디</span><span><i class="cal-dot" style="background:#2F6F9E;"></i>하드</span><span><i class="cal-dot" style="background:#B5552F;"></i>클레이</span><span style="margin-left:auto;">날짜를 누르면 그날 예약</span></div></div>';
+  if(sel){
+    var bs2=map[sel]||[];
+    h+='<div class="card"><div class="card-title" style="justify-content:space-between;flex-wrap:wrap;row-gap:8px;"><span class="nw">'+dstr(sel)+(sel===t?' <span class="pill ok">오늘</span>':'')+'</span><button class="sbtn" onclick="bkGo(\'form\',\'\',{date:\''+sel+'\'})">'+ic('plus',13)+'이 날 예약</button></div>'
+      +(bs2.length?bs2.map(function(b){return bkRowH(b,t);}).join(''):'<div class="prof-note" style="text-align:center;padding:6px 0;">이 날은 예약이 없어요.</div>')+'</div>';
+  }
+  return h;
+}
+/* ── 상세 (참여 여부 입력) ── */
+function meSelH(){return'<div class="me-sel" style="border:none;padding:0 0 8px;"><span>나:</span><select onchange="setMe(this.value)"><option value="">이름 선택</option>'+DB.members.map(function(m){return'<option value="'+m.id+'"'+(m.id===meId?' selected':'')+'>'+esc(m.name)+'</option>';}).join('')+'</select><span style="font-size:12.5px;">이 폰에서 참여·불참을 누를 이름</span></div>';}
+function bkDetailH(b){
+  var t=today(),c=bkAttCount(b),yes=bkNames(b,1),no=bkNames(b,0),mine=(meId&&b.att)?b.att[meId]:undefined,und=Math.max(0,DB.members.length-c.yes-c.no);
+  var h=bkPageHd('예약 상세','Booking','<button class="sbtn" onclick="bkGo(\'form\',\''+b.id+'\')">'+ic('edit',13)+'수정</button>');
+  h+='<div class="card"><div class="bkd-hd"><span class="bkd-day">'+dstr(b.date)+'</span>'+(b.date===t?'<span class="pill ok">오늘</span>':b.date<t?'<span class="pill">지난 예약</span>':'')+'</div>'
+    +'<div class="bkd-hd" style="margin-top:4px;"><span class="bkd-time">'+esc(b.start)+' – '+esc(b.end)+'</span>'+surfH(b.surface)+'</div>'
+    +'<div class="bkd-venue">'+esc(b.venue)+(b.court?'<span class="bk-court">'+esc(b.court)+'번 코트</span>':'')+'</div>'+(b.memo?'<div class="bk-memo" style="font-size:14.5px;margin-top:4px;">'+esc(b.memo)+'</div>':'')
+    +'<div class="bkd-sec"><div class="f-lbl">참여 현황 <small>— 참여 '+c.yes+' · 불참 '+c.no+' · 미정 '+und+'</small></div>'
+    +'<div class="att-line"><b>참여 '+c.yes+'명</b>'+(yes.length?' · '+yes.join(', '):'')+'</div>'+(no.length?'<div class="att-line" style="color:var(--muted);">불참 '+c.no+'명 · '+no.join(', ')+'</div>':'')+'</div>'
+    +'<div class="bkd-sec">'+meSelH()+'<div class="bk-btns" style="margin-top:0;"><button class="sbtn'+(mine===1?' on-yes':'')+'" onclick="bkMe(\''+b.id+'\',1)">'+ic('check',13)+'참여</button><button class="sbtn'+(mine===0?' on-no':'')+'" onclick="bkMe(\''+b.id+'\',0)">'+ic('x',13)+'불참</button>'
+    +(c.yes>=2&&b.date>=t?'<button class="sbtn" onclick="bkToSession(\''+b.id+'\')">'+ic('shuffle',13)+'이 예약으로 편성</button>':'')+'</div></div>'
+    +'<div class="bkd-sec"><div class="f-lbl">명단 <small>— 이름을 누를 때마다 미정 → 참여 → 불참 (다른 회원 대신 입력)</small></div><div class="roster" style="margin:0;padding:0;border:none;">'
+    +DB.members.map(function(m){var v=b.att?b.att[m.id]:undefined;return'<button type="button" class="tog'+(v===1?' yes':v===0?' no':'')+'" onclick="bkCycle(\''+b.id+'\',\''+m.id+'\')">'+esc(m.name)+'</button>';}).join('')+'</div></div>'
+    +'<div class="bkd-sec btn-row"><button class="btn btn-ghost" onclick="bkGo(\'form\',\''+b.id+'\')">'+ic('edit',15)+'수정</button><button class="btn btn-ghost" style="color:var(--red);" onclick="delBk(\''+b.id+'\')">'+ic('trash',15)+'삭제</button></div></div>';
+  return h;
 }
 function bkMe(bid,v){
-  if(!meId){toast('먼저 "나: 이름 선택"에서 본인 이름을 고르세요.');var sel=document.querySelector('#home-bk-card .me-sel select');if(sel)sel.focus();return;}
+  if(!meId){toast('먼저 "나: 이름 선택"에서 본인 이름을 고르세요.');var sel=document.querySelector('#bk-page .me-sel select');if(sel)sel.focus();return;}
   var b=bkById(bid);if(!b)return;b.att=b.att||{};
   if(b.att[meId]===v)delete b.att[meId];else b.att[meId]=v;
-  save();rBookings(true);
+  save();rBk(true);
 }
-function bkCycle(bid,mid){var b=bkById(bid);if(!b)return;b.att=b.att||{};var v=b.att[mid];if(v===1)b.att[mid]=0;else if(v===0)delete b.att[mid];else b.att[mid]=1;save();rBookings(true);}
-function bkOpen(id){bkForm={id:id||''};rBookings(true);var el=document.getElementById('home-bk-card');if(el)el.scrollIntoView({block:'start'});}
-function bkCancel(){bkForm=null;rBookings(true);}
+function bkCycle(bid,mid){var b=bkById(bid);if(!b)return;b.att=b.att||{};var v=b.att[mid];if(v===1)b.att[mid]=0;else if(v===0)delete b.att[mid];else b.att[mid]=1;save();rBk(true);}
+/* ── 입력 폼 ── */
+function bkFormPageH(){var b=bkView.id?bkById(bkView.id):null;return bkPageHd(b?'예약 수정':'예약 추가','Booking')+'<div class="card">'+bkFormH(b)+'</div>';}
+function bkCancel(){bkBack();}
 function bkVenuePick(btn){chipPick('bk-venue',btn);var v=VENUES.filter(function(x){return x.n===btn.getAttribute('data-v');})[0];if(v)document.querySelectorAll('#bk-surf .tog').forEach(function(x){x.classList.toggle('on',x.getAttribute('data-v')===v.s);});}
 function bkTimePick(btn){document.getElementById('bk-start').value=btn.getAttribute('data-s');document.getElementById('bk-end').value=btn.getAttribute('data-e');selChip(btn);}
 function bkFormH(b){
-  b=b||{};var isNew=!b.id,sf=b.surface||'grass';
-  return'<div class="f-lbl" style="margin-top:0;">'+(isNew?'예약 추가':'예약 수정')+' <small>— 예약 사이트에서 잡은 코트를 적어두면 회원들이 참여 여부를 표시해요</small></div>'
-    +'<div class="f-lbl">날짜</div><input type="date" id="bk-date" value="'+esc(b.date||today())+'">'
+  b=b||{};var isNew=!b.id,sf=b.surface||'grass',d0=b.date||bkView.date||today();
+  return'<div class="f-lbl" style="margin-top:0;">'+(isNew?'새 예약':'예약 수정')+' <small>— 예약 사이트에서 잡은 코트를 적어두면 회원들이 참여 여부를 표시해요</small></div>'
+    +'<div class="f-lbl">날짜</div><input type="date" id="bk-date" value="'+esc(d0)+'">'
     +'<div class="f-lbl">장소 <small>— 누르면 코트 종류가 자동 선택</small></div>'+chipsH('bk-vwrap',VENUES.map(function(v){return v.n;}),b.venue||'','bk-venue','bkVenuePick')
     +'<input type="text" id="bk-venue" class="mt8" placeholder="다른 곳이면 직접 입력" value="'+esc(b.venue||'')+'" oninput="chipSync(\'bk-vwrap\',this.value)">'
     +'<div class="f-lbl">코트 종류</div><div class="tog-wrap" id="bk-surf">'+[['grass','잔디'],['hard','하드'],['clay','클레이']].map(function(x){return'<button type="button" class="tog'+(sf===x[0]?' on':'')+'" data-v="'+x[0]+'" onclick="selChip(this)">'+x[1]+'</button>';}).join('')+'</div>'
@@ -2310,10 +2418,11 @@ function saveBk(id){
   if(!b){b={id:uid(),ts:Date.now(),att:{}};DB.bookings.push(b);}
   b.date=d;b.venue=venue;b.surface=chipVal('bk-surf')||'grass';b.court=court;b.start=st;b.end=en;b.memo=memo;
   if(!b.court)delete b.court;if(!b.memo)delete b.memo;
-  bkForm=null;bkWeek=Math.round((new Date(weekStart(d)+'T00:00:00')-new Date(weekStart(today())+'T00:00:00'))/(7*86400000));
-  save();rBookings(true);toast(id?'예약을 수정했습니다.':'예약을 추가했습니다.');
+  bkWeek=Math.round((new Date(weekStart(d)+'T00:00:00')-new Date(weekStart(today())+'T00:00:00'))/(7*86400000));
+  save();toast(id?'예약을 수정했습니다.':'예약을 추가했습니다.');
+  bkGo('detail',b.id,{month:d.slice(0,7),sel:d,replace:true});
 }
-function delBk(id){if(!confirm('이 예약을 삭제하시겠습니까?'))return;DB.bookings=bookings().filter(function(b){return b.id!==id;});bkForm=null;save();rBookings(true);toast('삭제되었습니다.');}
+function delBk(id){if(!confirm('이 예약을 삭제하시겠습니까?'))return;DB.bookings=bookings().filter(function(b){return b.id!==id;});save();toast('삭제되었습니다.');goTab('home');}
 function bkToSession(id){   // 예약 정보(날짜·코트 종류·코트 수·참여자)로 편성 폼 채우기
   var b=bkById(id);if(!b)return;
   var ids=DB.members.filter(function(m){return b.att&&b.att[m.id]===1;}).map(function(m){return m.id;});
@@ -3566,7 +3675,8 @@ function normalizeWinners(){
       if(pp&&pp.id&&Array.isArray(pp.matches)&&pp.matches.length&&Array.isArray(pp.presentIds)&&!DB.sessions.some(function(s){return s.id===pp.id;}))pending=pp;
     }
   }catch(e){}
-  if(TABS.indexOf(t0)<0&&t0!=='courtbook')t0='home';
+  if(t0==='bk'){try{var bv0=JSON.parse(sessionStorage.getItem('btc_bk')||'null');if(bv0&&bv0.mode&&(bv0.mode!=='detail'||bkById(bv0.id)))bkView=bv0;else t0='home';}catch(e){t0='home';}}
+  if(TABS.indexOf(t0)<0&&t0!=='courtbook'&&t0!=='bk')t0='home';
   window.history.replaceState({tab:t0,sub:null},'',window.location.pathname);
   if(t0==='home')rHome();else goTab(t0,null,false);
 })();
