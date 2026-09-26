@@ -367,13 +367,13 @@ input.mc-score::-webkit-outer-spin-button,input.mc-score::-webkit-inner-spin-but
 .bkr{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line2);cursor:pointer;}
 .bkr:last-child{border-bottom:none;}
 .bkr.past{opacity:.58;}
-/* 날짜 타일: 월 / 일(크게) / 요일 — 일요일 빨강, 토요일 파랑, 오늘은 초록 */
-.bkr-d{width:52px;flex-shrink:0;text-align:center;line-height:1;border:1px solid var(--line);border-radius:8px;padding:5px 2px 5px;background:#fff;}
-.bkr-d .m{display:block;font-size:11px;font-weight:600;color:var(--muted);}
-.bkr-d b{display:block;font-family:'Gothic A1',sans-serif;font-size:23px;font-weight:800;color:var(--text);margin:2px 0;letter-spacing:-.5px;}
-.bkr-d .w{display:block;font-size:13px;font-weight:700;color:var(--text2);}
-.bkr-d.sun .w{color:var(--red);}.bkr-d.sat .w{color:#2F6F9E;}
-.bkr-d.today{border-color:var(--accent);background:var(--accent-l2);}.bkr-d.today b{color:var(--accent);}
+/* 날짜 타일 (달력 낱장 모양): 요일 띠 / 큰 날짜 / 월 — 요일 띠 색: 평일 짙은 회색, 일 빨강, 토 파랑, 오늘 초록 */
+.bkr-d{width:54px;flex-shrink:0;text-align:center;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:#fff;}
+.bkr-d .w{display:block;font-size:11.5px;font-weight:700;color:#fff;background:var(--text2);padding:3px 0;line-height:1.25;letter-spacing:.5px;}
+.bkr-d.sun .w{background:var(--red);}.bkr-d.sat .w{background:#2F6F9E;}
+.bkr-d b{display:block;font-family:'Gothic A1',sans-serif;font-size:22px;font-weight:800;color:var(--text);line-height:1.1;padding:5px 0 0;letter-spacing:-.5px;}
+.bkr-d .m{display:block;font-size:11px;font-weight:600;color:var(--muted);line-height:1.25;padding:2px 0 5px;}
+.bkr-d.today{border-color:var(--accent);}.bkr-d.today .w{background:var(--accent);}.bkr-d.today b{color:var(--accent);}
 .bkr-m{flex:1;min-width:0;}
 .bkr-t{font-size:15.5px;font-weight:700;color:var(--text);font-variant-numeric:tabular-nums;display:flex;align-items:center;gap:6px 8px;flex-wrap:wrap;line-height:1.3;}
 .bkr-s{font-size:13.5px;color:var(--text2);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
@@ -1258,7 +1258,7 @@ function lgIco(s){return lgTagH(s);}
 function lgName(s){return lgOf(s)==='baekse'?'백세리그':'일반리그';}
 
 /* ── FIREBASE ── */
-var APP_VER='5.9.2 (2026-09-26)';
+var APP_VER='5.9.3 (2026-09-26)';
 var fbApp=null,fbDB=null,fbRef=null,isOnline=false;
 var FB_KEY='btc_firebase_cfg';
 var lastSavedSnapshot='';   // 자기가 저장한 데이터 추적 (echo 방지)
@@ -2331,7 +2331,7 @@ function rBookings(){
   card.innerHTML=list.map(function(b){return bkRowH(b,t);}).join('')
     +'<div style="text-align:center;padding-top:8px;"><button class="sbtn" onclick="bkCal()">'+ic('calendar',13)+'달력에서 전체 보기</button></div>';
 }
-function bkDateH(d,isT){var dt=new Date(d+'T00:00:00'),wd=dt.getDay();return'<div class=\"bkr-d'+(isT?' today':'')+(wd===0?' sun':wd===6?' sat':'')+'\"><span class=\"m\">'+(dt.getMonth()+1)+'월</span><b>'+dt.getDate()+'</b><span class=\"w\">'+DAYS[wd]+'</span></div>';}
+function bkDateH(d,isT){var dt=new Date(d+'T00:00:00'),wd=dt.getDay();return'<div class=\"bkr-d'+(isT?' today':'')+(wd===0?' sun':wd===6?' sat':'')+'\"><span class=\"w\">'+DAYS[wd]+'</span><b>'+dt.getDate()+'</b><span class=\"m\">'+(dt.getMonth()+1)+'월</span></div>';}
 function bkRowH(b,t){   // 요약 행: 날짜 타일 / 시간 · 코트 번호 / 장소 · 코트 종류 / 참여 인원 (누르면 상세)
   var c=bkAttCount(b),past=b.date<t,isT=b.date===t;
   return'<div class="bkr'+(isT?' today':past?' past':'')+'" onclick="bkGo(\'detail\',\''+b.id+'\')">'+bkDateH(b.date,isT)
