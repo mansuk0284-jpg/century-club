@@ -251,7 +251,41 @@ input.mc-score::-webkit-outer-spin-button,input.mc-score::-webkit-inner-spin-but
 .mem-row{display:flex;align-items:center;padding:10px 0;border-bottom:1px solid var(--line2);gap:10px;}
 .mem-row:last-child{border-bottom:none;}
 .mem-no{font-size:13.5px;color:var(--muted);width:22px;text-align:center;flex-shrink:0;font-variant-numeric:tabular-nums;}
-.mem-nm{flex:1;font-size:16.5px;font-weight:500;color:var(--text);}
+.mem-nm{font-size:16.5px;font-weight:500;color:var(--text);display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+.mem-main{flex:1;min-width:0;cursor:pointer;}
+.mem-sub{font-size:13.5px;color:var(--muted);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.mem-sub b{color:var(--text2);font-weight:600;}
+.pill.warn{border-color:rgba(183,121,31,.45);color:var(--amber);background:var(--amber-l);}
+/* ── 회원 프로필 (라켓·스트링) ── */
+.prof-back{display:flex;align-items:center;gap:6px;padding:10px 12px 8px;}
+.ct-en{font-family:'Cinzel',serif;font-size:10px;font-weight:700;letter-spacing:2px;color:var(--accent);text-transform:uppercase;margin-left:2px;}
+.f-lbl{font-size:14px;font-weight:700;color:var(--text2);margin:12px 0 6px;}
+.f-lbl small{font-weight:500;color:var(--muted);}
+.btn-row{display:flex;gap:8px;}
+.btn-row .btn{flex:1;width:auto;}
+.kv{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:9px 0;font-size:15.5px;}
+.kv+.kv{border-top:1px solid var(--line2);}
+.kv span{color:var(--muted);flex-shrink:0;}
+.kv b{color:var(--text);text-align:right;min-width:0;}
+.str-bar{height:6px;border-radius:3px;background:var(--gray-2);overflow:hidden;margin:10px 0 6px;}
+.str-bar i{display:block;height:100%;background:var(--accent);border-radius:3px;}
+.str-bar i.warn{background:var(--amber);}
+.prof-note{font-size:14.5px;color:var(--text2);line-height:1.6;}
+.prof-guide{font-size:13px;color:var(--muted);line-height:1.6;margin-top:6px;}
+.prof-form{padding-bottom:14px;margin-bottom:12px;border-bottom:1px solid var(--line);}
+.log-row{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--line2);}
+.log-row:last-child{border-bottom:none;}
+.log-d{width:88px;flex-shrink:0;font-weight:700;color:var(--text);font-size:14.5px;font-variant-numeric:tabular-nums;}
+.log-b{flex:1;min-width:0;font-size:15px;color:var(--text2);line-height:1.4;}
+.log-s{font-size:13px;color:var(--muted);margin-top:2px;}
+.ah-eq{margin-top:9px;font-size:13.5px;color:rgba(255,255,255,.88);display:flex;align-items:center;gap:4px 14px;flex-wrap:wrap;}
+.ah-eq-i{display:inline-flex;align-items:center;gap:5px;min-width:0;}
+.ah-eq-i .ic{color:var(--gold);}
+.eq-bar-row{display:flex;align-items:center;gap:10px;padding:6px 0;}
+.eq-bar-l{width:92px;flex-shrink:0;font-size:14.5px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.eq-bar{flex:1;height:8px;border-radius:2px;background:var(--gray-2);overflow:hidden;}
+.eq-bar i{display:block;height:100%;background:var(--accent);}
+.eq-bar-n{width:36px;text-align:right;font-size:14px;font-weight:700;color:var(--text2);font-variant-numeric:tabular-nums;flex-shrink:0;}
 .av{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;flex-shrink:0;}
 
 /* ── 기록 ── */
@@ -571,6 +605,7 @@ input.mc-score::-webkit-outer-spin-button,input.mc-score::-webkit-inner-spin-but
 
 <!-- ══ 회원관리 ══ -->
 <div id="pg-members" class="pg">
+  <div id="mem-main">
   <div class="pg-hd"><span class="ko">회원</span><span class="en">Members</span></div>
   <div class="card">
     <div class="card-title">새 회원 등록</div>
@@ -583,6 +618,8 @@ input.mc-score::-webkit-outer-spin-button,input.mc-score::-webkit-inner-spin-but
     <div class="card-title">전체 회원 <span class="cnt" id="mem-cnt">0명</span></div>
     <div id="mem-list"><div class="empty"><span class="empty-ico"><i data-ic="users" data-size="26"></i></span>등록된 회원이 없습니다.</div></div>
   </div>
+  </div>
+  <div id="mem-profile" style="display:none"></div>
 </div>
 
 <!-- ══ 경기편성 ══ -->
@@ -1088,7 +1125,7 @@ function lgIco(s){return lgTagH(s);}
 function lgName(s){return lgOf(s)==='baekse'?'백세리그':'일반리그';}
 
 /* ── FIREBASE ── */
-var APP_VER='5.3 (2026-09-22)';
+var APP_VER='5.4 (2026-09-26)';
 var fbApp=null,fbDB=null,fbRef=null,isOnline=false;
 var FB_KEY='btc_firebase_cfg';
 var lastSavedSnapshot='';   // 자기가 저장한 데이터 추적 (echo 방지)
@@ -1386,6 +1423,10 @@ function clearLocal(){
 function toArr(x){return x?(Array.isArray(x)?x:Object.values(x)):[];}
 function sanitizeDB(db){
   db.members=toArr(db.members).filter(function(m){return m&&m.id&&m.name;});
+  db.members.forEach(function(m){   // 프로필 필드(eq: 라켓, str: 스트링 교체 이력) — RTDB 왕복 후 배열 복원
+    if(m.str!=null){m.str=toArr(m.str).filter(function(x){return x&&x.id&&x.date;});if(!m.str.length)delete m.str;}
+    if(m.eq!=null&&typeof m.eq!=='object')delete m.eq;
+  });
   db.sessions=toArr(db.sessions).filter(function(s){return s&&s.id;});
   db.sessions.forEach(function(s){
     s.matches=toArr(s.matches).filter(function(m){return m&&m.id;});
@@ -2031,6 +2072,7 @@ function stPending(p){try{if(p)sessionStorage.setItem('btc_pending',JSON.stringi
 function goTab(tab,sub,push){
   if(push===undefined)push=true;
   stSet('btc_tab',tab);
+  if(tab!=='members'&&profId){profId=null;profForm=null;stSet('btc_prof','');}
   document.querySelectorAll('.pg').forEach(function(p){p.classList.remove('on');});
   document.querySelectorAll('#nav button').forEach(function(b){b.classList.remove('on');});
   var pg=document.getElementById('pg-'+tab);
@@ -2059,7 +2101,11 @@ window.addEventListener('popstate',function(e){
       if(state.sub==='form'){pending=null;activeId=null;showForm();}
       else if(state.sub==='prev'){if(pending)showPrev();else showForm();}
       else{showActive();}
-    }else{goTab(state.tab,null,false);}
+    }else{
+      if(state.tab==='members'&&state.sub==='prof'){var pid=null;try{pid=sessionStorage.getItem('btc_prof');}catch(e){}if(pid&&memById(pid))profId=pid;}
+      else if(profId){profId=null;profForm=null;stSet('btc_prof','');}
+      goTab(state.tab,null,false);
+    }
   }else{goTab('home',null,false);}
   isPopping=false;
 });
@@ -2084,13 +2130,17 @@ function rHome(){
 function openSes(id){activeId=id;goTab('session');}
 
 /* ── MEMBERS ── */
-function rMembers(){
+function rMembers(force){
+  var main=document.getElementById('mem-main'),prof=document.getElementById('mem-profile');
+  if(profId&&memById(profId)){
+    if(!force&&profForm&&prof.style.display!=='none')return;   // 입력 중엔 동기화로 화면을 덮지 않음
+    main.style.display='none';prof.style.display='block';prof.innerHTML=profileH(memById(profId));return;
+  }
+  profId=null;main.style.display='block';prof.style.display='none';
   document.getElementById('mem-cnt').textContent=DB.members.length+'명';
   var list=document.getElementById('mem-list');
   if(!DB.members.length){list.innerHTML=emptyH('users','등록된 회원이 없습니다.');return;}
-  list.innerHTML=DB.members.map(function(m,i){
-    return'<div class="mem-row"><span class="mem-no">'+(i+1)+'</span><span class="mem-nm" id="mn-'+m.id+'">'+esc(m.name)+'</span><button class="ic-btn" onclick="editMem(\''+m.id+'\')">'+ic('edit',17)+'</button><button class="ic-btn" style="color:var(--red);" onclick="delMem(\''+m.id+'\')">'+ic('trash',17)+'</button></div>';
-  }).join('');
+  list.innerHTML=DB.members.map(memRowH).join('');
 }
 function addMem(){
   var inp=document.getElementById('mem-inp'),name=inp.value.replace(/[<>&"'`]/g,'').trim();
@@ -2113,6 +2163,168 @@ function saveMem(id,nv,old){
   nv=nv.replace(/[<>&"'`]/g,'').trim();if(!nv||nv===old){rMembers();return;}
   DB.members=DB.members.map(function(m){return m.id===id?Object.assign({},m,{name:nv}):m;});
   save();rMembers();updAS();toast('수정되었습니다.');
+}
+
+/* ── 회원 프로필 · 라켓/스트링 관리 ── */
+ICONS.racket='<ellipse cx="14.5" cy="9.5" rx="5" ry="6.5" transform="rotate(40 14.5 9.5)"/><path d="m10.4 14.6-6.4 6.4M12 6.5l5.5 5.5M9.8 9.8l4.4 4.4"/>';
+var RACKET_BRANDS=['Wilson','Babolat','Head','Yonex','Prince','Tecnifibre','Dunlop','Völkl'];
+var STRING_BRANDS=['Luxilon','Babolat','Wilson','Head','Yonex','Tecnifibre','Solinco','Kirschbaum','Signum Pro','Gosen'];
+var STRING_TYPES=['폴리','멀티','신세틱','내추럴','하이브리드'];
+var STR_DAYS=90,STR_MATCHES=25;   // 스트링 교체 권장 기준 — 둘 중 하나라도 넘으면 '교체 권장'
+var profId=null,profForm=null;    // 열린 프로필의 회원 id · 열린 입력 폼('eq'|'str'|null)
+function memById(id){return DB.members.find(function(m){return m.id===id;});}
+function strList(m){return toArr(m&&m.str).filter(function(x){return x&&x.date;}).sort(function(a,b){return a.date<b.date?1:a.date>b.date?-1:0;});}   // 최신 우선
+function curStr(m){return strList(m)[0]||null;}
+function daysBetween(a,b){return Math.max(0,Math.round((new Date(b+'T00:00:00')-new Date(a+'T00:00:00'))/86400000));}
+function matchesBetween(mid,from,to){   // from~to(포함) 사이 모임에서 편성된 경기 수
+  var n=0;
+  DB.sessions.forEach(function(s){
+    if(!s.date||s.date<from||s.date>to)return;
+    (s.matches||[]).forEach(function(x){if((x.team1||[]).indexOf(mid)>=0||(x.team2||[]).indexOf(mid)>=0)n++;});
+  });
+  return n;
+}
+function strStatus(m){
+  var c=curStr(m);if(!c)return{level:'none',cur:null};
+  var d=daysBetween(c.date,today()),n=matchesBetween(m.id,c.date,today());
+  return{level:(d>=STR_DAYS||n>=STR_MATCHES)?'warn':'ok',days:d,matches:n,cur:c};
+}
+function eqName(m){var e=(m&&m.eq)||{};return[e.brand,e.model].filter(Boolean).join(' ');}
+function strShort(c){return c?([c.brand,c.model].filter(Boolean).join(' ')||c.type||'스트링')+(c.tension?' '+c.tension+'lb':''):'';}
+function strFull(c){return c?[[c.brand,c.model].filter(Boolean).join(' '),c.type,c.tension?c.tension+'lb':''].filter(Boolean).join(' · '):'';}
+function eqLineH(m){   // 분석 히어로용 장비 한 줄
+  var r=eqName(m),c=curStr(m);if(!r&&!c)return'';
+  return'<div class="ah-eq">'+(r?'<span class="ah-eq-i">'+ic('racket',14)+esc(r)+'</span>':'')+(c?'<span class="ah-eq-i">'+ic('sliders',14)+esc(strShort(c))+'</span>':'')+'</div>';
+}
+function clean(x){return String(x==null?'':x).replace(/[<>&"'\x60]/g,'').trim().slice(0,40);}
+function fv(id){var el=document.getElementById(id);return el?clean(el.value):'';}
+function chipPick(inputId,btn){var inp=document.getElementById(inputId);inp.value=btn.textContent;chipSync(btn.parentElement.id,inp.value);}
+function chipSync(wrapId,val){document.querySelectorAll('#'+wrapId+' .tog').forEach(function(b){b.classList.toggle('on',b.textContent===val.trim());});}
+function selChip(btn){btn.parentElement.querySelectorAll('.tog').forEach(function(b){b.classList.remove('on');});btn.classList.add('on');}
+function chipVal(wrapId){var b=document.querySelector('#'+wrapId+' .tog.on');return b?(b.getAttribute('data-v')||b.textContent):'';}
+function chipsH(wrapId,list,val,inputId){
+  return'<div class="tog-wrap" id="'+wrapId+'">'+list.map(function(x){
+    return'<button type="button" class="tog'+(x===val?' on':'')+'" '+(inputId?'onclick="chipPick(\''+inputId+'\',this)"':'data-v="'+x+'" onclick="selChip(this)"')+'>'+x+'</button>';
+  }).join('')+'</div>';
+}
+function openProfile(id){
+  if(!memById(id))return;
+  profId=id;profForm=null;stSet('btc_prof',id);rMembers(true);
+  document.getElementById('main').scrollTop=0;
+  if(!isPopping)window.history.pushState({tab:'members',sub:'prof'},'',window.location.pathname);
+}
+function closeProfile(){profId=null;profForm=null;stSet('btc_prof','');rMembers(true);}
+function profBack(){if(window.history.state&&window.history.state.sub==='prof')window.history.back();else closeProfile();}
+function profOpen(f){profForm=f;rMembers(true);var el=document.getElementById(f==='eq'?'eq-brand':'st-date');if(el)el.scrollIntoView({block:'center'});}
+function profCancel(){profForm=null;rMembers(true);}
+function memRowH(m,i){
+  var st=strStatus(m),sub=[],r=eqName(m);
+  if(r)sub.push(esc(r));
+  if(st.cur)sub.push(esc(strShort(st.cur))+' · <b>'+st.days+'일</b>');
+  return'<div class="mem-row"><span class="mem-no">'+(i+1)+'</span>'
+    +'<div class="mem-main" onclick="if(event.target.tagName!==\'INPUT\')openProfile(\''+m.id+'\')"><div class="mem-nm"><span id="mn-'+m.id+'">'+esc(m.name)+'</span>'+(st.level==='warn'?'<span class="pill warn">교체 권장</span>':'')+'</div>'
+    +'<div class="mem-sub">'+(sub.length?sub.join(' · '):'<span style="opacity:.7">라켓·스트링 미입력 · 눌러서 프로필 열기</span>')+'</div></div>'
+    +'<button class="ic-btn" onclick="editMem(\''+m.id+'\')">'+ic('edit',17)+'</button><button class="ic-btn" style="color:var(--red);" onclick="delMem(\''+m.id+'\')">'+ic('trash',17)+'</button></div>';
+}
+function profileH(m){
+  var st=strStatus(m),c=st.cur,logs=strList(m),r=eqName(m);
+  var played=matchesBetween(m.id,'0000-01-01',today());
+  var h='<div class="prof-back"><button class="ic-btn" onclick="profBack()">'+ic('arrow-left',20)+'</button><span class="pg-hd" style="padding:0;"><span class="ko">회원 프로필</span><span class="en">Profile</span></span></div>';
+  h+='<div class="ana-hero"><div class="ah-top"><div class="ah-av">'+esc(m.name.charAt(0))+'</div><div class="ah-id"><div class="ah-en">Member Profile</div><div class="ah-name">'+esc(m.name)+'</div>'
+    +'<div class="ah-sub">'+(r?esc(r):'라켓 미입력')+' · '+(c?esc(strShort(c)):'스트링 미입력')+'</div></div></div>'
+    +'<div class="ah-kpis"><div class="ah-kpi"><b>'+(c?st.days:'–')+'</b><span>스트링 경과일</span></div><div class="ah-kpi"><b>'+(c?st.matches:'–')+'</b><span>교체 후 경기</span></div><div class="ah-kpi"><b>'+played+'</b><span>총 출전 경기</span></div></div></div>';
+  h+='<div class="card"><div class="card-title" style="justify-content:space-between;"><span style="display:flex;align-items:center;gap:7px;">'+ic('racket',19)+'라켓 <span class="ct-en">Racket</span></span>'
+    +(profForm==='eq'?'':'<button class="sbtn" onclick="profOpen(\'eq\')">'+ic('edit',13)+(m.eq?'수정':'입력')+'</button>')+'</div>'
+    +(profForm==='eq'?eqFormH(m):eqViewH(m))+'</div>';
+  h+='<div class="card"><div class="card-title" style="justify-content:space-between;"><span style="display:flex;align-items:center;gap:7px;">'+ic('sliders',19)+'스트링 <span class="ct-en">Strings</span></span>'
+    +(profForm==='str'?'':'<button class="sbtn primary" onclick="profOpen(\'str\')">'+ic('plus',13)+'교체 기록</button>')+'</div>'
+    +(profForm==='str'?strFormH(m):'')+strViewH(m,st)+'</div>';
+  if(logs.length){
+    h+='<div class="card"><div class="card-title">교체 이력 <span class="cnt">'+logs.length+'회</span></div>'+logs.map(function(x,i){
+      var end=i>0?logs[i-1].date:today(),used=daysBetween(x.date,end),g=matchesBetween(m.id,x.date,end);
+      return'<div class="log-row"><div class="log-d">'+esc(x.date)+'</div><div class="log-b">'+esc(strFull(x)||'스트링')
+        +'<div class="log-s">'+used+'일 사용 · '+g+'경기'+(i===0?' · <b style="color:var(--accent);">현재</b>':'')+(x.memo?' · '+esc(x.memo):'')+'</div></div>'
+        +'<button class="ic-btn" style="color:var(--red);padding:2px 4px;" onclick="delStr(\''+m.id+'\',\''+x.id+'\')">'+ic('trash',16)+'</button></div>';
+    }).join('')+'</div>';
+  }
+  return h;
+}
+function eqViewH(m){
+  var e=m.eq||{};
+  if(!e.brand&&!e.model&&!e.hand&&!e.memo)return'<div class="prof-note">라켓 브랜드·모델을 입력하면 회원 목록과 분석 화면에 함께 표시돼요.</div>';
+  return'<div class="kv"><span>브랜드</span><b>'+(e.brand?esc(e.brand):'–')+'</b></div><div class="kv"><span>모델</span><b>'+(e.model?esc(e.model):'–')+'</b></div>'
+    +'<div class="kv"><span>주손</span><b>'+(e.hand==='L'?'왼손':e.hand==='R'?'오른손':'–')+'</b></div>'+(e.memo?'<div class="kv"><span>메모</span><b>'+esc(e.memo)+'</b></div>':'');
+}
+function eqFormH(m){
+  var e=m.eq||{};
+  return'<div class="f-lbl" style="margin-top:0;">브랜드</div>'+chipsH('eq-bwrap',RACKET_BRANDS,e.brand||'','eq-brand')
+    +'<input type="text" id="eq-brand" class="mt8" placeholder="목록에 없으면 직접 입력" value="'+esc(e.brand||'')+'" oninput="chipSync(\'eq-bwrap\',this.value)">'
+    +'<div class="f-lbl">모델</div><input type="text" id="eq-model" placeholder="예: Blade 98 v9, Pure Aero" value="'+esc(e.model||'')+'">'
+    +'<div class="f-lbl">주손</div><div class="tog-wrap" id="eq-hand"><button type="button" class="tog'+(e.hand==='R'?' on':'')+'" data-v="R" onclick="selChip(this)">오른손</button><button type="button" class="tog'+(e.hand==='L'?' on':'')+'" data-v="L" onclick="selChip(this)">왼손</button></div>'
+    +'<div class="f-lbl">메모 <small>(선택)</small></div><input type="text" id="eq-memo" placeholder="그립 사이즈, 무게, 오버그립 등" value="'+esc(e.memo||'')+'">'
+    +'<div class="btn-row mt12"><button class="btn btn-green" onclick="saveEq(\''+m.id+'\')">저장</button><button class="btn btn-ghost" onclick="profCancel()">취소</button></div>';
+}
+function saveEq(id){
+  var m=memById(id);if(!m)return;
+  var eq={brand:fv('eq-brand'),model:fv('eq-model'),hand:chipVal('eq-hand'),memo:fv('eq-memo')};
+  Object.keys(eq).forEach(function(k){if(!eq[k])delete eq[k];});
+  if(Object.keys(eq).length)m.eq=eq;else delete m.eq;
+  profForm=null;save();rMembers(true);toast('라켓 정보를 저장했습니다.');
+}
+function strViewH(m,st){
+  var c=st.cur;
+  if(!c)return'<div class="prof-note">아직 교체 기록이 없어요. <b>교체 기록</b>을 눌러 지금 쓰는 스트링과 교체일을 등록하면 경과일과 교체 후 경기 수를 계산해 드려요.</div>'
+    +'<div class="prof-guide">권장 교체 기준: '+STR_DAYS+'일 또는 '+STR_MATCHES+'경기 · 폴리 스트링은 장력이 빨리 빠져 더 자주 교체하는 편이에요.</div>';
+  var p=Math.min(100,Math.round(Math.max(st.days/STR_DAYS,st.matches/STR_MATCHES)*100));
+  return'<div class="kv"><span>현재 스트링</span><b>'+esc(strFull(c)||'–')+'</b></div>'
+    +'<div class="kv"><span>교체일</span><b>'+dstr(c.date)+'</b></div>'
+    +'<div class="kv"><span>사용</span><b>'+st.days+'일 · 교체 후 '+st.matches+'경기</b></div>'
+    +'<div class="kv"><span>상태</span><b><span class="pill '+(st.level==='warn'?'warn':'ok')+'">'+(st.level==='warn'?'교체 권장':'정상')+'</span></b></div>'
+    +'<div class="str-bar"><i'+(st.level==='warn'?' class="warn"':'')+' style="width:'+p+'%"></i></div>'
+    +'<div class="prof-guide">권장 교체 기준('+STR_DAYS+'일 또는 '+STR_MATCHES+'경기)의 '+p+'% 사용'+(st.level==='warn'?' — 장력이 많이 빠졌을 수 있어요':'')+'</div>';
+}
+function strFormH(m){
+  var c=curStr(m)||{};
+  return'<div class="prof-form"><div class="f-lbl" style="margin-top:0;">교체일</div><input type="date" id="st-date" value="'+today()+'" max="'+today()+'">'
+    +'<div class="f-lbl">브랜드</div>'+chipsH('st-bwrap',STRING_BRANDS,c.brand||'','st-brand')
+    +'<input type="text" id="st-brand" class="mt8" placeholder="목록에 없으면 직접 입력" value="'+esc(c.brand||'')+'" oninput="chipSync(\'st-bwrap\',this.value)">'
+    +'<div class="f-lbl">종류</div>'+chipsH('st-type',STRING_TYPES,c.type||'')
+    +'<div class="f-lbl">모델</div><input type="text" id="st-model" placeholder="예: ALU Power 125, RPM Blast" value="'+esc(c.model||'')+'">'
+    +'<div class="f-lbl">텐션 (lb)</div><input type="text" id="st-ten" inputmode="decimal" placeholder="예: 50 또는 52/50" value="'+esc(c.tension||'')+'">'
+    +'<div class="f-lbl">메모 <small>(선택)</small></div><input type="text" id="st-memo" placeholder="교체한 곳, 타구감 등">'
+    +'<div class="btn-row mt12"><button class="btn btn-green" onclick="saveStr(\''+m.id+'\')">저장</button><button class="btn btn-ghost" onclick="profCancel()">취소</button></div></div>';
+}
+function saveStr(id){
+  var m=memById(id);if(!m)return;
+  var d=(document.getElementById('st-date')||{}).value||'';
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(d)){toast('교체일을 입력하세요.');return;}
+  if(d>today()){toast('교체일이 오늘보다 뒤입니다.');return;}
+  var ent={id:uid(),date:d,brand:fv('st-brand'),type:chipVal('st-type'),model:fv('st-model'),tension:fv('st-ten'),memo:fv('st-memo')};
+  Object.keys(ent).forEach(function(k){if(!ent[k])delete ent[k];});
+  m.str=toArr(m.str).concat([ent]);
+  profForm=null;save();rMembers(true);toast('교체 기록을 추가했습니다.');
+}
+function delStr(id,sid){
+  if(!confirm('이 교체 기록을 삭제하시겠습니까?'))return;
+  var m=memById(id);if(!m)return;
+  m.str=toArr(m.str).filter(function(x){return x.id!==sid;});if(!m.str.length)delete m.str;
+  save();rMembers(true);toast('삭제되었습니다.');
+}
+function eqBarRow(label,n,max){return'<div class="eq-bar-row"><span class="eq-bar-l">'+esc(label)+'</span><div class="eq-bar"><i style="width:'+Math.round(n/max*100)+'%"></i></div><span class="eq-bar-n">'+n+'명</span></div>';}
+function eqClubCard(){   // 분석 > 클럽 하이라이트: 장비 현황
+  var bc={},sc={},warn=[],nb=0,ns=0;
+  DB.members.forEach(function(m){
+    var b=m.eq&&m.eq.brand;if(b){bc[b]=(bc[b]||0)+1;nb++;}
+    var st=strStatus(m);if(st.cur){ns++;var sb=st.cur.brand||'기타';sc[sb]=(sc[sb]||0)+1;if(st.level==='warn')warn.push({m:m,st:st});}
+  });
+  var bl=Object.keys(bc).sort(function(a,b){return bc[b]-bc[a]||(a<b?-1:1);}),sl=Object.keys(sc).sort(function(a,b){return sc[b]-sc[a]||(a<b?-1:1);});
+  if(!bl.length&&!sl.length)return'';
+  var body='';
+  if(bl.length)body+='<div class="sub-title" style="margin-top:0;">라켓 브랜드 <small style="font-weight:500;color:var(--muted);">'+nb+'명 입력</small></div>'+bl.map(function(b){return eqBarRow(b,bc[b],bc[bl[0]]);}).join('');
+  if(sl.length)body+='<div class="sub-title">스트링 브랜드 <small style="font-weight:500;color:var(--muted);">'+ns+'명 입력</small></div>'+sl.map(function(b){return eqBarRow(b,sc[b],sc[sl[0]]);}).join('');
+  if(warn.length)body+='<div class="sub-title">스트링 교체 권장 <small style="font-weight:500;color:var(--muted);">'+STR_DAYS+'일 또는 '+STR_MATCHES+'경기 초과</small></div><div style="font-size:15px;color:var(--text2);line-height:1.8;">'
+    +warn.map(function(w){return'<span class="nw">'+esc(w.m.name)+' <small style="color:var(--muted);">'+w.st.days+'일 · '+w.st.matches+'경기</small></span>';}).join(', ')+'</div>';
+  return aCard('장비 현황 <span class="ct-en">Equipment</span>',body);
 }
 
 /* ── SESSION ── */
@@ -2730,7 +2942,7 @@ function anaHero(mem,P,ranks){
   return'<div class="ana-hero">'
     +'<div class="ah-top"><div class="ah-av">'+esc(mem.name.charAt(0))+'</div>'
     +'<div class="ah-id"><div class="ah-en">Player Profile</div><div class="ah-name">'+esc(mem.name)+'</div>'
-    +'<div class="ah-sub"><span class="nw">'+lgTag()+' · '+PF_LBL[anaPf]+'</span>'+(pos>=0?' <span class="nw">· 랭킹 <b>'+(pos+1)+'위</b>/'+ranks.length+'명</span>':'')+'</div></div></div>'
+    +'<div class="ah-sub"><span class="nw">'+lgTag()+' · '+PF_LBL[anaPf]+'</span>'+(pos>=0?' <span class="nw">· 랭킹 <b>'+(pos+1)+'위</b>/'+ranks.length+'명</span>':'')+'</div></div></div>'+eqLineH(mem)
     +'<div class="ah-kpis">'
     +'<div class="ah-kpi"><b>'+P.n+'</b><span>경기</span></div>'
     +'<div class="ah-kpi"><b>'+(P.pct==null?'-':P.pct+'%')+arrow+'</b><span>승률</span></div>'
@@ -2932,6 +3144,7 @@ function anaClubHtml(recs,sess,attSess){
     +rl.map(function(o,i){return aRow({n:i+1,nc:'#94a3b8',name:'<span class="rk-name">'+esc(gn(o.a))+' <small style="color:var(--muted);font-weight:600;">vs</small> '+esc(gn(o.b))+'</span>',
       sub:esc(gn(o.a))+' 기준 · '+wdlTxt(o.w,o.d,o.l),bar:wdlBar(o.w,o.d,o.l,6),
       stat:'<span class="rpct">'+o.w+' : '+o.l+'</span>'});}).join(''));
+  cards+=eqClubCard();   // ⑥ 장비 현황 (라켓·스트링 브랜드 분포, 교체 권장)
   if(!cards)cards=aEmpty('chart','경기 결과가 더 쌓이면<br>클럽 하이라이트가 표시돼요.<br><span style="font-size:15px">위에서 선수를 눌러 개인 분석도 볼 수 있어요.</span>');
   return h+cards;
 }
@@ -3032,6 +3245,8 @@ function normalizeWinners(){
   try{
     t0=sessionStorage.getItem('btc_tab')||'home';
     var a0=sessionStorage.getItem('btc_active');
+    var pr0=sessionStorage.getItem('btc_prof');
+    if(pr0&&t0==='members'&&DB.members.some(function(m){return m.id===pr0;}))profId=pr0;
     if(a0&&DB.sessions.some(function(s){return s.id===a0;}))activeId=a0;
     var p0=sessionStorage.getItem('btc_pending');
     if(p0){
