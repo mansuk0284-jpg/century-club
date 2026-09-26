@@ -286,6 +286,31 @@ input.mc-score::-webkit-outer-spin-button,input.mc-score::-webkit-inner-spin-but
 .eq-bar{flex:1;height:8px;border-radius:2px;background:var(--gray-2);overflow:hidden;}
 .eq-bar i{display:block;height:100%;background:var(--accent);}
 .eq-bar-n{width:36px;text-align:right;font-size:14px;font-weight:700;color:var(--text2);font-variant-numeric:tabular-nums;flex-shrink:0;}
+/* 브랜드 마크 아바타 (주무기 브랜드 색 + 머리글자) */
+.bm{display:inline-flex;align-items:center;justify-content:center;border-radius:50%;font-family:'Gothic A1',sans-serif;font-weight:900;line-height:1;flex-shrink:0;box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.35);letter-spacing:-.5px;}
+.bm .ic{color:inherit;}
+.ah-av .bm{box-shadow:none;}
+.pill.main{border-color:rgba(214,199,122,.75);color:#7A6A1E;background:#FBF6DF;}
+/* 라켓 블록 */
+.rk{border:1px solid var(--line);border-radius:8px;padding:12px 12px 10px;margin-top:10px;background:#fff;}
+.rk.main{border-color:rgba(26,122,74,.45);box-shadow:0 0 0 2px rgba(26,122,74,.08);}
+.rk-hd{display:flex;align-items:center;gap:10px;}
+.rk-t{flex:1;min-width:0;}
+.rk-name{font-size:16px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:6px;flex-wrap:wrap;line-height:1.3;}
+.rk-name>span:first-child{min-width:0;overflow-wrap:anywhere;}
+.rk-sub{font-size:13px;color:var(--muted);margin-top:2px;}
+.rk-act{display:flex;align-items:center;gap:2px;flex-shrink:0;}
+.rk-str{margin-top:8px;border-top:1px dashed var(--line);padding-top:4px;}
+.rk-str .kv{padding:7px 0;font-size:14.5px;}
+.rk-btns{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;}
+.rk-log{margin-top:8px;border-top:1px solid var(--line2);}
+.rk-log .log-row{padding:9px 0;}
+.tg-s{display:block;font-size:10.5px;font-weight:500;color:var(--muted);margin-top:3px;line-height:1;}
+.tog.on .tg-s{color:rgba(255,255,255,.75);}
+.g-step{display:flex;gap:10px;align-items:flex-start;padding:8px 0;font-size:14.5px;line-height:1.55;color:var(--text2);}
+.g-step+.g-step{border-top:1px solid var(--line2);}
+.g-step b{color:var(--text);}
+.g-n{width:22px;height:22px;border-radius:50%;background:var(--green);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
 .av{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;flex-shrink:0;}
 
 /* ── 기록 ── */
@@ -1125,7 +1150,7 @@ function lgIco(s){return lgTagH(s);}
 function lgName(s){return lgOf(s)==='baekse'?'백세리그':'일반리그';}
 
 /* ── FIREBASE ── */
-var APP_VER='5.4 (2026-09-26)';
+var APP_VER='5.5 (2026-09-26)';
 var fbApp=null,fbDB=null,fbRef=null,isOnline=false;
 var FB_KEY='btc_firebase_cfg';
 var lastSavedSnapshot='';   // 자기가 저장한 데이터 추적 (echo 방지)
@@ -1423,9 +1448,20 @@ function clearLocal(){
 function toArr(x){return x?(Array.isArray(x)?x:Object.values(x)):[];}
 function sanitizeDB(db){
   db.members=toArr(db.members).filter(function(m){return m&&m.id&&m.name;});
-  db.members.forEach(function(m){   // 프로필 필드(eq: 라켓, str: 스트링 교체 이력) — RTDB 왕복 후 배열 복원
-    if(m.str!=null){m.str=toArr(m.str).filter(function(x){return x&&x.id&&x.date;});if(!m.str.length)delete m.str;}
-    if(m.eq!=null&&typeof m.eq!=='object')delete m.eq;
+  db.members.forEach(function(m){   // 프로필: rk=[{id,brand,model,main,memo,str:[...]}], hand — RTDB 왕복 후 배열 복원
+    if(m.rk!=null){
+      m.rk=toArr(m.rk).filter(function(r){return r&&r.id;});
+      m.rk.forEach(function(r){if(r.str!=null){r.str=toArr(r.str).filter(function(x){return x&&x.id&&x.date;});if(!r.str.length)delete r.str;}});
+      if(!m.rk.length)delete m.rk;
+    }
+    if(m.eq||m.str){   // v5.4 구조(라켓 1개 + 스트링 이력) → 라켓 배열로 이행
+      var e=(m.eq&&typeof m.eq==='object')?m.eq:{},r={id:uid(),main:true};
+      if(e.brand)r.brand=e.brand;if(e.model)r.model=e.model;if(e.memo)r.memo=e.memo;if(e.hand)m.hand=e.hand;
+      var st=toArr(m.str).filter(function(x){return x&&x.id&&x.date;});if(st.length)r.str=st;
+      if(r.brand||r.model||r.str){m.rk=toArr(m.rk);m.rk.forEach(function(x){x.main=false;});m.rk.push(r);}
+      delete m.eq;delete m.str;
+    }
+    if(m.rk&&m.rk.length&&!m.rk.some(function(r){return r.main;}))m.rk[0].main=true;
   });
   db.sessions=toArr(db.sessions).filter(function(s){return s&&s.id;});
   db.sessions.forEach(function(s){
@@ -2165,16 +2201,50 @@ function saveMem(id,nv,old){
   save();rMembers();updAS();toast('수정되었습니다.');
 }
 
-/* ── 회원 프로필 · 라켓/스트링 관리 ── */
+/* ── 회원 프로필 · 라켓(여러 개, 주무기)/라켓별 스트링 관리 ── */
 ICONS.racket='<ellipse cx="14.5" cy="9.5" rx="5" ry="6.5" transform="rotate(40 14.5 9.5)"/><path d="m10.4 14.6-6.4 6.4M12 6.5l5.5 5.5M9.8 9.8l4.4 4.4"/>';
 var RACKET_BRANDS=['Wilson','Babolat','Head','Yonex','Prince','Tecnifibre','Dunlop','Völkl'];
 var STRING_BRANDS=['Luxilon','Babolat','Wilson','Head','Yonex','Tecnifibre','Solinco','Kirschbaum','Signum Pro','Gosen'];
 var STRING_TYPES=['폴리','멀티','신세틱','내추럴','하이브리드'];
+var RACKET_MODELS={
+  'Wilson':['Blade 98','Blade 100','Pro Staff 97','Clash 100','Ultra 100','Shift 99'],
+  'Babolat':['Pure Aero','Pure Aero 98','Pure Drive','Pure Drive 98','Pure Strike 98','Pure Strike 100'],
+  'Head':['Speed MP','Speed Pro','Radical MP','Gravity MP','Extreme MP','Boom MP','Prestige MP'],
+  'Yonex':['EZONE 98','EZONE 100','VCORE 98','VCORE 100','Percept 97','VCORE Pro 97'],
+  'Prince':['Phantom 100X','Phantom 100','Textreme Tour 100','Ripstick 100','Beast 100'],
+  'Tecnifibre':['TF40 305','TF40 315','Tempo 298','T-Fight 305','TF-X1 300'],
+  'Dunlop':['FX 500','CX 200','SX 300','CX 400','FX 500 Tour'],
+  'Völkl':['V-Cell 8','V-Cell 10','V-Feel 8','C10 Pro','V1 Pro']
+};
+var STRING_MODELS={   // [모델, 종류]
+  'Luxilon':[['ALU Power','폴리'],['ALU Power Rough','폴리'],['4G','폴리'],['Element','폴리'],['Big Banger Original','폴리']],
+  'Babolat':[['RPM Blast','폴리'],['RPM Rough','폴리'],['RPM Power','폴리'],['Xcel','멀티'],['VS Touch','내추럴'],['Syn Gut','신세틱']],
+  'Wilson':[['Revolve','폴리'],['Revolve Spin','폴리'],['NXT','멀티'],['Sensation','멀티'],['Synthetic Gut Power','신세틱']],
+  'Head':[['Lynx Tour','폴리'],['Lynx','폴리'],['Hawk','폴리'],['Hawk Touch','폴리'],['Velocity MLT','멀티'],['RIP Control','멀티']],
+  'Yonex':[['Poly Tour Pro','폴리'],['Poly Tour Rev','폴리'],['Poly Tour Strike','폴리'],['Rexis','멀티'],['Dynawire','하이브리드']],
+  'Tecnifibre':[['Black Code','폴리'],['Razor Code','폴리'],['Ice Code','폴리'],['X-One Biphase','멀티'],['NRG2','멀티'],['Triax','멀티']],
+  'Solinco':[['Hyper-G','폴리'],['Hyper-G Soft','폴리'],['Tour Bite','폴리'],['Confidential','폴리'],['Vanquish','멀티']],
+  'Kirschbaum':[['Pro Line Evolution','폴리'],['Max Power','폴리'],['Black Shark','폴리'],['Touch Turbo','멀티']],
+  'Signum Pro':[['Poly Plasma','폴리'],['X-Perience','폴리'],['Firestorm','폴리'],['Micronite','멀티']],
+  'Gosen':[['OG-Sheep Micro','신세틱'],['Polylon','폴리'],['G-Tour','폴리'],['AK Pro','멀티']]
+};
+/* 브랜드 마크: 브랜드 상징색 + 머리글자 (로고 이미지 없이 골프 선수 이름 앞 브랜드 표기처럼) */
+var BRAND_STYLE={
+  'Wilson':{bg:'#C8102E',fg:'#FFFFFF',t:'W'},'Babolat':{bg:'#0033A0',fg:'#FFFFFF',t:'B'},'Head':{bg:'#141414',fg:'#FF8A00',t:'H'},
+  'Yonex':{bg:'#0B4F9C',fg:'#9BE000',t:'Y'},'Prince':{bg:'#000000',fg:'#FFFFFF',t:'P'},'Tecnifibre':{bg:'#E4002B',fg:'#FFFFFF',t:'T'},
+  'Dunlop':{bg:'#FFD200',fg:'#111111',t:'D'},'Völkl':{bg:'#D71920',fg:'#FFFFFF',t:'V'},
+  'Luxilon':{bg:'#1D1D1B',fg:'#FFFFFF',t:'L'},'Solinco':{bg:'#0C0C0C',fg:'#9BE000',t:'S'},'Kirschbaum':{bg:'#003F87',fg:'#FFFFFF',t:'K'},
+  'Signum Pro':{bg:'#E30613',fg:'#FFFFFF',t:'S'},'Gosen':{bg:'#0055A5',fg:'#FFFFFF',t:'G'}
+};
 var STR_DAYS=90,STR_MATCHES=25;   // 스트링 교체 권장 기준 — 둘 중 하나라도 넘으면 '교체 권장'
-var profId=null,profForm=null;    // 열린 프로필의 회원 id · 열린 입력 폼('eq'|'str'|null)
+var profId=null,profForm=null,profLogOpen={};   // 열린 프로필 회원 id · 열린 폼 {t:'rk'|'str',id:라켓id} · 펼친 이력
 function memById(id){return DB.members.find(function(m){return m.id===id;});}
-function strList(m){return toArr(m&&m.str).filter(function(x){return x&&x.date;}).sort(function(a,b){return a.date<b.date?1:a.date>b.date?-1:0;});}   // 최신 우선
-function curStr(m){return strList(m)[0]||null;}
+function rackets(m){return toArr(m&&m.rk).filter(function(r){return r&&r.id;});}
+function mainRk(m){var rs=rackets(m);return rs.filter(function(r){return r.main;})[0]||rs[0]||null;}
+function rkById(m,rid){return rackets(m).filter(function(r){return r.id===rid;})[0]||null;}
+function rkSorted(m){return rackets(m).slice().sort(function(a,b){return(b.main?1:0)-(a.main?1:0);});}   // 주무기 먼저
+function strList(rk){return toArr(rk&&rk.str).filter(function(x){return x&&x.date;}).sort(function(a,b){return a.date<b.date?1:a.date>b.date?-1:0;});}   // 최신 우선
+function curStr(rk){return strList(rk)[0]||null;}
 function daysBetween(a,b){return Math.max(0,Math.round((new Date(b+'T00:00:00')-new Date(a+'T00:00:00'))/86400000));}
 function matchesBetween(mid,from,to){   // from~to(포함) 사이 모임에서 편성된 경기 수
   var n=0;
@@ -2184,146 +2254,222 @@ function matchesBetween(mid,from,to){   // from~to(포함) 사이 모임에서 �
   });
   return n;
 }
-function strStatus(m){
-  var c=curStr(m);if(!c)return{level:'none',cur:null};
+function rkStatus(m,rk){
+  var c=curStr(rk);if(!c)return{level:'none',cur:null};
   var d=daysBetween(c.date,today()),n=matchesBetween(m.id,c.date,today());
   return{level:(d>=STR_DAYS||n>=STR_MATCHES)?'warn':'ok',days:d,matches:n,cur:c};
 }
-function eqName(m){var e=(m&&m.eq)||{};return[e.brand,e.model].filter(Boolean).join(' ');}
+function memStatus(m){var rk=mainRk(m);return rk?rkStatus(m,rk):{level:'none',cur:null};}   // 주무기 기준
+function rkName(rk){return rk?[rk.brand,rk.model].filter(Boolean).join(' '):'';}
 function strShort(c){return c?([c.brand,c.model].filter(Boolean).join(' ')||c.type||'스트링')+(c.tension?' '+c.tension+'lb':''):'';}
 function strFull(c){return c?[[c.brand,c.model].filter(Boolean).join(' '),c.type,c.tension?c.tension+'lb':''].filter(Boolean).join(' · '):'';}
-function eqLineH(m){   // 분석 히어로용 장비 한 줄
-  var r=eqName(m),c=curStr(m);if(!r&&!c)return'';
-  return'<div class="ah-eq">'+(r?'<span class="ah-eq-i">'+ic('racket',14)+esc(r)+'</span>':'')+(c?'<span class="ah-eq-i">'+ic('sliders',14)+esc(strShort(c))+'</span>':'')+'</div>';
+function brandKey(b,map){var l=String(b||'').trim().toLowerCase();return Object.keys(map).filter(function(k){return k.toLowerCase()===l;})[0]||'';}
+function canonBrand(b){return brandKey(b,BRAND_STYLE)||b;}
+function bmH(brand,size,cls){   // 브랜드 마크 (브랜드 없으면 라켓 아이콘)
+  var k=brandKey(brand,BRAND_STYLE),st=k?BRAND_STYLE[k]:(brand?{bg:'#E4E9F1',fg:'#3F4A55',t:String(brand).charAt(0).toUpperCase()}:null);
+  if(!st)return'<span class="bm'+(cls?' '+cls:'')+'" style="width:'+size+'px;height:'+size+'px;background:var(--gray-1);color:var(--muted);">'+ic('racket',Math.round(size*.5))+'</span>';
+  return'<span class="bm'+(cls?' '+cls:'')+'" style="width:'+size+'px;height:'+size+'px;font-size:'+Math.round(size*.5)+'px;background:'+st.bg+';color:'+st.fg+';" title="'+esc(brand)+'">'+st.t+'</span>';
+}
+function memAvH(m,size,cls){   // 회원 아바타: 주무기 브랜드 마크, 없으면 이름 첫 글자
+  var rk=mainRk(m);if(rk&&rk.brand)return bmH(rk.brand,size,cls);
+  var a=avS(m.name);
+  return'<span class="bm'+(cls?' '+cls:'')+'" style="width:'+size+'px;height:'+size+'px;font-size:'+Math.round(size*.42)+'px;background:'+a.bg+';color:'+a.cl+';">'+esc(m.name.charAt(0))+'</span>';
+}
+function eqLineH(m){   // 분석 히어로용: 주무기 + 그 라켓의 스트링
+  var rk=mainRk(m),c=rk?curStr(rk):null;if(!rk)return'';
+  return'<div class="ah-eq"><span class="ah-eq-i">'+ic('racket',14)+esc(rkName(rk)||'라켓')+'</span>'+(c?'<span class="ah-eq-i">'+ic('sliders',14)+esc(strShort(c))+'</span>':'')+'</div>';
 }
 function clean(x){return String(x==null?'':x).replace(/[<>&"'\x60]/g,'').trim().slice(0,40);}
 function fv(id){var el=document.getElementById(id);return el?clean(el.value):'';}
-function chipPick(inputId,btn){var inp=document.getElementById(inputId);inp.value=btn.textContent;chipSync(btn.parentElement.id,inp.value);}
-function chipSync(wrapId,val){document.querySelectorAll('#'+wrapId+' .tog').forEach(function(b){b.classList.toggle('on',b.textContent===val.trim());});}
-function selChip(btn){btn.parentElement.querySelectorAll('.tog').forEach(function(b){b.classList.remove('on');});btn.classList.add('on');}
-function chipVal(wrapId){var b=document.querySelector('#'+wrapId+' .tog.on');return b?(b.getAttribute('data-v')||b.textContent):'';}
-function chipsH(wrapId,list,val,inputId){
+function chipsH(wrapId,list,val,inputId,fn){   // 선택 칩: inputId가 있으면 입력칸을 채움(fn: 후처리 함수명), 없으면 단독 선택
   return'<div class="tog-wrap" id="'+wrapId+'">'+list.map(function(x){
-    return'<button type="button" class="tog'+(x===val?' on':'')+'" '+(inputId?'onclick="chipPick(\''+inputId+'\',this)"':'data-v="'+x+'" onclick="selChip(this)"')+'>'+x+'</button>';
+    var on=inputId?(fn?'onclick="'+fn+'(this)"':'onclick="chipPick(\''+inputId+'\',this)"'):'onclick="selChip(this)"';
+    return'<button type="button" class="tog'+(x===val?' on':'')+'" data-v="'+esc(x)+'" '+on+'>'+esc(x)+'</button>';
   }).join('')+'</div>';
 }
+function chipPick(inputId,btn){var inp=document.getElementById(inputId);inp.value=btn.getAttribute('data-v')||btn.textContent;chipSync(btn.parentElement.id,inp.value);}
+function chipSync(wrapId,val){val=String(val||'').trim().toLowerCase();document.querySelectorAll('#'+wrapId+' .tog').forEach(function(b){b.classList.toggle('on',(b.getAttribute('data-v')||b.textContent).toLowerCase()===val);});}
+function selChip(btn){btn.parentElement.querySelectorAll('.tog').forEach(function(b){b.classList.remove('on');});btn.classList.add('on');}
+function chipVal(wrapId){var b=document.querySelector('#'+wrapId+' .tog.on');return b?(b.getAttribute('data-v')||b.textContent):'';}
 function openProfile(id){
   if(!memById(id))return;
-  profId=id;profForm=null;stSet('btc_prof',id);rMembers(true);
+  profId=id;profForm=null;profLogOpen={};stSet('btc_prof',id);rMembers(true);
   document.getElementById('main').scrollTop=0;
   if(!isPopping)window.history.pushState({tab:'members',sub:'prof'},'',window.location.pathname);
 }
 function closeProfile(){profId=null;profForm=null;stSet('btc_prof','');rMembers(true);}
 function profBack(){if(window.history.state&&window.history.state.sub==='prof')window.history.back();else closeProfile();}
-function profOpen(f){profForm=f;rMembers(true);var el=document.getElementById(f==='eq'?'eq-brand':'st-date');if(el)el.scrollIntoView({block:'center'});}
+function profOpen(t,id){profForm={t:t,id:id||''};rMembers(true);var el=document.getElementById(t==='rk'?'rk-brand':'st-date');if(el)el.scrollIntoView({block:'center'});}
 function profCancel(){profForm=null;rMembers(true);}
+function toggleLog(rid){profLogOpen[rid]=!profLogOpen[rid];rMembers(true);}
 function memRowH(m,i){
-  var st=strStatus(m),sub=[],r=eqName(m);
-  if(r)sub.push(esc(r));
+  var st=memStatus(m),rk=mainRk(m),rs=rackets(m),sub=[];
+  if(rk)sub.push(esc(rkName(rk)||'라켓'));
   if(st.cur)sub.push(esc(strShort(st.cur))+' · <b>'+st.days+'일</b>');
-  return'<div class="mem-row"><span class="mem-no">'+(i+1)+'</span>'
+  if(rs.length>1)sub.push('라켓 '+rs.length+'개');
+  return'<div class="mem-row">'+memAvH(m,36)
     +'<div class="mem-main" onclick="if(event.target.tagName!==\'INPUT\')openProfile(\''+m.id+'\')"><div class="mem-nm"><span id="mn-'+m.id+'">'+esc(m.name)+'</span>'+(st.level==='warn'?'<span class="pill warn">교체 권장</span>':'')+'</div>'
-    +'<div class="mem-sub">'+(sub.length?sub.join(' · '):'<span style="opacity:.7">라켓·스트링 미입력 · 눌러서 프로필 열기</span>')+'</div></div>'
+    +'<div class="mem-sub">'+(sub.length?sub.join(' · '):'<span style="opacity:.7">라켓 미등록 · 눌러서 프로필 열기</span>')+'</div></div>'
     +'<button class="ic-btn" onclick="editMem(\''+m.id+'\')">'+ic('edit',17)+'</button><button class="ic-btn" style="color:var(--red);" onclick="delMem(\''+m.id+'\')">'+ic('trash',17)+'</button></div>';
 }
+function kpiH(v,l){return'<div class="ah-kpi"><b>'+v+'</b><span>'+l+'</span></div>';}
 function profileH(m){
-  var st=strStatus(m),c=st.cur,logs=strList(m),r=eqName(m);
-  var played=matchesBetween(m.id,'0000-01-01',today());
+  var rs=rkSorted(m),main=mainRk(m),st=memStatus(m),c=st.cur;
+  var addOpen=profForm&&profForm.t==='rk'&&!profForm.id;
   var h='<div class="prof-back"><button class="ic-btn" onclick="profBack()">'+ic('arrow-left',20)+'</button><span class="pg-hd" style="padding:0;"><span class="ko">회원 프로필</span><span class="en">Profile</span></span></div>';
-  h+='<div class="ana-hero"><div class="ah-top"><div class="ah-av">'+esc(m.name.charAt(0))+'</div><div class="ah-id"><div class="ah-en">Member Profile</div><div class="ah-name">'+esc(m.name)+'</div>'
-    +'<div class="ah-sub">'+(r?esc(r):'라켓 미입력')+' · '+(c?esc(strShort(c)):'스트링 미입력')+'</div></div></div>'
-    +'<div class="ah-kpis"><div class="ah-kpi"><b>'+(c?st.days:'–')+'</b><span>스트링 경과일</span></div><div class="ah-kpi"><b>'+(c?st.matches:'–')+'</b><span>교체 후 경기</span></div><div class="ah-kpi"><b>'+played+'</b><span>총 출전 경기</span></div></div></div>';
-  h+='<div class="card"><div class="card-title" style="justify-content:space-between;"><span style="display:flex;align-items:center;gap:7px;">'+ic('racket',19)+'라켓 <span class="ct-en">Racket</span></span>'
-    +(profForm==='eq'?'':'<button class="sbtn" onclick="profOpen(\'eq\')">'+ic('edit',13)+(m.eq?'수정':'입력')+'</button>')+'</div>'
-    +(profForm==='eq'?eqFormH(m):eqViewH(m))+'</div>';
-  h+='<div class="card"><div class="card-title" style="justify-content:space-between;"><span style="display:flex;align-items:center;gap:7px;">'+ic('sliders',19)+'스트링 <span class="ct-en">Strings</span></span>'
-    +(profForm==='str'?'':'<button class="sbtn primary" onclick="profOpen(\'str\')">'+ic('plus',13)+'교체 기록</button>')+'</div>'
-    +(profForm==='str'?strFormH(m):'')+strViewH(m,st)+'</div>';
-  if(logs.length){
-    h+='<div class="card"><div class="card-title">교체 이력 <span class="cnt">'+logs.length+'회</span></div>'+logs.map(function(x,i){
+  h+='<div class="ana-hero"><div class="ah-top"><div class="ah-av">'+memAvH(m,48)+'</div><div class="ah-id"><div class="ah-en">Member Profile</div><div class="ah-name">'+esc(m.name)+'</div>'
+    +'<div class="ah-sub">'+(main?'주무기 <b>'+esc(rkName(main)||'라켓')+'</b>':'라켓 미등록')+(c?' · '+esc(strShort(c)):'')+(m.hand?' · '+(m.hand==='L'?'왼손':'오른손'):'')+'</div></div></div>'
+    +'<div class="ah-kpis">'+kpiH(rs.length,'보유 라켓')+kpiH(c?st.days:'–','스트링 경과일')+kpiH(c?st.matches:'–','교체 후 경기')+'</div></div>';
+  if(!rs.length&&!addOpen)h+=guideCardH();
+  h+='<div class="card"><div class="card-title" style="justify-content:space-between;"><span style="display:flex;align-items:center;gap:7px;">'+ic('racket',19)+'라켓 <span class="ct-en">Rackets</span>'+(rs.length?'<span class="cnt">'+rs.length+'개</span>':'')+'</span>'
+    +(addOpen?'':'<button class="sbtn primary" onclick="profOpen(\'rk\',\'\')">'+ic('plus',13)+'라켓 추가</button>')+'</div>';
+  if(addOpen)h+=rkFormH(m,null);
+  else if(!rs.length)h+='<div class="prof-note">보유 라켓을 등록하고 <b>주무기</b>를 정하면, 라켓마다 스트링 교체 기록을 따로 관리할 수 있어요.</div>';
+  h+=rs.map(function(rk){return rkBlockH(m,rk);}).join('')+'</div>';
+  h+='<div class="card"><div class="card-title"><span style="display:flex;align-items:center;gap:7px;">'+ic('user',19)+'선수 정보 <span class="ct-en">Player</span></span></div>'
+    +'<div class="f-lbl" style="margin-top:0;">주손</div><div class="tog-wrap"><button type="button" class="tog'+(m.hand==='R'?' on':'')+'" onclick="setHand(\''+m.id+'\',\'R\')">오른손</button><button type="button" class="tog'+(m.hand==='L'?' on':'')+'" onclick="setHand(\''+m.id+'\',\'L\')">왼손</button></div></div>';
+  return h;
+}
+function guideCardH(){
+  return'<div class="card"><div class="card-title">처음 설정 가이드 <span class="ct-en">Quick Start</span></div>'
+    +'<div class="g-step"><span class="g-n">1</span><div><b>라켓 추가</b> — [라켓 추가]를 누르고 브랜드 → 모델 순서로 고르세요. 목록에 없으면 직접 입력하면 돼요. 라켓이 두 개 이상이면 각각 등록합니다.</div></div>'
+    +'<div class="g-step"><span class="g-n">2</span><div><b>주무기 설정</b> — 주로 쓰는 라켓에 <b>주무기</b>를 켜세요. 회원 목록·분석 화면의 이름 앞 마크가 그 라켓 브랜드로 표시돼요.</div></div>'
+    +'<div class="g-step"><span class="g-n">3</span><div><b>스트링 교체 기록</b> — 라켓마다 [교체 기록]으로 브랜드 → 모델(종류 자동) → 텐션을 남기면 경과일·교체 후 경기 수를 계산하고, 90일 또는 25경기가 넘으면 교체 권장을 알려드려요.</div></div></div>';
+}
+function rkBlockH(m,rk){
+  var st=rkStatus(m,rk),c=st.cur,logs=strList(rk),isMain=!!rk.main;
+  if(profForm&&profForm.t==='rk'&&profForm.id===rk.id)return'<div class="rk'+(isMain?' main':'')+'">'+rkFormH(m,rk)+'</div>';
+  var strOpen=profForm&&profForm.t==='str'&&profForm.id===rk.id;
+  var h='<div class="rk'+(isMain?' main':'')+'"><div class="rk-hd">'+bmH(rk.brand||'',36)
+    +'<div class="rk-t"><div class="rk-name"><span>'+esc(rkName(rk)||'라켓')+'</span>'+(isMain?'<span class="pill main">주무기</span>':'')+'</div>'
+    +'<div class="rk-sub">'+(rk.memo?esc(rk.memo)+' · ':'')+'교체 기록 '+logs.length+'회</div></div>'
+    +'<div class="rk-act"><button class="ic-btn" onclick="profOpen(\'rk\',\''+rk.id+'\')">'+ic('edit',16)+'</button><button class="ic-btn" style="color:var(--red);" onclick="delRk(\''+m.id+'\',\''+rk.id+'\')">'+ic('trash',16)+'</button></div></div>';
+  if(c){
+    var p=Math.min(100,Math.round(Math.max(st.days/STR_DAYS,st.matches/STR_MATCHES)*100)),warn=st.level==='warn';
+    h+='<div class="rk-str"><div class="kv"><span>스트링</span><b>'+esc(strFull(c))+'</b></div>'
+      +'<div class="kv"><span>교체일</span><b>'+dstr(c.date)+'</b></div>'
+      +'<div class="kv"><span>사용</span><b>'+st.days+'일 · 교체 후 '+st.matches+'경기 <span class="pill '+(warn?'warn':'ok')+'">'+(warn?'교체 권장':'정상')+'</span></b></div>'
+      +'<div class="str-bar"><i'+(warn?' class="warn"':'')+' style="width:'+p+'%"></i></div>'
+      +'<div class="prof-guide">권장 교체 기준('+STR_DAYS+'일 또는 '+STR_MATCHES+'경기)의 '+p+'% 사용'+(warn?' — 장력이 많이 빠졌을 수 있어요':'')+'</div></div>';
+  }else h+='<div class="rk-str"><div class="prof-note" style="font-size:14px;">스트링 기록이 없어요. <b>교체 기록</b>을 눌러 지금 쓰는 스트링을 등록하세요.</div></div>';
+  h+='<div class="rk-btns">'+(strOpen?'':'<button class="sbtn primary" onclick="profOpen(\'str\',\''+rk.id+'\')">'+ic('plus',13)+'교체 기록</button>')
+    +(isMain?'':'<button class="sbtn" onclick="setMainRk(\''+m.id+'\',\''+rk.id+'\')">'+ic('star',13)+'주무기로</button>')
+    +(logs.length?'<button class="sbtn" onclick="toggleLog(\''+rk.id+'\')">'+ic(profLogOpen[rk.id]?'chevron-up':'chevron-down',13)+'이력 '+logs.length+'회</button>':'')+'</div>';
+  if(strOpen)h+=strFormH(m,rk);
+  if(profLogOpen[rk.id]&&logs.length){
+    h+='<div class="rk-log">'+logs.map(function(x,i){
       var end=i>0?logs[i-1].date:today(),used=daysBetween(x.date,end),g=matchesBetween(m.id,x.date,end);
       return'<div class="log-row"><div class="log-d">'+esc(x.date)+'</div><div class="log-b">'+esc(strFull(x)||'스트링')
         +'<div class="log-s">'+used+'일 사용 · '+g+'경기'+(i===0?' · <b style="color:var(--accent);">현재</b>':'')+(x.memo?' · '+esc(x.memo):'')+'</div></div>'
-        +'<button class="ic-btn" style="color:var(--red);padding:2px 4px;" onclick="delStr(\''+m.id+'\',\''+x.id+'\')">'+ic('trash',16)+'</button></div>';
+        +'<button class="ic-btn" style="color:var(--red);padding:2px 4px;" onclick="delStr(\''+m.id+'\',\''+rk.id+'\',\''+x.id+'\')">'+ic('trash',16)+'</button></div>';
     }).join('')+'</div>';
   }
-  return h;
+  return h+'</div>';
 }
-function eqViewH(m){
-  var e=m.eq||{};
-  if(!e.brand&&!e.model&&!e.hand&&!e.memo)return'<div class="prof-note">라켓 브랜드·모델을 입력하면 회원 목록과 분석 화면에 함께 표시돼요.</div>';
-  return'<div class="kv"><span>브랜드</span><b>'+(e.brand?esc(e.brand):'–')+'</b></div><div class="kv"><span>모델</span><b>'+(e.model?esc(e.model):'–')+'</b></div>'
-    +'<div class="kv"><span>주손</span><b>'+(e.hand==='L'?'왼손':e.hand==='R'?'오른손':'–')+'</b></div>'+(e.memo?'<div class="kv"><span>메모</span><b>'+esc(e.memo)+'</b></div>':'');
+/* 라켓 입력 폼 */
+function rkModelChipsH(brand,val){
+  var k=brandKey(brand,RACKET_MODELS),list=RACKET_MODELS[k]||[];
+  if(!list.length)return'<div class="prof-guide" style="margin:0 0 2px;">'+(brand?esc(brand)+' 모델은 아래에 직접 입력하세요.':'브랜드를 먼저 고르면 인기 모델 목록이 나와요.')+'</div>';
+  return chipsH('rk-mwrap',list,val,'rk-model');
 }
-function eqFormH(m){
-  var e=m.eq||{};
-  return'<div class="f-lbl" style="margin-top:0;">브랜드</div>'+chipsH('eq-bwrap',RACKET_BRANDS,e.brand||'','eq-brand')
-    +'<input type="text" id="eq-brand" class="mt8" placeholder="목록에 없으면 직접 입력" value="'+esc(e.brand||'')+'" oninput="chipSync(\'eq-bwrap\',this.value)">'
-    +'<div class="f-lbl">모델</div><input type="text" id="eq-model" placeholder="예: Blade 98 v9, Pure Aero" value="'+esc(e.model||'')+'">'
-    +'<div class="f-lbl">주손</div><div class="tog-wrap" id="eq-hand"><button type="button" class="tog'+(e.hand==='R'?' on':'')+'" data-v="R" onclick="selChip(this)">오른손</button><button type="button" class="tog'+(e.hand==='L'?' on':'')+'" data-v="L" onclick="selChip(this)">왼손</button></div>'
-    +'<div class="f-lbl">메모 <small>(선택)</small></div><input type="text" id="eq-memo" placeholder="그립 사이즈, 무게, 오버그립 등" value="'+esc(e.memo||'')+'">'
-    +'<div class="btn-row mt12"><button class="btn btn-green" onclick="saveEq(\''+m.id+'\')">저장</button><button class="btn btn-ghost" onclick="profCancel()">취소</button></div>';
+function rkBrandPick(btn){chipPick('rk-brand',btn);rkModels(btn.getAttribute('data-v'));}
+function rkModels(brand){var el=document.getElementById('rk-models');if(el)el.innerHTML=rkModelChipsH(brand,(document.getElementById('rk-model')||{}).value||'');}
+function rkFormH(m,rk){
+  rk=rk||{};var isNew=!rk.id,mainOn=rk.id?!!rk.main:!rackets(m).length;
+  return'<div class="prof-form" style="border-bottom:none;margin-bottom:0;padding-bottom:4px;"><div class="f-lbl" style="margin-top:0;">'+(isNew?'새 라켓 추가':'라켓 수정')+' <small>— ① 브랜드 → ② 모델 → ③ 주무기</small></div>'
+    +'<div class="f-lbl">① 브랜드 <small>— 누르면 인기 모델이 나와요</small></div>'+chipsH('rk-bwrap',RACKET_BRANDS,rk.brand||'','rk-brand','rkBrandPick')
+    +'<input type="text" id="rk-brand" class="mt8" placeholder="목록에 없으면 직접 입력" value="'+esc(rk.brand||'')+'" oninput="chipSync(\'rk-bwrap\',this.value);rkModels(this.value)">'
+    +'<div class="f-lbl">② 모델</div><div id="rk-models">'+rkModelChipsH(rk.brand||'',rk.model||'')+'</div>'
+    +'<input type="text" id="rk-model" class="mt8" placeholder="예: Blade 98 v9 (없으면 직접 입력)" value="'+esc(rk.model||'')+'" oninput="chipSync(\'rk-mwrap\',this.value)">'
+    +'<div class="f-lbl">③ 주무기 <small>— 주로 쓰는 라켓 한 개</small></div><div class="tog-wrap"><button type="button" class="tog'+(mainOn?' on':'')+'" id="rk-main" onclick="this.classList.toggle(\'on\')">'+ic('star',14)+' 주무기로 설정</button></div>'
+    +'<div class="f-lbl">메모 <small>(선택)</small></div><input type="text" id="rk-memo" placeholder="그립 사이즈, 무게, 구입 시기 등" value="'+esc(rk.memo||'')+'">'
+    +'<div class="btn-row mt12"><button class="btn btn-green" onclick="saveRk(\''+m.id+'\',\''+(rk.id||'')+'\')">'+(isNew?'라켓 추가':'저장')+'</button><button class="btn btn-ghost" onclick="profCancel()">취소</button></div></div>';
 }
-function saveEq(id){
-  var m=memById(id);if(!m)return;
-  var eq={brand:fv('eq-brand'),model:fv('eq-model'),hand:chipVal('eq-hand'),memo:fv('eq-memo')};
-  Object.keys(eq).forEach(function(k){if(!eq[k])delete eq[k];});
-  if(Object.keys(eq).length)m.eq=eq;else delete m.eq;
-  profForm=null;save();rMembers(true);toast('라켓 정보를 저장했습니다.');
+function saveRk(mid,rid){
+  var m=memById(mid);if(!m)return;
+  var brand=canonBrand(fv('rk-brand')),model=fv('rk-model'),memo=fv('rk-memo');
+  var mb=document.getElementById('rk-main'),mainOn=!!(mb&&mb.classList.contains('on'));
+  if(!brand&&!model){toast('브랜드 또는 모델을 입력하세요.');return;}
+  m.rk=toArr(m.rk);
+  var rk=rid?rkById(m,rid):null;
+  if(!rk){rk={id:uid()};m.rk.push(rk);}
+  rk.brand=brand;rk.model=model;rk.memo=memo;
+  ['brand','model','memo'].forEach(function(k){if(!rk[k])delete rk[k];});
+  if(mainOn||m.rk.length===1){m.rk.forEach(function(x){x.main=false;});rk.main=true;}
+  else{rk.main=false;if(!m.rk.some(function(x){return x.main;}))m.rk[0].main=true;}
+  profForm=null;save();rMembers(true);toast(rid?'라켓 정보를 저장했습니다.':'라켓을 추가했습니다.');
 }
-function strViewH(m,st){
-  var c=st.cur;
-  if(!c)return'<div class="prof-note">아직 교체 기록이 없어요. <b>교체 기록</b>을 눌러 지금 쓰는 스트링과 교체일을 등록하면 경과일과 교체 후 경기 수를 계산해 드려요.</div>'
-    +'<div class="prof-guide">권장 교체 기준: '+STR_DAYS+'일 또는 '+STR_MATCHES+'경기 · 폴리 스트링은 장력이 빨리 빠져 더 자주 교체하는 편이에요.</div>';
-  var p=Math.min(100,Math.round(Math.max(st.days/STR_DAYS,st.matches/STR_MATCHES)*100));
-  return'<div class="kv"><span>현재 스트링</span><b>'+esc(strFull(c)||'–')+'</b></div>'
-    +'<div class="kv"><span>교체일</span><b>'+dstr(c.date)+'</b></div>'
-    +'<div class="kv"><span>사용</span><b>'+st.days+'일 · 교체 후 '+st.matches+'경기</b></div>'
-    +'<div class="kv"><span>상태</span><b><span class="pill '+(st.level==='warn'?'warn':'ok')+'">'+(st.level==='warn'?'교체 권장':'정상')+'</span></b></div>'
-    +'<div class="str-bar"><i'+(st.level==='warn'?' class="warn"':'')+' style="width:'+p+'%"></i></div>'
-    +'<div class="prof-guide">권장 교체 기준('+STR_DAYS+'일 또는 '+STR_MATCHES+'경기)의 '+p+'% 사용'+(st.level==='warn'?' — 장력이 많이 빠졌을 수 있어요':'')+'</div>';
+function setMainRk(mid,rid){
+  var m=memById(mid);if(!m||!rkById(m,rid))return;
+  m.rk.forEach(function(x){x.main=(x.id===rid);});
+  save();rMembers(true);toast('주무기를 바꿨습니다.');
 }
-function strFormH(m){
-  var c=curStr(m)||{};
-  return'<div class="prof-form"><div class="f-lbl" style="margin-top:0;">교체일</div><input type="date" id="st-date" value="'+today()+'" max="'+today()+'">'
-    +'<div class="f-lbl">브랜드</div>'+chipsH('st-bwrap',STRING_BRANDS,c.brand||'','st-brand')
-    +'<input type="text" id="st-brand" class="mt8" placeholder="목록에 없으면 직접 입력" value="'+esc(c.brand||'')+'" oninput="chipSync(\'st-bwrap\',this.value)">'
+function delRk(mid,rid){
+  var m=memById(mid),rk=m&&rkById(m,rid);if(!rk)return;
+  var n=strList(rk).length;
+  if(!confirm('이 라켓을 삭제하시겠습니까?'+(n?'\n스트링 교체 기록 '+n+'건도 함께 삭제됩니다.':'')))return;
+  m.rk=rackets(m).filter(function(x){return x.id!==rid;});
+  if(!m.rk.length)delete m.rk;else if(!m.rk.some(function(x){return x.main;}))m.rk[0].main=true;
+  profForm=null;save();rMembers(true);toast('삭제되었습니다.');
+}
+function setHand(mid,h){var m=memById(mid);if(!m)return;if(m.hand===h)delete m.hand;else m.hand=h;save();rMembers(true);}
+/* 스트링 입력 폼 (라켓별) */
+function stModelChipsH(brand,val){
+  var k=brandKey(brand,STRING_MODELS),list=STRING_MODELS[k]||[];
+  if(!list.length)return'<div class="prof-guide" style="margin:0 0 2px;">'+(brand?esc(brand)+' 모델은 아래에 직접 입력하고 종류를 골라주세요.':'브랜드를 먼저 고르면 인기 모델 목록이 나와요.')+'</div>';
+  return'<div class="tog-wrap" id="st-mwrap">'+list.map(function(x){return'<button type="button" class="tog'+(x[0]===val?' on':'')+'" data-v="'+esc(x[0])+'" data-type="'+x[1]+'" onclick="stModelPick(this)">'+esc(x[0])+'<small class="tg-s">'+x[1]+'</small></button>';}).join('')+'</div>';
+}
+function stModelPick(btn){
+  var inp=document.getElementById('st-model');inp.value=btn.getAttribute('data-v');chipSync('st-mwrap',inp.value);
+  var t=btn.getAttribute('data-type');document.querySelectorAll('#st-type .tog').forEach(function(b){b.classList.toggle('on',b.getAttribute('data-v')===t);});
+}
+function stBrandPick(btn){chipPick('st-brand',btn);stModels(btn.getAttribute('data-v'));}
+function stModels(brand){var el=document.getElementById('st-models');if(el)el.innerHTML=stModelChipsH(brand,(document.getElementById('st-model')||{}).value||'');}
+function strFormH(m,rk){
+  var c=curStr(rk)||{};
+  return'<div class="prof-form mt8" style="border-bottom:none;margin-bottom:0;padding-bottom:4px;"><div class="f-lbl" style="margin-top:0;">'+esc(rkName(rk)||'라켓')+' — 스트링 교체 기록 <small>— ① 브랜드 → ② 모델 → ③ 텐션</small></div>'
+    +'<div class="f-lbl">교체일</div><input type="date" id="st-date" value="'+today()+'" max="'+today()+'">'
+    +'<div class="f-lbl">① 브랜드 <small>— 누르면 인기 모델이 나와요</small></div>'+chipsH('st-bwrap',STRING_BRANDS,c.brand||'','st-brand','stBrandPick')
+    +'<input type="text" id="st-brand" class="mt8" placeholder="목록에 없으면 직접 입력" value="'+esc(c.brand||'')+'" oninput="chipSync(\'st-bwrap\',this.value);stModels(this.value)">'
+    +'<div class="f-lbl">② 모델 <small>— 누르면 종류가 자동 선택돼요</small></div><div id="st-models">'+stModelChipsH(c.brand||'',c.model||'')+'</div>'
+    +'<input type="text" id="st-model" class="mt8" placeholder="예: RPM Blast 125 (없으면 직접 입력)" value="'+esc(c.model||'')+'" oninput="chipSync(\'st-mwrap\',this.value)">'
     +'<div class="f-lbl">종류</div>'+chipsH('st-type',STRING_TYPES,c.type||'')
-    +'<div class="f-lbl">모델</div><input type="text" id="st-model" placeholder="예: ALU Power 125, RPM Blast" value="'+esc(c.model||'')+'">'
-    +'<div class="f-lbl">텐션 (lb)</div><input type="text" id="st-ten" inputmode="decimal" placeholder="예: 50 또는 52/50" value="'+esc(c.tension||'')+'">'
+    +'<div class="f-lbl">③ 텐션 (lb) <small>— 보통 45~55, 폴리는 멀티보다 2~4 낮게'+(c.tension?' · 이전 '+esc(c.tension)+'lb':'')+'</small></div><input type="text" id="st-ten" inputmode="decimal" placeholder="예: 50 또는 52/50 (메인/크로스)" value="'+esc(c.tension||'')+'">'
     +'<div class="f-lbl">메모 <small>(선택)</small></div><input type="text" id="st-memo" placeholder="교체한 곳, 타구감 등">'
-    +'<div class="btn-row mt12"><button class="btn btn-green" onclick="saveStr(\''+m.id+'\')">저장</button><button class="btn btn-ghost" onclick="profCancel()">취소</button></div></div>';
+    +'<div class="btn-row mt12"><button class="btn btn-green" onclick="saveStr(\''+m.id+'\',\''+rk.id+'\')">저장</button><button class="btn btn-ghost" onclick="profCancel()">취소</button></div></div>';
 }
-function saveStr(id){
-  var m=memById(id);if(!m)return;
+function saveStr(mid,rid){
+  var m=memById(mid),rk=m&&rkById(m,rid);if(!rk)return;
   var d=(document.getElementById('st-date')||{}).value||'';
   if(!/^\d{4}-\d{2}-\d{2}$/.test(d)){toast('교체일을 입력하세요.');return;}
   if(d>today()){toast('교체일이 오늘보다 뒤입니다.');return;}
-  var ent={id:uid(),date:d,brand:fv('st-brand'),type:chipVal('st-type'),model:fv('st-model'),tension:fv('st-ten'),memo:fv('st-memo')};
+  var ent={id:uid(),date:d,brand:canonBrand(fv('st-brand')),type:chipVal('st-type'),model:fv('st-model'),tension:fv('st-ten'),memo:fv('st-memo')};
   Object.keys(ent).forEach(function(k){if(!ent[k])delete ent[k];});
-  m.str=toArr(m.str).concat([ent]);
+  rk.str=toArr(rk.str).concat([ent]);
   profForm=null;save();rMembers(true);toast('교체 기록을 추가했습니다.');
 }
-function delStr(id,sid){
+function delStr(mid,rid,sid){
   if(!confirm('이 교체 기록을 삭제하시겠습니까?'))return;
-  var m=memById(id);if(!m)return;
-  m.str=toArr(m.str).filter(function(x){return x.id!==sid;});if(!m.str.length)delete m.str;
+  var m=memById(mid),rk=m&&rkById(m,rid);if(!rk)return;
+  rk.str=toArr(rk.str).filter(function(x){return x.id!==sid;});if(!rk.str.length)delete rk.str;
   save();rMembers(true);toast('삭제되었습니다.');
 }
-function eqBarRow(label,n,max){return'<div class="eq-bar-row"><span class="eq-bar-l">'+esc(label)+'</span><div class="eq-bar"><i style="width:'+Math.round(n/max*100)+'%"></i></div><span class="eq-bar-n">'+n+'명</span></div>';}
-function eqClubCard(){   // 분석 > 클럽 하이라이트: 장비 현황
-  var bc={},sc={},warn=[],nb=0,ns=0;
+/* 분석 > 클럽 하이라이트: 장비 현황 (주무기 기준) */
+function eqBarRow(label,n,max){return'<div class="eq-bar-row">'+bmH(label,22)+'<span class="eq-bar-l">'+esc(label)+'</span><div class="eq-bar"><i style="width:'+Math.round(n/max*100)+'%"></i></div><span class="eq-bar-n">'+n+'명</span></div>';}
+function eqClubCard(){
+  var bc={},sc={},warn=[],nb=0,ns=0,nr=0;
   DB.members.forEach(function(m){
-    var b=m.eq&&m.eq.brand;if(b){bc[b]=(bc[b]||0)+1;nb++;}
-    var st=strStatus(m);if(st.cur){ns++;var sb=st.cur.brand||'기타';sc[sb]=(sc[sb]||0)+1;if(st.level==='warn')warn.push({m:m,st:st});}
+    var rs=rackets(m),rk=mainRk(m);nr+=rs.length;
+    if(rk&&rk.brand){bc[rk.brand]=(bc[rk.brand]||0)+1;nb++;}
+    if(rk){var st=rkStatus(m,rk);if(st.cur){ns++;var sb=st.cur.brand||'기타';sc[sb]=(sc[sb]||0)+1;if(st.level==='warn')warn.push({m:m,rk:rk,st:st});}}
   });
   var bl=Object.keys(bc).sort(function(a,b){return bc[b]-bc[a]||(a<b?-1:1);}),sl=Object.keys(sc).sort(function(a,b){return sc[b]-sc[a]||(a<b?-1:1);});
   if(!bl.length&&!sl.length)return'';
   var body='';
-  if(bl.length)body+='<div class="sub-title" style="margin-top:0;">라켓 브랜드 <small style="font-weight:500;color:var(--muted);">'+nb+'명 입력</small></div>'+bl.map(function(b){return eqBarRow(b,bc[b],bc[bl[0]]);}).join('');
+  if(bl.length)body+='<div class="sub-title" style="margin-top:0;">라켓 브랜드 <small style="font-weight:500;color:var(--muted);">주무기 기준 '+nb+'명 · 보유 '+nr+'자루</small></div>'+bl.map(function(b){return eqBarRow(b,bc[b],bc[bl[0]]);}).join('');
   if(sl.length)body+='<div class="sub-title">스트링 브랜드 <small style="font-weight:500;color:var(--muted);">'+ns+'명 입력</small></div>'+sl.map(function(b){return eqBarRow(b,sc[b],sc[sl[0]]);}).join('');
   if(warn.length)body+='<div class="sub-title">스트링 교체 권장 <small style="font-weight:500;color:var(--muted);">'+STR_DAYS+'일 또는 '+STR_MATCHES+'경기 초과</small></div><div style="font-size:15px;color:var(--text2);line-height:1.8;">'
-    +warn.map(function(w){return'<span class="nw">'+esc(w.m.name)+' <small style="color:var(--muted);">'+w.st.days+'일 · '+w.st.matches+'경기</small></span>';}).join(', ')+'</div>';
+    +warn.map(function(w){return'<span class="nw">'+esc(w.m.name)+' <small style="color:var(--muted);">'+esc(rkName(w.rk)||'라켓')+' · '+w.st.days+'일 · '+w.st.matches+'경기</small></span>';}).join(', ')+'</div>';
   return aCard('장비 현황 <span class="ct-en">Equipment</span>',body);
 }
 
@@ -2940,7 +3086,7 @@ function anaHero(mem,P,ranks){
   var diff=P.gf-P.ga,ds=(diff>0?'+':'')+diff;
   var streak=P.cur.n>=2?'<span class="ah-streak'+(P.cur.k==='W'?'':' down')+'">'+P.cur.n+(P.cur.k==='W'?'연승 중':'연패 중')+'</span>':'';
   return'<div class="ana-hero">'
-    +'<div class="ah-top"><div class="ah-av">'+esc(mem.name.charAt(0))+'</div>'
+    +'<div class="ah-top"><div class="ah-av">'+memAvH(mem,48)+'</div>'
     +'<div class="ah-id"><div class="ah-en">Player Profile</div><div class="ah-name">'+esc(mem.name)+'</div>'
     +'<div class="ah-sub"><span class="nw">'+lgTag()+' · '+PF_LBL[anaPf]+'</span>'+(pos>=0?' <span class="nw">· 랭킹 <b>'+(pos+1)+'위</b>/'+ranks.length+'명</span>':'')+'</div></div></div>'+eqLineH(mem)
     +'<div class="ah-kpis">'
@@ -3160,8 +3306,7 @@ function renderAnaChips(){
   var el=document.getElementById('ana-chips');if(!el)return;
   var h='<button class="ana-chip'+(aSel==='club'?' on':'')+'" onclick="selAna(\'club\')"><span class="ana-av">'+ic('users',15)+'</span>클럽 전체</button>';
   h+=DB.members.map(function(m){
-    var a=avS(m.name);
-    return'<button class="ana-chip'+(aSel===m.id?' on':'')+'" onclick="selAna(\''+m.id+'\')"><span class="ana-av" style="background:'+a.bg+';color:'+a.cl+';">'+esc(m.name.charAt(0))+'</span>'+esc(m.name)+'</button>';
+    return'<button class="ana-chip'+(aSel===m.id?' on':'')+'" onclick="selAna(\''+m.id+'\')">'+memAvH(m,28)+esc(m.name)+'</button>';
   }).join('');
   el.innerHTML=h;
   var on=el.querySelector('.ana-chip.on');
