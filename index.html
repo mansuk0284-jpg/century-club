@@ -330,6 +330,37 @@ input.mc-score::-webkit-outer-spin-button,input.mc-score::-webkit-inner-spin-but
 .st-s{font-size:13px;color:var(--muted);margin-top:2px;display:flex;align-items:center;gap:5px;flex-wrap:wrap;}
 .st-row .str-bar{margin:7px 0 2px;}
 .st-more{font-size:13.5px;color:var(--accent);font-weight:600;background:none;border:none;padding:6px 0 2px 19px;cursor:pointer;font-family:inherit;}
+/* ── 코트 예약 현황 (홈) ── */
+.sec-row{display:flex;align-items:center;gap:8px;padding:18px 18px 8px;}
+.sec-row .sec-label{padding:0;flex:1;}
+.bk-nav{display:flex;align-items:center;gap:4px;margin:-4px 0 6px;}
+.bk-range{flex:1;text-align:center;font-family:'Gothic A1',sans-serif;font-size:16px;font-weight:800;color:var(--text);line-height:1.2;}
+.bk-range small{display:block;font-family:'Noto Sans KR',sans-serif;font-size:12.5px;color:var(--muted);font-weight:500;margin-top:2px;}
+.me-sel{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--muted);padding-bottom:8px;border-bottom:1px solid var(--line2);}
+.me-sel select{width:auto;padding:6px 10px;font-size:14.5px;-webkit-appearance:menulist;appearance:menulist;background:#fff;}
+.bk{border:1px solid var(--line);border-radius:8px;padding:11px 12px 10px;margin-top:10px;background:#fff;}
+.bk.today{border-color:rgba(26,122,74,.45);box-shadow:0 0 0 2px rgba(26,122,74,.08);}
+.bk.past{opacity:.62;}
+.bk-hd{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.bk-day{font-family:'Gothic A1',sans-serif;font-size:16px;font-weight:800;color:var(--text);}
+.bk-time{font-size:15px;font-weight:700;color:var(--accent);font-variant-numeric:tabular-nums;}
+.bk-act{margin-left:auto;display:flex;gap:0;}
+.bk-venue{font-size:16px;font-weight:700;color:var(--text);margin-top:5px;line-height:1.35;}
+.bk-court{display:inline-block;font-size:13.5px;font-weight:700;color:var(--text2);background:var(--gray-2);border-radius:4px;padding:2px 7px;margin-left:6px;vertical-align:1px;}
+.bk-memo{font-size:13.5px;color:var(--muted);margin-top:2px;}
+.bk-att{font-size:14px;color:var(--text2);margin-top:8px;line-height:1.55;}
+.bk-att b{color:var(--accent);}
+.bk-names{font-size:13.5px;color:var(--muted);}
+.bk-btns{display:flex;gap:6px;margin-top:9px;flex-wrap:wrap;}
+.sbtn.on-yes{background:var(--accent);border-color:var(--accent);color:#fff;}
+.sbtn.on-no{background:var(--gray-3);border-color:var(--gray-3);color:#fff;}
+.roster{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px;padding-top:9px;border-top:1px dashed var(--line);}
+.roster .tog{padding:6px 10px;font-size:14px;}
+.roster .tog.yes{background:var(--accent);color:#fff;font-weight:700;}
+.roster .tog.no{background:var(--gray-3);color:#fff;text-decoration:line-through;}
+.time-row{display:flex;gap:8px;align-items:center;}
+.time-row input{flex:1;}
+.time-row span{color:var(--muted);flex-shrink:0;}
 .av{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;flex-shrink:0;}
 
 /* ── 기록 ── */
@@ -636,6 +667,12 @@ input.mc-score::-webkit-outer-spin-button,input.mc-score::-webkit-inner-spin-but
       <div class="qg-ic" style="background:#9277cf;"><svg width="24" height="24" viewBox="0 0 24 24"><g fill="currentColor" stroke="none"><rect x="5.4" y="12" width="3.2" height="6.6" rx="1"/><rect x="10.4" y="7.6" width="3.2" height="11" rx="1"/><rect x="15.4" y="14" width="3.2" height="4.6" rx="1"/></g></svg></div>
       <div class="qg-txt"><div class="qg-t">분석</div><div class="qg-s">Insights</div></div>
     </button>
+  </div>
+
+  <!-- 섹션: 코트 예약 현황 (주간) -->
+  <div id="home-bk">
+    <div class="sec-row"><div class="sec-label">코트 예약 현황<span class="sec-en">Bookings</span></div><button class="sbtn primary" onclick="bkOpen('')"><i data-ic="plus" data-size="13"></i>예약 추가</button></div>
+    <div class="card" id="home-bk-card"></div>
   </div>
 
   <!-- 섹션: 최근 모임 -->
@@ -1169,7 +1206,7 @@ function lgIco(s){return lgTagH(s);}
 function lgName(s){return lgOf(s)==='baekse'?'백세리그':'일반리그';}
 
 /* ── FIREBASE ── */
-var APP_VER='5.6 (2026-09-26)';
+var APP_VER='5.7 (2026-09-26)';
 var fbApp=null,fbDB=null,fbRef=null,isOnline=false;
 var FB_KEY='btc_firebase_cfg';
 var lastSavedSnapshot='';   // 자기가 저장한 데이터 추적 (echo 방지)
@@ -1219,7 +1256,7 @@ function initFB(cfg){
         // 자기가 방금 저장한 데이터면 화면 새로고침 안 함 (입력 끊김 방지)
         var incoming=JSON.stringify(inc);
         if(incoming===lastSavedSnapshot){return;}
-        DB.members=inc.members;DB.sessions=inc.sessions;
+        DB.members=inc.members;DB.sessions=inc.sessions;DB.bookings=inc.bookings;
         if(migrate()){save();}                        // 구버전 데이터에 회원 순서 부여
         try{localStorage.setItem('btc2',JSON.stringify(DB));}catch(e){}
         // 입력 중이 아닐 때만 새로고침
@@ -1328,13 +1365,13 @@ function connectFB(){
         if(confirm('서버에 기존 데이터가 있습니다.\n\n[확인] 서버 데이터 받기 (내 데이터 대체)\n[취소] 내 데이터로 서버 덮어쓰기')){
           // 서버 데이터 받기
           var inc1=adoptServer(serverData);
-          DB.members=inc1.members;DB.sessions=inc1.sessions;migrate();
+          DB.members=inc1.members;DB.sessions=inc1.sessions;DB.bookings=inc1.bookings;migrate();
           try{localStorage.setItem('btc2',JSON.stringify(DB));}catch(e){}
         }else{
           // 내 데이터로 서버 덮어쓰기 선택 → 리스너가 서버 데이터로 바꾸기 전에 로컬을 보존해 두고 업로드
-          var keepLocal=JSON.parse(JSON.stringify({members:DB.members,sessions:DB.sessions}));
+          var keepLocal=JSON.parse(JSON.stringify({members:DB.members,sessions:DB.sessions,bookings:DB.bookings}));
           setTimeout(function(){
-            DB.members=keepLocal.members;DB.sessions=keepLocal.sessions;
+            DB.members=keepLocal.members;DB.sessions=keepLocal.sessions;DB.bookings=keepLocal.bookings;
             sortDB(DB);
             try{localStorage.setItem('btc2',JSON.stringify(DB));}catch(e){}
             pushAllFB();refreshTab();
@@ -1427,9 +1464,10 @@ function pushAllFB(){
   sortDB(DB);
   var mo={};DB.members.forEach(function(m){mo[m.id]=m;});
   var so={};DB.sessions.forEach(function(s){so[s.id]=s;});
-  lastSavedSnapshot=JSON.stringify({members:DB.members,sessions:DB.sessions});
+  var bo={};toArr(DB.bookings).forEach(function(b){bo[b.id]=b;});
+  lastSavedSnapshot=JSON.stringify({members:DB.members,sessions:DB.sessions,bookings:DB.bookings});
   lastSyncedDB=JSON.parse(lastSavedSnapshot);
-  return fbRef.set({members:mo,sessions:so});
+  return fbRef.set({members:mo,sessions:so,bookings:bo});
 }
 
 function uploadFB(){
@@ -1446,7 +1484,7 @@ function downloadFB(){
     var d=snap.val();
     if(d){
       var inc=adoptServer(d);
-      DB.members=inc.members;DB.sessions=inc.sessions;migrate();
+      DB.members=inc.members;DB.sessions=inc.sessions;DB.bookings=inc.bookings;migrate();
       lastSyncedDB=JSON.parse(JSON.stringify(inc));
       try{localStorage.setItem('btc2',JSON.stringify(DB));}catch(e){}
       toast('다운로드 완료!');rHome();
@@ -1482,6 +1520,8 @@ function sanitizeDB(db){
     }
     if(m.rk&&m.rk.length&&!m.rk.some(function(r){return r.main;}))m.rk[0].main=true;
   });
+  db.bookings=toArr(db.bookings).filter(function(b){return b&&b.id&&b.date;});   // 코트 예약 현황 (v5.7)
+  db.bookings.forEach(function(b){if(!b.att||typeof b.att!=='object'||Array.isArray(b.att))b.att={};});
   db.sessions=toArr(db.sessions).filter(function(s){return s&&s.id;});
   db.sessions.forEach(function(s){
     s.matches=toArr(s.matches).filter(function(m){return m&&m.id;});
@@ -1507,11 +1547,12 @@ function sortDB(db){
     if(ao!==bo)return ao-bo;
     return (a.name||'')<(b.name||'')?-1:1;
   });
+  (db.bookings||[]).sort(function(a,b){var x=a.date+(a.start||''),y=b.date+(b.start||'');return x<y?-1:x>y?1:(a.id<b.id?-1:1);});
   return db;
 }
 function adoptServer(d){
-  var inc=d?{members:d.members?Object.values(d.members):[],sessions:d.sessions?Object.values(d.sessions):[]}
-           :{members:[],sessions:[]};
+  var inc=d?{members:d.members?Object.values(d.members):[],sessions:d.sessions?Object.values(d.sessions):[],bookings:d.bookings?Object.values(d.bookings):[]}
+           :{members:[],sessions:[],bookings:[]};
   sanitizeDB(inc);sortDB(inc);
   return inc;
 }
@@ -1532,9 +1573,9 @@ function migrate(){
 }
 /* 변경된 항목만 골라내는 부분 저장 패치 (전체 덮어쓰기 → 항목별 저장: 동시 입력 충돌 최소화) */
 function diffPatch(prev,cur){
-  prev=prev||{members:[],sessions:[]};
+  prev=prev||{members:[],sessions:[],bookings:[]};
   var patch={};
-  ['members','sessions'].forEach(function(k){
+  ['members','sessions','bookings'].forEach(function(k){
     var pm={},cm={};
     (prev[k]||[]).forEach(function(x){pm[x.id]=x;});
     (cur[k]||[]).forEach(function(x){cm[x.id]=x;});
@@ -1555,7 +1596,7 @@ function save(){
   try{
     var patch=diffPatch(lastSyncedDB,DB);
     if(!Object.keys(patch).length)return;
-    lastSavedSnapshot=JSON.stringify({members:DB.members,sessions:DB.sessions});
+    lastSavedSnapshot=JSON.stringify({members:DB.members,sessions:DB.sessions,bookings:DB.bookings});
     lastSyncedDB=JSON.parse(lastSavedSnapshot);
     fbRef.update(patch).catch(function(e){
       console.error('FB save:',e);
@@ -1586,7 +1627,7 @@ function maintainFB(){
   var key=today();
   bref.child(key).once('value').then(function(s){
     if(s.exists())return null;
-    return bref.child(key).set({ts:Date.now(),members:DB.members,sessions:DB.sessions});
+    return bref.child(key).set({ts:Date.now(),members:DB.members,sessions:DB.sessions,bookings:DB.bookings});
   }).then(function(){
     return bref.once('value');
   }).then(function(s){
@@ -1628,9 +1669,9 @@ function restoreBackup(k){
   if(!v){toast('백업 데이터를 찾을 수 없습니다.');return;}
   if(!confirm('['+k+'] 백업으로 되돌립니다.\n\n현재 데이터는 복원 직전 상태로 자동 보관되며,\n복원 결과는 모든 기기에 적용됩니다.\n진행할까요?'))return;
   // 복원 전 현재 상태를 별도 백업으로 보관
-  try{fbDB.ref('baekse-tennis-backups/'+today()+'_pre-restore').set({ts:Date.now(),members:DB.members,sessions:DB.sessions});}catch(e){}
+  try{fbDB.ref('baekse-tennis-backups/'+today()+'_pre-restore').set({ts:Date.now(),members:DB.members,sessions:DB.sessions,bookings:DB.bookings});}catch(e){}
   var inc=adoptServer(v);
-  DB.members=inc.members;DB.sessions=inc.sessions;migrate();normalizeWinners();
+  DB.members=inc.members;DB.sessions=inc.sessions;DB.bookings=inc.bookings;migrate();normalizeWinners();
   try{localStorage.setItem('btc2',JSON.stringify(DB));}catch(e){}
   pushAllFB().then(function(){toast('복원 완료! 모든 기기에 적용됩니다.');refreshTab();})
     .catch(function(e){toast('서버 반영 실패: '+e.message);});
@@ -1675,7 +1716,7 @@ function restoreTrash(k){
 function exportJSON(){
   try{
     var payload={app:'baekse-tennis',ver:APP_VER,exportedAt:new Date().toISOString(),
-      data:{members:DB.members,sessions:DB.sessions}};
+      data:{members:DB.members,sessions:DB.sessions,bookings:DB.bookings}};
     var txt=JSON.stringify(payload,null,1);
     var name='백세테니스_백업_'+today()+'.json';
     var blob=new Blob([txt],{type:'application/json'});
@@ -1708,7 +1749,7 @@ function importJSON(ev){
       var mc=(data.members||[]).length,sc=(data.sessions||[]).length;
       if(!confirm('백업파일 내용: 회원 '+mc+'명 · 모임 '+sc+'개\n\n현재 데이터를 이 내용으로 교체합니다.'
         +(isOnline?'\n(서버에도 반영되어 모든 기기에 적용됩니다)':'')+'\n진행할까요?'))return;
-      DB={members:data.members||[],sessions:data.sessions||[]};
+      DB={members:data.members||[],sessions:data.sessions||[],bookings:data.bookings||[]};
       sanitizeDB(DB);migrate();sortDB(DB);normalizeWinners();
       try{localStorage.setItem('btc2',JSON.stringify(DB));}catch(e){}
       if(isOnline&&fbRef){
@@ -2175,6 +2216,7 @@ function rHome(){
   // 설정 행 뱃지
   var badge=document.getElementById('fav-fb-badge');
   if(badge)badge.className=isOnline?'ql-badge on':'ql-badge';
+  rBookings();
   var card=document.getElementById('home-rec'),list=document.getElementById('home-rec-list');
   if(!DB.sessions.length){card.style.display='none';return;}
   card.style.display='block';
@@ -2183,6 +2225,106 @@ function rHome(){
   }).join('');
 }
 function openSes(id){activeId=id;goTab('session');}
+
+/* ── 코트 예약 현황 (홈 · 주간 · 참여 여부) ── */
+ICONS['chevron-left']='<path d="m15 5.5-6.5 6.5L15 18.5"/>';
+var VENUES=[{n:'동래실내테니스장',s:'grass'},{n:'백운포테니스장',s:'grass'},{n:'스포원테니스장',s:'hard'},{n:'송정테니스장',s:'grass'}];   // 자주 가는 곳
+var TIME_PRESETS=[['06:00','08:00'],['07:00','09:00'],['18:00','20:00'],['19:00','21:00'],['20:00','22:00']];
+var bkWeek=0,bkForm=null,bkRoster={},meId=null;   // 보는 주(0=이번 주) · 열린 입력 폼 · 명단 펼침 · 이 기기의 "나"
+try{meId=localStorage.getItem('btc_me')||null;}catch(e){}
+function bookings(){return toArr(DB.bookings);}
+function bkById(id){return bookings().filter(function(b){return b.id===id;})[0]||null;}
+function fmtD(dt){var m=dt.getMonth()+1,d=dt.getDate();return dt.getFullYear()+'-'+(m<10?'0':'')+m+'-'+(d<10?'0':'')+d;}
+function addDays(d,n){var dt=new Date(d+'T00:00:00');dt.setDate(dt.getDate()+n);return fmtD(dt);}
+function weekStart(d){var dt=new Date(d+'T00:00:00');dt.setDate(dt.getDate()-((dt.getDay()+6)%7));return fmtD(dt);}   // 월요일 시작
+function bkDay(d){var dt=new Date(d+'T00:00:00');return DAYS[dt.getDay()]+' '+(dt.getMonth()+1)+'/'+dt.getDate();}
+function md(d){var dt=new Date(d+'T00:00:00');return(dt.getMonth()+1)+'/'+dt.getDate();}
+function setMe(v){meId=(v&&memById(v))?v:null;try{if(meId)localStorage.setItem('btc_me',meId);else localStorage.removeItem('btc_me');}catch(e){}rBookings(true);}
+function bkAttCount(b){var y=0,n=0;Object.keys(b.att||{}).forEach(function(k){if(!memById(k))return;if(b.att[k]===1)y++;else if(b.att[k]===0)n++;});return{yes:y,no:n};}
+function bkNames(b,v){return DB.members.filter(function(m){return b.att&&b.att[m.id]===v;}).map(function(m){return esc(m.name);});}
+function rBookings(force){
+  var card=document.getElementById('home-bk-card');if(!card)return;
+  if(bkForm&&!force)return;   // 입력 중엔 동기화로 화면을 덮지 않음
+  if(meId&&!memById(meId))meId=null;
+  if(bkForm){card.innerHTML=bkFormH(bkForm.id?bkById(bkForm.id):null);return;}
+  var t=today(),ws=addDays(weekStart(t),bkWeek*7),we=addDays(ws,6);
+  var list=bookings().filter(function(b){return b.date>=ws&&b.date<=we;});
+  var lbl=bkWeek===0?'이번 주':bkWeek===1?'다음 주':bkWeek===-1?'지난 주':(bkWeek>0?bkWeek+'주 뒤':(-bkWeek)+'주 전');
+  var h='<div class="bk-nav"><button class="ic-btn" onclick="bkWeek--;rBookings(true)">'+ic('chevron-left',18)+'</button>'
+    +'<div class="bk-range">'+md(ws)+' – '+md(we)+'<small>'+lbl+'</small></div>'
+    +'<button class="ic-btn" onclick="bkWeek++;rBookings(true)">'+ic('chevron-right',18)+'</button></div>';
+  h+='<div class="me-sel"><span>나:</span><select onchange="setMe(this.value)"><option value="">이름 선택</option>'+DB.members.map(function(m){return'<option value="'+m.id+'"'+(m.id===meId?' selected':'')+'>'+esc(m.name)+'</option>';}).join('')+'</select>'
+    +'<span style="flex:1;"></span>'+(bkWeek!==0?'<button class="sbtn" onclick="bkWeek=0;rBookings(true)">이번 주로</button>':'<span style="font-size:12.5px;">참여·불참은 본인 이름 기준</span>')+'</div>';
+  if(!list.length){
+    var nx=bookings().filter(function(b){return b.date>=t;})[0];
+    h+='<div class="prof-note" style="text-align:center;padding:14px 0 8px;">이 주에는 예약이 없어요.'+(nx?'<br><span style="color:var(--muted);font-size:13.5px;">다음 예약 · '+bkDay(nx.date)+' '+esc(nx.start)+' '+esc(nx.venue)+'</span>':'<br><span style="color:var(--muted);font-size:13.5px;">[예약 추가]로 잡아둔 코트를 적어두세요.</span>')+'</div>';
+  }else h+=list.map(function(b){return bkCardH(b,t);}).join('');
+  card.innerHTML=h;
+}
+function bkCardH(b,t){
+  var c=bkAttCount(b),mine=(meId&&b.att)?b.att[meId]:undefined,past=b.date<t,isT=b.date===t,yes=bkNames(b,1);
+  var h='<div class="bk'+(isT?' today':past?' past':'')+'"><div class="bk-hd"><span class="bk-day">'+bkDay(b.date)+'</span><span class="bk-time">'+esc(b.start)+'–'+esc(b.end)+'</span>'+surfH(b.surface)
+    +'<span class="bk-act"><button class="ic-btn" onclick="bkOpen(\''+b.id+'\')">'+ic('edit',16)+'</button><button class="ic-btn" style="color:var(--red);" onclick="delBk(\''+b.id+'\')">'+ic('trash',16)+'</button></span></div>'
+    +'<div class="bk-venue">'+esc(b.venue)+(b.court?'<span class="bk-court">'+esc(b.court)+'번 코트</span>':'')+'</div>'+(b.memo?'<div class="bk-memo">'+esc(b.memo)+'</div>':'')
+    +'<div class="bk-att">참여 <b>'+c.yes+'명</b>'+(c.no?' · 불참 '+c.no+'명':'')+(yes.length?'<div class="bk-names">'+yes.join(', ')+'</div>':'')+'</div>'
+    +'<div class="bk-btns"><button class="sbtn'+(mine===1?' on-yes':'')+'" onclick="bkMe(\''+b.id+'\',1)">'+ic('check',13)+'참여</button><button class="sbtn'+(mine===0?' on-no':'')+'" onclick="bkMe(\''+b.id+'\',0)">'+ic('x',13)+'불참</button>'
+    +'<button class="sbtn" onclick="bkRoster[\''+b.id+'\']=!bkRoster[\''+b.id+'\'];rBookings(true)">'+ic(bkRoster[b.id]?'chevron-up':'users',13)+'명단</button>'
+    +(c.yes>=2&&!past?'<button class="sbtn" onclick="bkToSession(\''+b.id+'\')">'+ic('shuffle',13)+'편성</button>':'')+'</div>';
+  if(bkRoster[b.id])h+='<div class="roster">'+DB.members.map(function(m){var v=b.att?b.att[m.id]:undefined;return'<button type="button" class="tog'+(v===1?' yes':v===0?' no':'')+'" onclick="bkCycle(\''+b.id+'\',\''+m.id+'\')">'+esc(m.name)+'</button>';}).join('')
+    +'<div style="width:100%;font-size:12.5px;color:var(--muted);">이름을 누를 때마다 미정 → 참여 → 불참 순으로 바뀝니다 (다른 회원 대신 입력할 때)</div></div>';
+  return h+'</div>';
+}
+function bkMe(bid,v){
+  if(!meId){toast('먼저 "나: 이름 선택"에서 본인 이름을 고르세요.');var sel=document.querySelector('#home-bk-card .me-sel select');if(sel)sel.focus();return;}
+  var b=bkById(bid);if(!b)return;b.att=b.att||{};
+  if(b.att[meId]===v)delete b.att[meId];else b.att[meId]=v;
+  save();rBookings(true);
+}
+function bkCycle(bid,mid){var b=bkById(bid);if(!b)return;b.att=b.att||{};var v=b.att[mid];if(v===1)b.att[mid]=0;else if(v===0)delete b.att[mid];else b.att[mid]=1;save();rBookings(true);}
+function bkOpen(id){bkForm={id:id||''};rBookings(true);var el=document.getElementById('home-bk-card');if(el)el.scrollIntoView({block:'start'});}
+function bkCancel(){bkForm=null;rBookings(true);}
+function bkVenuePick(btn){chipPick('bk-venue',btn);var v=VENUES.filter(function(x){return x.n===btn.getAttribute('data-v');})[0];if(v)document.querySelectorAll('#bk-surf .tog').forEach(function(x){x.classList.toggle('on',x.getAttribute('data-v')===v.s);});}
+function bkTimePick(btn){document.getElementById('bk-start').value=btn.getAttribute('data-s');document.getElementById('bk-end').value=btn.getAttribute('data-e');selChip(btn);}
+function bkFormH(b){
+  b=b||{};var isNew=!b.id,sf=b.surface||'grass';
+  return'<div class="f-lbl" style="margin-top:0;">'+(isNew?'예약 추가':'예약 수정')+' <small>— 예약 사이트에서 잡은 코트를 적어두면 회원들이 참여 여부를 표시해요</small></div>'
+    +'<div class="f-lbl">날짜</div><input type="date" id="bk-date" value="'+esc(b.date||today())+'">'
+    +'<div class="f-lbl">장소 <small>— 누르면 코트 종류가 자동 선택</small></div>'+chipsH('bk-vwrap',VENUES.map(function(v){return v.n;}),b.venue||'','bk-venue','bkVenuePick')
+    +'<input type="text" id="bk-venue" class="mt8" placeholder="다른 곳이면 직접 입력" value="'+esc(b.venue||'')+'" oninput="chipSync(\'bk-vwrap\',this.value)">'
+    +'<div class="f-lbl">코트 종류</div><div class="tog-wrap" id="bk-surf">'+[['grass','잔디'],['hard','하드'],['clay','클레이']].map(function(x){return'<button type="button" class="tog'+(sf===x[0]?' on':'')+'" data-v="'+x[0]+'" onclick="selChip(this)">'+x[1]+'</button>';}).join('')+'</div>'
+    +'<div class="f-lbl">코트 번호 <small>— 여러 면이면 쉼표로 (예: 3, 4)</small></div><input type="text" id="bk-court" placeholder="예: 3" value="'+esc(b.court||'')+'">'
+    +'<div class="f-lbl">시간</div><div class="tog-wrap" style="margin-bottom:8px;">'+TIME_PRESETS.map(function(p){return'<button type="button" class="tog'+((b.start===p[0]&&b.end===p[1])?' on':'')+'" data-s="'+p[0]+'" data-e="'+p[1]+'" onclick="bkTimePick(this)">'+parseInt(p[0],10)+'–'+parseInt(p[1],10)+'시</button>';}).join('')+'</div>'
+    +'<div class="time-row"><input type="time" id="bk-start" value="'+esc(b.start||'19:00')+'"><span>~</span><input type="time" id="bk-end" value="'+esc(b.end||'21:00')+'"></div>'
+    +'<div class="f-lbl">메모 <small>(선택)</small></div><input type="text" id="bk-memo" placeholder="예: 예약자 김철수 · 코트비 1만원" value="'+esc(b.memo||'')+'">'
+    +'<div class="btn-row mt12"><button class="btn btn-green" onclick="saveBk(\''+(b.id||'')+'\')">'+(isNew?'예약 추가':'저장')+'</button><button class="btn btn-ghost" onclick="bkCancel()">취소</button></div>';
+}
+function saveBk(id){
+  var d=(document.getElementById('bk-date')||{}).value||'',venue=fv('bk-venue'),court=fv('bk-court'),memo=fv('bk-memo');
+  var st=(document.getElementById('bk-start')||{}).value||'',en=(document.getElementById('bk-end')||{}).value||'';
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(d)){toast('날짜를 입력하세요.');return;}
+  if(!venue){toast('장소를 선택하거나 입력하세요.');return;}
+  if(!st||!en){toast('시간을 입력하세요.');return;}
+  if(en<=st){toast('종료 시간이 시작 시간보다 빨라요.');return;}
+  DB.bookings=bookings();
+  var b=id?bkById(id):null;
+  if(!b){b={id:uid(),ts:Date.now(),att:{}};DB.bookings.push(b);}
+  b.date=d;b.venue=venue;b.surface=chipVal('bk-surf')||'grass';b.court=court;b.start=st;b.end=en;b.memo=memo;
+  if(!b.court)delete b.court;if(!b.memo)delete b.memo;
+  bkForm=null;bkWeek=Math.round((new Date(weekStart(d)+'T00:00:00')-new Date(weekStart(today())+'T00:00:00'))/(7*86400000));
+  save();rBookings(true);toast(id?'예약을 수정했습니다.':'예약을 추가했습니다.');
+}
+function delBk(id){if(!confirm('이 예약을 삭제하시겠습니까?'))return;DB.bookings=bookings().filter(function(b){return b.id!==id;});bkForm=null;save();rBookings(true);toast('삭제되었습니다.');}
+function bkToSession(id){   // 예약 정보(날짜·코트 종류·코트 수·참여자)로 편성 폼 채우기
+  var b=bkById(id);if(!b)return;
+  var ids=DB.members.filter(function(m){return b.att&&b.att[m.id]===1;}).map(function(m){return m.id;});
+  activeId=null;goTab('session');showForm();
+  document.getElementById('ses-date').value=b.date;
+  surface=(b.surface==='hard'||b.surface==='clay')?b.surface:'grass';syncTog('tg-sf',surface);
+  var n=String(b.court||'').split(/[^0-9]+/).filter(Boolean).length;if(n>=1)courts=Math.max(1,Math.min(8,n));
+  if(ids.length)pIds=ids;
+  updCalc();rChips();
+  toast('예약 내용으로 편성 폼을 채웠어요 (참여 '+ids.length+'명)');
+}
 
 /* ── MEMBERS ── */
 function rMembers(force){
