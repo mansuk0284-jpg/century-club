@@ -410,6 +410,46 @@ input.mc-score::-webkit-outer-spin-button,input.mc-score::-webkit-inner-spin-but
 .bkd-sec .f-lbl{margin-top:0;}
 .att-line{font-size:14.5px;color:var(--text2);line-height:1.6;}
 .att-line b{color:var(--text);}
+/* 모임 상세: 이름 칩으로 참석 선택 · 하단 편성 버튼 */
+.att-cnt{display:flex;gap:5px;margin-left:auto;flex-wrap:wrap;}
+.att-cnt .pill{font-size:12px;}
+.att-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(72px,1fr));gap:7px;}
+.att-chip{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-width:0;padding:9px 6px 8px;border-radius:8px;border:1px solid var(--gray-3);background:#fff;color:var(--text2);font-family:inherit;font-size:15.5px;font-weight:600;line-height:1.25;cursor:pointer;text-align:center;}
+.att-chip .nm{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.att-chip .st{font-size:11.5px;font-weight:700;line-height:1.2;color:var(--muted);}
+.att-chip.yes{background:var(--accent);border-color:var(--accent);color:#fff;}
+.att-chip.yes .st{color:rgba(255,255,255,.85);}
+.att-chip.no{background:var(--gray-2);border-color:var(--gray-2);color:var(--muted);}
+.att-chip.no .nm{text-decoration:line-through;}
+.cta-wrap{padding:6px 18px 4px;}
+.btn.dis{opacity:.45;}
+/* 프로필: 라켓 카드 (N번 라켓 머리띠 + 스트링 교체기록 표) */
+.card.rkc{padding:0;overflow:hidden;}
+.card.rkc.main{border-color:rgba(26,122,74,.45);}
+.rkc-hd{display:flex;align-items:center;gap:8px;min-height:44px;padding:6px 8px 6px 14px;background:var(--gray-1);border-bottom:1px solid var(--line);}
+.rkc.main .rkc-hd{background:var(--accent-l2);border-bottom-color:rgba(26,122,74,.22);}
+.rkc-no{font-family:'Gothic A1','Noto Sans KR',sans-serif;font-size:16px;font-weight:800;color:var(--text);letter-spacing:-.3px;line-height:1.3;white-space:nowrap;}
+.rkc-act{margin-left:auto;display:flex;align-items:center;gap:2px;flex-shrink:0;}
+.rkc-bd{padding:14px 14px 14px;}
+.rkc-top{display:flex;align-items:center;gap:12px;}
+.rkc-name{font-size:17px;font-weight:700;color:var(--text);line-height:1.35;overflow-wrap:anywhere;}
+.rkc-memo{font-size:13.5px;color:var(--muted);line-height:1.45;margin-top:2px;overflow-wrap:anywhere;}
+.rkc-sec{display:flex;align-items:center;gap:8px;margin-top:14px;padding-top:12px;border-top:1px solid var(--line2);}
+.rkc-sec b{font-family:'Gothic A1','Noto Sans KR',sans-serif;font-size:15.5px;font-weight:800;color:var(--text);letter-spacing:-.3px;line-height:1.3;white-space:nowrap;}
+.rkc-sec .cnt{margin-left:0;}
+.rkc-sec .sbtn{margin-left:auto;}
+/* 스트링 교체기록 행: 윗줄 = 교체일 · 사용 현황 · 삭제 / 아랫줄 = 스트링 이름(전체 폭) */
+.sl-row{padding:10px 0;}
+.sl-row+.sl-row{border-top:1px solid var(--line2);}
+.sl-top{display:flex;align-items:center;gap:8px;min-height:24px;}
+.sl-d{font-size:14px;font-weight:700;color:var(--text2);font-variant-numeric:tabular-nums;line-height:1.4;white-space:nowrap;}
+.sl-d small{font-size:12px;font-weight:500;color:var(--muted);margin-left:5px;}
+.sl-u{margin-left:auto;min-width:0;display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:2px 6px;font-size:13px;color:var(--muted);line-height:1.4;}
+.sl-u>span{white-space:nowrap;}
+.sl-n{font-size:15px;font-weight:500;color:var(--text2);line-height:1.4;margin-top:3px;overflow-wrap:anywhere;}
+.sl-row.cur .sl-n{font-weight:700;color:var(--text);}
+.sl-memo{font-size:13px;color:var(--muted);line-height:1.45;margin-top:1px;overflow-wrap:anywhere;}
+.sl-x{flex-shrink:0;color:var(--gray-3);padding:2px 2px 2px 4px;}
 .av{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;flex-shrink:0;}
 
 /* ── 기록 ── */
@@ -1258,7 +1298,7 @@ function lgIco(s){return lgTagH(s);}
 function lgName(s){return lgOf(s)==='baekse'?'백세리그':'일반리그';}
 
 /* ── FIREBASE ── */
-var APP_VER='5.9.4 (2026-09-26)';
+var APP_VER='6.0 (2026-10-02)';
 var fbApp=null,fbDB=null,fbRef=null,isOnline=false;
 var FB_KEY='btc_firebase_cfg';
 var lastSavedSnapshot='';   // 자기가 저장한 데이터 추적 (echo 방지)
@@ -2283,9 +2323,8 @@ function openSes(id){activeId=id;goTab('session');}
 ICONS['chevron-left']='<path d="m15 5.5-6.5 6.5L15 18.5"/>';
 var VENUES=[{n:'동래실내테니스장',s:'grass',k:'동래'},{n:'백운포테니스장',s:'grass',k:'백운포'},{n:'스포원테니스장',s:'hard',k:'스포원'},{n:'송정테니스장',s:'grass',k:'송정'}];   // 자주 가는 곳
 var TIME_PRESETS=[['06:00','08:00'],['07:00','09:00'],['18:00','20:00'],['19:00','21:00'],['20:00','22:00']];
-var bkWeek=0,meId=null;                                   // 홈에서 보는 주(0=이번 주) · 이 기기의 "나"
+var bkWeek=0,bkEdit=null;                                 // (bkWeek 미사용) · 모임 상세에서 일정 수정 중인 모임 id
 var bkView={mode:'cal',id:'',month:'',date:'',sel:''};    // 예약 페이지 상태: mode cal|detail|form
-try{meId=localStorage.getItem('btc_me')||null;}catch(e){}
 function bookings(){return toArr(DB.bookings);}
 function bkById(id){return bookings().filter(function(b){return b.id===id;})[0]||null;}
 function fmtD(dt){var m=dt.getMonth()+1,d=dt.getDate();return dt.getFullYear()+'-'+(m<10?'0':'')+m+'-'+(d<10?'0':'')+d;}
@@ -2295,14 +2334,13 @@ function dow(d){return DAYS[new Date(d+'T00:00:00').getDay()];}
 function md(d){var dt=new Date(d+'T00:00:00');return(dt.getMonth()+1)+'/'+dt.getDate();}
 function bkShort(v){var p=VENUES.filter(function(x){return x.n===v;})[0];return p?p.k:String(v||'').replace(/테니스장|체육공원|실내/g,'').slice(0,3);}
 function bkByDate(){var m={};bookings().forEach(function(b){(m[b.date]=m[b.date]||[]).push(b);});return m;}
-function setMe(v){meId=(v&&memById(v))?v:null;try{if(meId)localStorage.setItem('btc_me',meId);else localStorage.removeItem('btc_me');}catch(e){}rBk(true);}
 function bkAttCount(b){var y=0,n=0;Object.keys(b.att||{}).forEach(function(k){if(!memById(k))return;if(b.att[k]===1)y++;else if(b.att[k]===0)n++;});return{yes:y,no:n};}
 function bkNames(b,v){return DB.members.filter(function(m){return b.att&&b.att[m.id]===v;}).map(function(m){return esc(m.name);});}
 /* 페이지 상태 ↔ history/sessionStorage */
 function bkSub(){return[bkView.mode,bkView.id||'',bkView.month||'',bkView.date||'',bkView.sel||''].join('|');}
 function bkFromSub(x){if(!x)return null;var p=String(x).split('|');if(!p[0])return null;return{mode:p[0],id:p[1]||'',month:p[2]||'',date:p[3]||'',sel:p[4]||''};}
 function bkGo(mode,id,opt){
-  opt=opt||{};
+  opt=opt||{};bkEdit=null;
   bkView={mode:mode,id:id||'',month:opt.month||bkView.month||today().slice(0,7),date:opt.date||'',sel:opt.sel!==undefined?opt.sel:(bkView.sel||'')};
   stSet('btc_bk',JSON.stringify(bkView));
   goTab('bk',bkSub(),!opt.replace&&opt.push!==false);
@@ -2313,11 +2351,15 @@ function bkBack(){if(window.history.state&&window.history.state.tab==='bk')windo
 function bkPageHd(ko,en,right){return'<div class="prof-back"><button class="ic-btn" onclick="bkBack()">'+ic('arrow-left',20)+'</button><span class="pg-hd" style="padding:0;"><span class="ko">'+ko+'</span><span class="en">'+en+'</span></span>'+(right?'<span style="margin-left:auto;">'+right+'</span>':'')+'</div>';}
 function rBk(force){
   var el=document.getElementById('bk-page');if(!el)return;
-  if(meId&&!memById(meId))meId=null;
   var sub=bkSub();
   if(bkView.mode==='form'){if(!force&&el.getAttribute('data-sub')===sub)return;el.setAttribute('data-sub',sub);el.innerHTML=bkFormPageH();return;}   // 입력 중엔 동기화로 덮지 않음
   el.setAttribute('data-sub',sub);
-  if(bkView.mode==='detail'){var b=bkById(bkView.id);el.innerHTML=b?bkDetailH(b):bkPageHd('모임 상세','Booking')+'<div class="card">'+emptyH('calendar','삭제되었거나 없는 모임 일정입니다.')+'</div>';return;}
+  if(bkView.mode==='detail'){
+    var b=bkById(bkView.id);
+    if(!b||bkEdit!==bkView.id)bkEdit=null;
+    if(bkEdit&&!force&&el.querySelector('#bk-date'))return;   // 일정 수정 중엔 동기화로 덮지 않음
+    el.innerHTML=b?bkDetailH(b):bkPageHd('모임 상세','Booking')+'<div class="card">'+emptyH('calendar','삭제되었거나 없는 모임 일정입니다.')+'</div>';return;
+  }
   el.innerHTML=bkCalH();
 }
 /* ── 홈: 모임 일정 — 이번 주 남은 모임 + 앞으로의 모임 (최소 2건) ── */
@@ -2365,32 +2407,31 @@ function bkCalH(){
   return h;
 }
 /* ── 상세 (참여 여부 입력) ── */
-function meSelH(){return'<div class="me-sel" style="border:none;padding:0 0 8px;"><span>나:</span><select onchange="setMe(this.value)"><option value="">이름 선택</option>'+DB.members.map(function(m){return'<option value="'+m.id+'"'+(m.id===meId?' selected':'')+'>'+esc(m.name)+'</option>';}).join('')+'</select><span style="font-size:12.5px;">이 폰에서 참여·불참을 누를 이름</span></div>';}
-function bkDetailH(b){
-  var t=today(),c=bkAttCount(b),yes=bkNames(b,1),no=bkNames(b,0),mine=(meId&&b.att)?b.att[meId]:undefined,und=Math.max(0,DB.members.length-c.yes-c.no);
-  var h=bkPageHd('모임 상세','Booking','<button class="sbtn" onclick="bkGo(\'form\',\''+b.id+'\')">'+ic('edit',13)+'수정</button>');
-  h+='<div class="card"><div class="bkd-hd"><span class="bkd-day">'+dstr(b.date)+'</span>'+(b.date===t?'<span class="pill ok">오늘</span>':b.date<t?'<span class="pill">지난 모임</span>':'')+'</div>'
+function bkDetailH(b){   // 모임 상세: ① 모임 정보(+일정 수정) ② 참석 여부(이름을 눌러 선택) ③ 이 인원으로 경기 편성
+  var t=today(),c=bkAttCount(b),und=Math.max(0,DB.members.length-c.yes-c.no),editing=bkEdit===b.id;
+  var h=bkPageHd('모임 상세','Booking');
+  h+='<div class="card"><div class="card-title" style="justify-content:space-between;"><span>모임 정보</span>'+(editing?'':'<button class="sbtn" onclick="bkEditOn(\''+b.id+'\')">'+ic('edit',13)+'일정 수정</button>')+'</div>';
+  if(editing)h+=bkFormH(b);
+  else h+='<div class="bkd-hd"><span class="bkd-day">'+dstr(b.date)+'</span>'+(b.date===t?'<span class="pill ok">오늘</span>':b.date<t?'<span class="pill">지난 모임</span>':'')+'</div>'
     +'<div class="bkd-hd" style="margin-top:4px;"><span class="bkd-time">'+esc(b.start)+' – '+esc(b.end)+'</span>'+surfH(b.surface)+'</div>'
-    +'<div class="bkd-venue">'+esc(b.venue)+(b.court?'<span class="bk-court">'+esc(b.court)+'번 코트</span>':'')+'</div>'+(b.memo?'<div class="bk-memo" style="font-size:14.5px;margin-top:4px;">'+esc(b.memo)+'</div>':'')
-    +'<div class="bkd-sec"><div class="f-lbl">참여 현황 <small>— 참여 '+c.yes+' · 불참 '+c.no+' · 미정 '+und+'</small></div>'
-    +'<div class="att-line"><b>참여 '+c.yes+'명</b>'+(yes.length?' · '+yes.join(', '):'')+'</div>'+(no.length?'<div class="att-line" style="color:var(--muted);">불참 '+c.no+'명 · '+no.join(', ')+'</div>':'')+'</div>'
-    +'<div class="bkd-sec">'+meSelH()+'<div class="bk-btns" style="margin-top:0;"><button class="sbtn'+(mine===1?' on-yes':'')+'" onclick="bkMe(\''+b.id+'\',1)">'+ic('check',13)+'참여</button><button class="sbtn'+(mine===0?' on-no':'')+'" onclick="bkMe(\''+b.id+'\',0)">'+ic('x',13)+'불참</button>'
-    +(c.yes>=2&&b.date>=t?'<button class="sbtn" onclick="bkToSession(\''+b.id+'\')">'+ic('shuffle',13)+'이 예약으로 편성</button>':'')+'</div></div>'
-    +'<div class="bkd-sec"><div class="f-lbl">명단 <small>— 이름을 누를 때마다 미정 → 참여 → 불참 (다른 회원 대신 입력)</small></div><div class="roster" style="margin:0;padding:0;border:none;">'
-    +DB.members.map(function(m){var v=b.att?b.att[m.id]:undefined;return'<button type="button" class="tog'+(v===1?' yes':v===0?' no':'')+'" onclick="bkCycle(\''+b.id+'\',\''+m.id+'\')">'+esc(m.name)+'</button>';}).join('')+'</div></div>'
-    +'<div class="bkd-sec btn-row"><button class="btn btn-ghost" onclick="bkGo(\'form\',\''+b.id+'\')">'+ic('edit',15)+'수정</button><button class="btn btn-ghost" style="color:var(--red);" onclick="delBk(\''+b.id+'\')">'+ic('trash',15)+'삭제</button></div></div>';
+    +'<div class="bkd-venue">'+esc(b.venue)+(b.court?'<span class="bk-court">'+esc(b.court)+'번 코트</span>':'')+'</div>'+(b.memo?'<div class="bk-memo" style="font-size:14.5px;margin-top:4px;">'+esc(b.memo)+'</div>':'');
+  h+='</div>';
+  h+='<div class="card"><div class="card-title" style="flex-wrap:wrap;row-gap:8px;"><span>참석 여부</span><span class="att-cnt"><span class="pill ok">참여 '+c.yes+'</span><span class="pill">불참 '+c.no+'</span><span class="pill">미정 '+und+'</span></span></div>'
+    +(DB.members.length
+      ?'<div class="att-grid">'+DB.members.map(function(m){var v=b.att?b.att[m.id]:undefined;return'<button type="button" class="att-chip'+(v===1?' yes':v===0?' no':'')+'" onclick="bkCycle(\''+b.id+'\',\''+m.id+'\')"><span class="nm">'+esc(m.name)+'</span><span class="st">'+(v===1?'참여':v===0?'불참':'미정')+'</span></button>';}).join('')+'</div>'
+        +'<div class="prof-guide" style="margin-top:10px;">이름을 누를 때마다 <b>참여 → 불참 → 미정</b> 순서로 바뀝니다.</div>'
+      :'<div class="prof-note">등록된 회원이 없어요. 회원 탭에서 먼저 회원을 추가하세요.</div>')+'</div>';
+  h+='<div class="cta-wrap">'+(c.yes>=2
+      ?'<button class="btn btn-green" onclick="bkToSession(\''+b.id+'\')">'+ic('shuffle',17)+'이 참석 인원으로 경기 편성 ('+c.yes+'명)</button>'
+      :'<button class="btn btn-green dis" onclick="toast(\'참여가 2명 이상이면 경기 편성을 할 수 있어요.\')">'+ic('shuffle',17)+'이 참석 인원으로 경기 편성</button><div class="prof-guide" style="text-align:center;margin-top:8px;">참여 인원이 2명 이상이면 바로 편성할 수 있어요.</div>')
+    +'<div style="text-align:center;margin-top:16px;"><button class="sbtn danger" onclick="delBk(\''+b.id+'\')">'+ic('trash',13)+'모임 일정 삭제</button></div></div>';
   return h;
 }
-function bkMe(bid,v){
-  if(!meId){toast('먼저 "나: 이름 선택"에서 본인 이름을 고르세요.');var sel=document.querySelector('#bk-page .me-sel select');if(sel)sel.focus();return;}
-  var b=bkById(bid);if(!b)return;b.att=b.att||{};
-  if(b.att[meId]===v)delete b.att[meId];else b.att[meId]=v;
-  save();rBk(true);
-}
+function bkEditOn(id){bkEdit=id;rBk(true);var el=document.getElementById('bk-date');if(el)el.scrollIntoView({block:'center'});}
 function bkCycle(bid,mid){var b=bkById(bid);if(!b)return;b.att=b.att||{};var v=b.att[mid];if(v===1)b.att[mid]=0;else if(v===0)delete b.att[mid];else b.att[mid]=1;save();rBk(true);}
 /* ── 입력 폼 ── */
 function bkFormPageH(){var b=bkView.id?bkById(bkView.id):null;return bkPageHd(b?'모임 일정 수정':'모임 일정 추가','Booking')+'<div class="card">'+bkFormH(b)+'</div>';}
-function bkCancel(){bkBack();}
+function bkCancel(){if(bkEdit){bkEdit=null;rBk(true);}else bkBack();}
 function bkVenuePick(btn){chipPick('bk-venue',btn);var v=VENUES.filter(function(x){return x.n===btn.getAttribute('data-v');})[0];if(v)document.querySelectorAll('#bk-surf .tog').forEach(function(x){x.classList.toggle('on',x.getAttribute('data-v')===v.s);});}
 function bkTimePick(btn){document.getElementById('bk-start').value=btn.getAttribute('data-s');document.getElementById('bk-end').value=btn.getAttribute('data-e');selChip(btn);}
 function bkFormH(b){
@@ -2419,6 +2460,7 @@ function saveBk(id){
   b.date=d;b.venue=venue;b.surface=chipVal('bk-surf')||'grass';b.court=court;b.start=st;b.end=en;b.memo=memo;
   if(!b.court)delete b.court;if(!b.memo)delete b.memo;
   save();toast(id?'모임 일정을 수정했습니다.':'모임 일정을 추가했습니다.');
+  if(id&&bkEdit===id){bkEdit=null;bkView.month=d.slice(0,7);bkView.sel=d;rBk(true);return;}   // 상세 화면에서 바로 수정한 경우 그 자리에서 갱신
   bkGo('detail',b.id,{month:d.slice(0,7),sel:d,replace:true});
 }
 function delBk(id){if(!confirm('이 모임 일정을 삭제하시겠습니까?'))return;DB.bookings=bookings().filter(function(b){return b.id!==id;});save();toast('삭제되었습니다.');goTab('home');}
@@ -2588,58 +2630,55 @@ function memRowH(m,i){
     +'<button class="ic-btn" onclick="editMem(\''+m.id+'\')">'+ic('edit',17)+'</button><button class="ic-btn" style="color:var(--red);" onclick="delMem(\''+m.id+'\')">'+ic('trash',17)+'</button></div>';
 }
 function kpiH(v,l){return'<div class="ah-kpi"><b>'+v+'</b><span>'+l+'</span></div>';}
-function profileH(m){
-  var rs=rkSorted(m),main=mainRk(m),st=memStatus(m),c=st.cur;
+function profileH(m){   // 프로필: 히어로 → 보유 라켓(N번 라켓 카드, 등록 순) → 선수 정보
+  var rs=rackets(m),main=mainRk(m),st=memStatus(m),c=st.cur;
   var addOpen=profForm&&profForm.t==='rk'&&!profForm.id;
   var h='<div class="prof-back"><button class="ic-btn" onclick="profBack()">'+ic('arrow-left',20)+'</button><span class="pg-hd" style="padding:0;"><span class="ko">회원 프로필</span><span class="en">Profile</span></span></div>';
   h+='<div class="ana-hero"><div class="ah-top"><div class="ah-av'+(memHasLogo(m)?' logo':'')+'">'+memAvH(m,48)+'</div><div class="ah-id"><div class="ah-en">Member Profile</div><div class="ah-name">'+esc(m.name)+'</div>'
     +'<div class="ah-sub">'+(main?'<span class="en-b">MAIN</span> <b>'+esc(rkName(main)||'라켓')+'</b>':'라켓 미등록')+(m.hand?' · '+(m.hand==='L'?'왼손':'오른손'):'')+'</div></div></div>'
     +'<div class="ah-kpis">'+kpiH(rs.length,'보유 라켓')+kpiH(c?st.days:'–','스트링 경과일')+kpiH(c?st.matches:'–','교체 후 경기')+'</div></div>';
-  if(!rs.length&&!addOpen)h+=guideCardH();
-  h+='<div class="card"><div class="card-title" style="justify-content:space-between;flex-wrap:wrap;row-gap:8px;"><span style="display:flex;align-items:center;gap:7px;white-space:nowrap;">'+ic('racket',19)+'라켓 <span class="ct-en">Rackets</span>'+(rs.length?'<span class="cnt">'+rs.length+'개</span>':'')+'</span>'
+  h+='<div class="sec-row"><div class="sec-label">보유 라켓<span class="sec-en">Rackets</span></div>'+(rs.length?'<span class="cnt" style="margin:0;">'+rs.length+'자루</span>':'')
     +(addOpen?'':'<button class="sbtn primary" onclick="profOpen(\'rk\',\'\')">'+ic('plus',13)+'라켓 추가</button>')+'</div>';
-  if(addOpen)h+=rkFormH(m,null);
-  else if(!rs.length)h+='<div class="prof-note">보유 라켓을 등록하고 <b>MAIN</b>(주로 쓰는 라켓)을 정하면, 라켓마다 스트링 교체 기록을 따로 관리할 수 있어요.</div>';
-  h+=rs.map(function(rk){return rkBlockH(m,rk);}).join('')+'</div>';
+  if(addOpen)h+='<div class="card rkc"><div class="rkc-hd"><span class="rkc-no">'+(rs.length+1)+'번 라켓 추가</span></div><div class="rkc-bd">'+rkFormH(m,null)+'</div></div>';
+  else if(!rs.length)h+=guideCardH();
+  h+=rs.map(function(rk,i){return rkCardH(m,rk,i+1);}).join('');
+  if(rs.length)h+='<div class="prof-guide" style="padding:0 20px 12px;margin-top:0;">스트링은 교체 후 '+STR_DAYS+'일 또는 '+STR_MATCHES+'경기가 넘으면 <b>교체 권장</b>으로 표시됩니다.</div>';
   h+='<div class="card"><div class="card-title"><span style="display:flex;align-items:center;gap:7px;">'+ic('user',19)+'선수 정보 <span class="ct-en">Player</span></span></div>'
     +'<div class="f-lbl" style="margin-top:0;">주손</div><div class="tog-wrap"><button type="button" class="tog'+(m.hand==='R'?' on':'')+'" onclick="setHand(\''+m.id+'\',\'R\')">오른손</button><button type="button" class="tog'+(m.hand==='L'?' on':'')+'" onclick="setHand(\''+m.id+'\',\'L\')">왼손</button></div></div>';
   return h;
 }
 function guideCardH(){
   return'<div class="card"><div class="card-title">처음 설정 가이드 <span class="ct-en">Quick Start</span></div>'
-    +'<div class="g-step"><span class="g-n">1</span><div><b>라켓 추가</b> — [라켓 추가]를 누르고 브랜드 → 모델 순서로 고르세요. 목록에 없으면 직접 입력하면 돼요. 라켓이 두 개 이상이면 각각 등록합니다.</div></div>'
-    +'<div class="g-step"><span class="g-n">2</span><div><b>MAIN 설정</b> — 주로 쓰는 라켓(Main Racket)에 <b>MAIN</b>을 켜세요. 회원 목록·분석 화면의 이름 앞에 그 라켓 브랜드 로고가 표시돼요.</div></div>'
-    +'<div class="g-step"><span class="g-n">3</span><div><b>스트링 교체 기록</b> — 라켓마다 [교체 기록]으로 브랜드 → 모델(종류 자동) → 텐션을 남기면 라켓별 타임라인에 경과일·교체 후 경기 수가 표시되고, 90일 또는 25경기가 넘으면 교체 권장을 알려드려요.</div></div></div>';
+    +'<div class="g-step"><span class="g-n">1</span><div><b>라켓 추가</b> — 브랜드 → 모델을 고르면 <b>1번 라켓</b>으로 등록돼요. 여러 자루면 2번, 3번으로 계속 추가하세요.</div></div>'
+    +'<div class="g-step"><span class="g-n">2</span><div><b>MAIN</b> — 주로 쓰는 라켓에 MAIN을 켜면 이름 앞에 그 브랜드 로고가 표시돼요.</div></div>'
+    +'<div class="g-step"><span class="g-n">3</span><div><b>스트링 교체기록</b> — 라켓마다 [교체 기록]으로 스트링·텐션·교체일을 남기면 사용 일수와 경기 수가 계산돼요.</div></div></div>';
 }
-function strTimelineH(m,rk,st){   // 라켓별 스트링 타임라인: 현재 스트링(상태·막대) + 이전 기록(기본 2개, 더 보기)
-  var logs=strList(rk);
-  if(!logs.length)return'<div class="st-tl"><div class="prof-note" style="font-size:14px;padding:4px 0 2px;">스트링 기록이 없어요. <b>교체 기록</b>을 눌러 지금 쓰는 스트링을 등록하세요.</div></div>';
-  var more=!!profMore[rk.id],show=more?logs:logs.slice(0,3),warn=st.level==='warn';
-  var p=Math.min(100,Math.round(Math.max(st.days/STR_DAYS,st.matches/STR_MATCHES)*100));
-  var h='<div class="st-tl">'+show.map(function(x,i){
-    var cur=i===0,end=cur?today():logs[i-1].date,used=daysBetween(x.date,end),g=matchesBetween(m.id,x.date,end);
-    var sub=cur?'<span>'+dstr(x.date)+' 교체</span><span>·</span><span>'+used+'일 · '+g+'경기</span><span class="pill '+(warn?'warn':'ok')+'">'+(warn?'교체 권장':'정상')+'</span>'
-              :'<span>'+esc(x.date)+' ~ '+esc(end)+'</span><span>·</span><span>'+used+'일 · '+g+'경기</span>';
-    return'<div class="st-row'+(cur?(warn?' cur warn':' cur'):'')+'"><span class="st-dot"></span><div class="st-b"><div class="st-n">'+esc(strFull(x)||'스트링')+'</div><div class="st-s">'+sub+(x.memo?'<span>· '+esc(x.memo)+'</span>':'')+'</div>'
-      +(cur?'<div class="str-bar"><i'+(warn?' class="warn"':'')+' style="width:'+p+'%"></i></div><div class="prof-guide" style="margin-top:2px;">권장 교체 기준('+STR_DAYS+'일 또는 '+STR_MATCHES+'경기)의 '+p+'% 사용'+(warn?' — 장력이 많이 빠졌을 수 있어요':'')+'</div>':'')
-      +'</div><button class="ic-btn" style="color:var(--gray-3);padding:2px 4px;" onclick="delStr(\''+m.id+'\',\''+rk.id+'\',\''+x.id+'\')">'+ic('trash',15)+'</button></div>';
-  }).join('');
-  if(logs.length>3)h+='<button class="st-more" onclick="toggleMore(\''+rk.id+'\')">'+(more?'접기':'이전 기록 '+(logs.length-3)+'개 더 보기')+'</button>';
-  return h+'</div>';
-}
-function rkBlockH(m,rk){
-  var st=rkStatus(m,rk),isMain=!!rk.main;
-  if(profForm&&profForm.t==='rk'&&profForm.id===rk.id)return'<div class="rk'+(isMain?' main':'')+'">'+rkFormH(m,rk)+'</div>';
-  var strOpen=profForm&&profForm.t==='str'&&profForm.id===rk.id;
-  var h='<div class="rk'+(isMain?' main':'')+'"><div class="rk-hd">'+bmH(rk.brand||'',30)
-    +'<div class="rk-t"><div class="rkt-name"><span>'+esc(rkName(rk)||'라켓')+'</span>'+(isMain?'<span class="pill main">MAIN</span>':'')+'</div>'
-    +(rk.memo?'<div class="rk-sub">'+esc(rk.memo)+'</div>':'')+'</div>'
-    +'<div class="rk-act"><button class="ic-btn" onclick="profOpen(\'rk\',\''+rk.id+'\')">'+ic('edit',16)+'</button><button class="ic-btn" style="color:var(--red);" onclick="delRk(\''+m.id+'\',\''+rk.id+'\')">'+ic('trash',16)+'</button></div></div>'
-    +strTimelineH(m,rk,st)
-    +'<div class="rk-btns">'+(strOpen?'':'<button class="sbtn primary" onclick="profOpen(\'str\',\''+rk.id+'\')">'+ic('plus',13)+'교체 기록</button>')
-    +(isMain?'':'<button class="sbtn" onclick="setMainRk(\''+m.id+'\',\''+rk.id+'\')">'+ic('star',13)+'MAIN으로</button>')+'</div>';
+function rkCardH(m,rk,no){   // 라켓 카드: 머리띠(N번 라켓 · MAIN · 수정/삭제) → 라켓 → 스트링 교체기록
+  var isMain=!!rk.main,st=rkStatus(m,rk),logs=strList(rk);
+  var editing=profForm&&profForm.t==='rk'&&profForm.id===rk.id,strOpen=profForm&&profForm.t==='str'&&profForm.id===rk.id;
+  var h='<div class="card rkc'+(isMain?' main':'')+'"><div class="rkc-hd"><span class="rkc-no">'+no+'번 라켓'+(editing?' 수정':'')+'</span>'+(isMain?'<span class="pill main">MAIN</span>':'')
+    +'<span class="rkc-act">'+(isMain||editing?'':'<button class="sbtn" onclick="setMainRk(\''+m.id+'\',\''+rk.id+'\')">'+ic('star',13)+'MAIN으로</button>')
+    +(editing?'':'<button class="ic-btn" title="라켓 수정" onclick="profOpen(\'rk\',\''+rk.id+'\')">'+ic('edit',16)+'</button><button class="ic-btn" title="라켓 삭제" style="color:var(--red);" onclick="delRk(\''+m.id+'\',\''+rk.id+'\')">'+ic('trash',16)+'</button>')
+    +'</span></div><div class="rkc-bd">';
+  if(editing)return h+rkFormH(m,rk)+'</div></div>';
+  h+='<div class="rkc-top">'+bmH(rk.brand||'',32)+'<div style="min-width:0;"><div class="rkc-name">'+esc(rkName(rk)||'라켓')+'</div>'+(rk.memo?'<div class="rkc-memo">'+esc(rk.memo)+'</div>':'')+'</div></div>';
+  h+='<div class="rkc-sec"><b>스트링 교체기록</b>'+(logs.length?'<span class="cnt">'+logs.length+'회</span>':'')+(strOpen?'':'<button class="sbtn primary" onclick="profOpen(\'str\',\''+rk.id+'\')">'+ic('plus',13)+'교체 기록</button>')+'</div>';
   if(strOpen)h+=strFormH(m,rk);
-  return h+'</div>';
+  return h+strLogH(m,rk,st,logs)+'</div></div>';
+}
+function strLogH(m,rk,st,logs){   // 스트링 교체기록 표: 교체일 | 스트링 · 사용 일수/경기 수 | 삭제 (맨 위가 지금 매여 있는 스트링)
+  if(!logs.length)return'<div class="prof-note" style="font-size:14px;padding:8px 0 2px;">아직 기록이 없어요. <b>교체 기록</b>을 눌러 지금 매여 있는 스트링과 교체일을 남겨두세요.</div>';
+  var more=!!profMore[rk.id],show=more?logs:logs.slice(0,4),warn=st.level==='warn';
+  var h=show.map(function(x,i){
+    var cur=i===0,end=cur?today():logs[i-1].date,used=daysBetween(x.date,end),g=matchesBetween(m.id,x.date,end);
+    var yr=String(x.date).slice(0,4);
+    return'<div class="sl-row'+(cur?' cur':'')+'"><div class="sl-top"><span class="sl-d">'+md(x.date)+' ('+dow(x.date)+')'+(yr!==today().slice(0,4)?'<small>'+esc(yr)+'</small>':'')+'</span>'
+      +'<span class="sl-u">'+(cur?'<span class="pill '+(warn?'warn':'ok')+'">'+(warn?'교체 권장':'사용 중')+'</span>':'')+'<span>'+used+(cur?'일째':'일 사용')+' · '+g+'경기</span></span>'
+      +'<button class="ic-btn sl-x" title="기록 삭제" onclick="delStr(\''+m.id+'\',\''+rk.id+'\',\''+x.id+'\')">'+ic('trash',15)+'</button></div>'
+      +'<div class="sl-n">'+esc(strFull(x)||'스트링')+'</div>'+(x.memo?'<div class="sl-memo">'+esc(x.memo)+'</div>':'')+'</div>';
+  }).join('');
+  if(logs.length>4)h+='<button class="st-more" style="padding-left:0;" onclick="toggleMore(\''+rk.id+'\')">'+(more?'접기':'이전 기록 '+(logs.length-4)+'개 더 보기')+'</button>';
+  return h;
 }
 /* 라켓 입력 폼 */
 function rkModelChipsH(brand,val){
