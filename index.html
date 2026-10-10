@@ -423,6 +423,9 @@ input.mc-score::-webkit-outer-spin-button,input.mc-score::-webkit-inner-spin-but
 .att-chip.no .nm{text-decoration:line-through;}
 .cta-wrap{padding:6px 18px 4px;}
 .btn.dis{opacity:.45;}
+.bk-done{display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center;padding:12px 10px 14px;margin-bottom:10px;border:1px solid var(--line);border-radius:8px;background:#fff;}
+.bk-done b{font-size:15.5px;color:var(--text);}
+.bk-done span:last-child{font-size:13px;color:var(--muted);line-height:1.5;}
 /* 프로필: 라켓 카드 (N번 라켓 머리띠 + 스트링 교체기록 표) */
 .card.rkc{padding:0;overflow:hidden;}
 .card.rkc.main{border-color:rgba(26,122,74,.45);}
@@ -1282,6 +1285,7 @@ function matchCardH(m,sess,mode){
 /* ── STATE ── */
 var DB={members:[],sessions:[]};
 var pending=null,activeId=null,rf='all',histOpen={};
+var formBookingId=null;   // 편성 폼을 모임 일정 상세에서 열었을 때 그 일정 id (doCreate 때 세션에 bookingId로 기록)
 var courts=2,totalMin=120,gameMin=30,mtype='doubles',surface='grass',pIds=[];
 var isPopping=false;
 
@@ -1299,7 +1303,7 @@ function lgIco(s){return lgTagH(s);}
 function lgName(s){return lgOf(s)==='baekse'?'백세리그':'일반리그';}
 
 /* ── FIREBASE ── */
-var APP_VER='6.1 (2026-10-10)';
+var APP_VER='6.2 (2026-10-10)';
 var fbApp=null,fbDB=null,fbRef=null,isOnline=false;
 var FB_KEY='btc_firebase_cfg';
 var lastSavedSnapshot='';   // 자기가 저장한 데이터 추적 (echo 방지)
@@ -2378,9 +2382,9 @@ function rBookings(){
 }
 function bkDateH(d,isT){var dt=new Date(d+'T00:00:00'),wd=dt.getDay();return'<div class=\"bkr-d'+(isT?' today':'')+(wd===0?' sun':wd===6?' sat':'')+'\"><span class=\"w\">'+DAYS[wd]+'</span><b>'+dt.getDate()+'</b><span class=\"m\">'+(dt.getMonth()+1)+'월</span></div>';}
 function bkRowH(b,t){   // 요약 행: 날짜 타일 / 시간 · 코트 번호 / 장소 · 코트 종류 / 참여 인원 (누르면 상세)
-  var c=bkAttCount(b),past=b.date<t,isT=b.date===t;
+  var c=bkAttCount(b),past=b.date<t,isT=b.date===t,ls=bkSession(b);
   return'<div class="bkr'+(isT?' today':past?' past':'')+'" onclick="bkGo(\'detail\',\''+b.id+'\')">'+bkDateH(b.date,isT)
-    +'<div class="bkr-m"><div class="bkr-t">'+esc(b.start)+'–'+esc(b.end)+(b.court?'<span class="bk-court" style="margin-left:0;">'+esc(b.court)+'번 코트</span>':'')+'</div><div class="bkr-s">'+esc(b.venue)+' '+surfH(b.surface)+'</div></div>'
+    +'<div class="bkr-m"><div class="bkr-t">'+esc(b.start)+'–'+esc(b.end)+(b.court?'<span class="bk-court" style="margin-left:0;">'+esc(b.court)+'번 코트</span>':'')+(ls?(ls.resultsLocked?'<span class="pill ok">완료</span>':'<span class="pill">편성됨</span>'):'')+'</div><div class="bkr-s">'+esc(b.venue)+' '+surfH(b.surface)+'</div></div>'
     +'<span class="bkr-n'+(c.yes?'':' zero')+'">'+c.yes+'<small>명</small></span>'+ic('chevron-right',16)+'</div>';
 }
 /* ── 월간 달력 ── */
@@ -2424,9 +2428,14 @@ function bkDetailH(b){   // 모임 상세: ① 모임 정보(+일정 수정) ②
       ?'<div class="att-grid">'+DB.members.map(function(m){var v=b.att?b.att[m.id]:undefined;return'<button type="button" class="att-chip'+(v===1?' yes':v===0?' no':'')+'" onclick="bkCycle(\''+b.id+'\',\''+m.id+'\')"><span class="nm">'+esc(m.name)+'</span><span class="st">'+(v===1?'참여':v===0?'불참':'미정')+'</span></button>';}).join('')+'</div>'
         +'<div class="prof-guide" style="margin-top:10px;">이름을 누를 때마다 <b>참여 → 불참 → 미정</b> 순서로 바뀝니다.</div>'
       :'<div class="prof-note">등록된 회원이 없어요. 회원 탭에서 먼저 회원을 추가하세요.</div>')+'</div>';
-  h+='<div class="cta-wrap">'+(c.yes>=2
-      ?'<button class="btn btn-green" onclick="bkToSession(\''+b.id+'\')">'+ic('shuffle',17)+'이 참석 인원으로 경기 편성 ('+c.yes+'명)</button>'
-      :'<button class="btn btn-green dis" onclick="toast(\'참여가 2명 이상이면 경기 편성을 할 수 있어요.\')">'+ic('shuffle',17)+'이 참석 인원으로 경기 편성</button><div class="prof-guide" style="text-align:center;margin-top:8px;">참여 인원이 2명 이상이면 바로 편성할 수 있어요.</div>')
+  var ls=bkSession(b);
+  h+='<div class="cta-wrap">'+(ls
+      ?(ls.resultsLocked
+        ?'<div class="bk-done"><span class="pill ok">완료</span><b>이 모임은 경기가 끝났어요</b><span>경기 '+(ls.matches||[]).length+'개 결과 확정 · 다시 편성할 수 없습니다</span></div><button class="btn btn-ghost" onclick="openSes(\''+ls.id+'\')">'+ic('clipboard',16)+'경기 결과 보기</button>'
+        :'<div class="bk-done"><span class="pill" style="color:var(--amber);border-color:rgba(183,121,31,.45);background:var(--amber-l);">진행중</span><b>이미 편성된 모임이에요</b><span>경기 '+(ls.matches||[]).length+'개 · 점수 입력 후 결과를 확정하세요</span></div><button class="btn btn-green" onclick="openSes(\''+ls.id+'\')">'+ic('edit',16)+'점수 입력 열기</button>')
+      :(c.yes>=2
+        ?'<button class="btn btn-green" onclick="bkToSession(\''+b.id+'\')">'+ic('shuffle',17)+'이 참석 인원으로 경기 편성 ('+c.yes+'명)</button>'
+        :'<button class="btn btn-green dis" onclick="toast(\'참여가 2명 이상이면 경기 편성을 할 수 있어요.\')">'+ic('shuffle',17)+'이 참석 인원으로 경기 편성</button><div class="prof-guide" style="text-align:center;margin-top:8px;">참여 인원이 2명 이상이면 바로 편성할 수 있어요.</div>'))
     +'<div style="text-align:center;margin-top:16px;"><button class="sbtn danger" onclick="delBk(\''+b.id+'\')">'+ic('trash',13)+'모임 일정 삭제</button></div></div>';
   return h;
 }
@@ -2467,10 +2476,19 @@ function saveBk(id){
   bkGo('detail',b.id,{month:d.slice(0,7),sel:d,replace:true});
 }
 function delBk(id){if(!confirm('이 모임 일정을 삭제하시겠습니까?'))return;DB.bookings=bookings().filter(function(b){return b.id!==id;});save();toast('삭제되었습니다.');goTab('home');}
+function bkSession(b){   // 이 모임 일정으로 편성된 경기 모임 (bookingId 연결, 없으면 같은 날짜의 유일한 모임으로 추정)
+  if(!b)return null;
+  var s=DB.sessions.filter(function(x){return x.bookingId===b.id;})[0];
+  if(s)return s;
+  var sameDay=bookings().filter(function(x){return x.date===b.date;}).length;
+  return sameDay===1?(DB.sessions.filter(function(x){return!x.bookingId&&x.date===b.date;})[0]||null):null;
+}
 function bkToSession(id){   // 예약 정보(날짜·코트 종류·코트 수·참여자)로 편성 폼 채우기
   var b=bkById(id);if(!b)return;
+  var ls=bkSession(b);
+  if(ls){toast(ls.resultsLocked?'완료된 모임이라 다시 편성할 수 없어요.':'이미 편성된 모임이에요. 경기 탭에서 점수를 입력하세요.');return;}
   var ids=DB.members.filter(function(m){return b.att&&b.att[m.id]===1;}).map(function(m){return m.id;});
-  activeId=null;goTab('session');showForm();
+  activeId=null;goTab('session');showForm();formBookingId=b.id;
   document.getElementById('ses-date').value=b.date;
   surface=(b.surface==='hard'||b.surface==='clay')?b.surface:'grass';syncTog('tg-sf',surface);
   var n=String(b.court||'').split(/[^0-9]+/).filter(Boolean).length;if(n>=1)courts=Math.max(1,Math.min(8,n));
@@ -2799,7 +2817,7 @@ function eqClubCard(){
 /* ── SESSION ── */
 function rSession(){if(pending){showPrev();return;}if(activeId){showActive();return;}showForm();}
 function showForm(){
-  pending=null;stPending(null);
+  pending=null;stPending(null);formBookingId=null;
   ['ses-form','ses-prev','ses-active'].forEach(function(id,i){document.getElementById(id).style.display=i===0?'block':'none';});
   // 기존 모임이 있으면 점수 입력으로 바로 가는 버튼 표시
   var fe=document.getElementById('form-existing');
@@ -2834,6 +2852,7 @@ function doCreate(){
     var ms=genMatches(pIds,DB.sessions,mtype,calcG(),courts,league);
     if(!ms.length){toast('편성 가능한 경기가 없습니다.');return;}
     pending={id:uid(),ts:Date.now(),league:league,date:document.getElementById('ses-date').value||today(),matchType:mtype,surface:surface,courts:courts,totalMin:totalMin,gameMin:gameMin,totalGames:calcG(),presentIds:[].concat(pIds),matches:ms,resultsLocked:false};
+    if(formBookingId)pending.bookingId=formBookingId;   // 모임 일정에서 편성한 경우 연결 (완료 후 재편성 방지에 사용)
     showPrev();
   });
 }
