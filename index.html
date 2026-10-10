@@ -784,6 +784,7 @@ input.mc-score::-webkit-outer-spin-button,input.mc-score::-webkit-inner-spin-but
     <div class="card-title">새 회원 등록</div>
     <div class="row-inp">
       <input type="text" id="mem-inp" placeholder="이름 입력" onkeydown="if(event.key==='Enter')addMem()">
+      <button type="button" class="tog" id="mem-guest" onclick="this.classList.toggle('on')" title="게스트로 등록">게스트</button>
       <button class="btn-add" onclick="addMem()">추가</button>
     </div>
   </div>
@@ -1298,7 +1299,7 @@ function lgIco(s){return lgTagH(s);}
 function lgName(s){return lgOf(s)==='baekse'?'백세리그':'일반리그';}
 
 /* ── FIREBASE ── */
-var APP_VER='6.0 (2026-10-02)';
+var APP_VER='6.1 (2026-10-10)';
 var fbApp=null,fbDB=null,fbRef=null,isOnline=false;
 var FB_KEY='btc_firebase_cfg';
 var lastSavedSnapshot='';   // 자기가 저장한 데이터 추적 (echo 방지)
@@ -1652,6 +1653,8 @@ function adoptServer(d){
 function migrate(){
   var ch=false,mx=DB.members.reduce(function(a,m){return Math.max(a,m.ord||0);},0);
   DB.members.forEach(function(m){if(m.ord==null){mx++;m.ord=mx;ch=true;}});
+  var GUEST_INIT=['신세영','전형철'];   // 2026-10-10 관리자 지정: 게스트 구분이 없던 기존 회원 중 게스트 (프로필에서 정회원으로 바꾸면 더 이상 적용 안 됨)
+  DB.members.forEach(function(m){if(m.guest==null&&GUEST_INIT.indexOf(m.name)>=0){m.guest=true;ch=true;}});
   DB.sessions.forEach(function(s){
     if(s.ts==null){
       // uid 끝부분이 base36 생성시각 — 추출 실패 시 0 (날짜만으로 정렬)
@@ -1706,7 +1709,7 @@ function save(){
 function load(){
   try{var d=localStorage.getItem('btc2');if(d)DB=JSON.parse(d);}catch(e){}
   if(!DB||typeof DB!=='object')DB={members:[],sessions:[]};
-  sanitizeDB(DB);migrate();sortDB(DB);
+  sanitizeDB(DB);if(migrate()){try{localStorage.setItem('btc2',JSON.stringify(DB));}catch(e){}}sortDB(DB);   // 이행 결과를 바로 로컬에 저장 (서버에는 연결 후 첫 동기화 때 반영)
   var cfg=getFBCfg();
   if(cfg&&cfg.databaseURL){setTimeout(function(){initFB(cfg);},600);}
 }
@@ -2303,7 +2306,7 @@ window.addEventListener('popstate',function(e){
 function rHome(){
   var dot=document.getElementById('hdr-fb-dot');
   if(dot)dot.style.background=isOnline?'#4ade80':(ruleDenied?'#ef4444':'rgba(0,0,0,.2)');
-  document.getElementById('st-mem').textContent=DB.members.length;
+  document.getElementById('st-mem').textContent=DB.members.filter(function(m){return!m.guest;}).length;
   document.getElementById('st-ses').textContent=DB.sessions.length;
   document.getElementById('st-mat').textContent=DB.sessions.reduce(function(a,s){return a+s.matches.length;},0);
   // 설정 행 뱃지
@@ -2484,17 +2487,20 @@ function rMembers(force){
     main.style.display='none';prof.style.display='block';prof.innerHTML=profileH(memById(profId));return;
   }
   profId=null;main.style.display='block';prof.style.display='none';
-  document.getElementById('mem-cnt').textContent=DB.members.length+'명';
+  var reg=DB.members.filter(function(m){return!m.guest;}),gs=DB.members.filter(function(m){return!!m.guest;});
+  document.getElementById('mem-cnt').textContent=reg.length+'명'+(gs.length?' · 게스트 '+gs.length+'명':'');
   var list=document.getElementById('mem-list');
   if(!DB.members.length){list.innerHTML=emptyH('users','등록된 회원이 없습니다.');return;}
-  list.innerHTML=DB.members.map(memRowH).join('');
+  list.innerHTML=reg.map(memRowH).join('')+(gs.length?'<div class="rdiv" style="padding-top:16px;">Guest</div>'+gs.map(memRowH).join(''):'');
 }
 function addMem(){
   var inp=document.getElementById('mem-inp'),name=inp.value.replace(/[<>&"'`]/g,'').trim();
   if(!name){toast('이름을 입력하세요.');return;}
   if(DB.members.find(function(m){return m.name===name;})){toast('이미 등록된 이름입니다.');return;}
   var mx=DB.members.reduce(function(a,m){return Math.max(a,m.ord||0);},0);
-  DB.members.push({id:uid(),name:name,ord:mx+1});save();inp.value='';rMembers();updAS();toast('추가되었습니다.');
+  var gb=document.getElementById('mem-guest'),guest=!!(gb&&gb.classList.contains('on'));
+  var nm={id:uid(),name:name,ord:mx+1};if(guest)nm.guest=true;
+  DB.members.push(nm);save();inp.value='';if(gb)gb.classList.remove('on');rMembers();updAS();toast(guest?'게스트로 추가되었습니다.':'추가되었습니다.');
 }
 function delMem(id){
   if(!confirm('삭제하시겠습니까?'))return;
@@ -2625,7 +2631,7 @@ function memRowH(m,i){
   if(st.cur)sub.push(esc(strShort(st.cur))+' · <b>'+st.days+'일</b>');
   if(rs.length>1)sub.push('라켓 '+rs.length+'개');
   return'<div class="mem-row">'+memAvH(m,36)
-    +'<div class="mem-main" onclick="if(event.target.tagName!==\'INPUT\')openProfile(\''+m.id+'\')"><div class="mem-nm"><span id="mn-'+m.id+'">'+esc(m.name)+'</span>'+(st.level==='warn'?'<span class="pill warn">교체 권장</span>':'')+'</div>'
+    +'<div class="mem-main" onclick="if(event.target.tagName!==\'INPUT\')openProfile(\''+m.id+'\')"><div class="mem-nm"><span id="mn-'+m.id+'">'+esc(m.name)+'</span>'+(m.guest?'<span class="pill">게스트</span>':'')+(st.level==='warn'?'<span class="pill warn">교체 권장</span>':'')+'</div>'
     +'<div class="mem-sub">'+(sub.length?sub.join(' · '):'<span style="opacity:.7">라켓 미등록 · 눌러서 프로필 열기</span>')+'</div></div>'
     +'<button class="ic-btn" onclick="editMem(\''+m.id+'\')">'+ic('edit',17)+'</button><button class="ic-btn" style="color:var(--red);" onclick="delMem(\''+m.id+'\')">'+ic('trash',17)+'</button></div>';
 }
@@ -2634,8 +2640,8 @@ function profileH(m){   // 프로필: 히어로 → 보유 라켓(N번 라켓 �
   var rs=rackets(m),main=mainRk(m),st=memStatus(m),c=st.cur;
   var addOpen=profForm&&profForm.t==='rk'&&!profForm.id;
   var h='<div class="prof-back"><button class="ic-btn" onclick="profBack()">'+ic('arrow-left',20)+'</button><span class="pg-hd" style="padding:0;"><span class="ko">회원 프로필</span><span class="en">Profile</span></span></div>';
-  h+='<div class="ana-hero"><div class="ah-top"><div class="ah-av'+(memHasLogo(m)?' logo':'')+'">'+memAvH(m,48)+'</div><div class="ah-id"><div class="ah-en">Member Profile</div><div class="ah-name">'+esc(m.name)+'</div>'
-    +'<div class="ah-sub">'+(main?'<span class="en-b">MAIN</span> <b>'+esc(rkName(main)||'라켓')+'</b>':'라켓 미등록')+(m.hand?' · '+(m.hand==='L'?'왼손':'오른손'):'')+'</div></div></div>'
+  h+='<div class="ana-hero"><div class="ah-top"><div class="ah-av'+(memHasLogo(m)?' logo':'')+'">'+memAvH(m,48)+'</div><div class="ah-id"><div class="ah-en">'+(m.guest?'Guest':'Member Profile')+'</div><div class="ah-name">'+esc(m.name)+'</div>'
+    +'<div class="ah-sub">'+(m.guest?'게스트 · ':'')+(main?'<span class="en-b">MAIN</span> <b>'+esc(rkName(main)||'라켓')+'</b>':'라켓 미등록')+(m.hand?' · '+(m.hand==='L'?'왼손':'오른손'):'')+'</div></div></div>'
     +'<div class="ah-kpis">'+kpiH(rs.length,'보유 라켓')+kpiH(c?st.days:'–','스트링 경과일')+kpiH(c?st.matches:'–','교체 후 경기')+'</div></div>';
   h+='<div class="sec-row"><div class="sec-label">보유 라켓<span class="sec-en">Rackets</span></div>'+(rs.length?'<span class="cnt" style="margin:0;">'+rs.length+'자루</span>':'')
     +(addOpen?'':'<button class="sbtn primary" onclick="profOpen(\'rk\',\'\')">'+ic('plus',13)+'라켓 추가</button>')+'</div>';
@@ -2644,7 +2650,9 @@ function profileH(m){   // 프로필: 히어로 → 보유 라켓(N번 라켓 �
   h+=rs.map(function(rk,i){return rkCardH(m,rk,i+1);}).join('');
   if(rs.length)h+='<div class="prof-guide" style="padding:0 20px 12px;margin-top:0;">스트링은 교체 후 '+STR_DAYS+'일 또는 '+STR_MATCHES+'경기가 넘으면 <b>교체 권장</b>으로 표시됩니다.</div>';
   h+='<div class="card"><div class="card-title"><span style="display:flex;align-items:center;gap:7px;">'+ic('user',19)+'선수 정보 <span class="ct-en">Player</span></span></div>'
-    +'<div class="f-lbl" style="margin-top:0;">주손</div><div class="tog-wrap"><button type="button" class="tog'+(m.hand==='R'?' on':'')+'" onclick="setHand(\''+m.id+'\',\'R\')">오른손</button><button type="button" class="tog'+(m.hand==='L'?' on':'')+'" onclick="setHand(\''+m.id+'\',\'L\')">왼손</button></div></div>';
+    +'<div class="f-lbl" style="margin-top:0;">구분</div><div class="tog-wrap"><button type="button" class="tog'+(!m.guest?' on':'')+'" onclick="setGuest(\''+m.id+'\',false)">정회원</button><button type="button" class="tog'+(m.guest?' on':'')+'" onclick="setGuest(\''+m.id+'\',true)">게스트</button></div>'
+    +'<div class="prof-guide" style="margin-top:4px;">게스트는 랭킹 집계에서 제외되고, 정회원으로 바꾸면 그동안의 기록이 그대로 포함됩니다.</div>'
+    +'<div class="f-lbl">주손</div><div class="tog-wrap"><button type="button" class="tog'+(m.hand==='R'?' on':'')+'" onclick="setHand(\''+m.id+'\',\'R\')">오른손</button><button type="button" class="tog'+(m.hand==='L'?' on':'')+'" onclick="setHand(\''+m.id+'\',\'L\')">왼손</button></div></div>';
   return h;
 }
 function guideCardH(){
@@ -2727,6 +2735,7 @@ function delRk(mid,rid){
   profForm=null;save();rMembers(true);toast('삭제되었습니다.');
 }
 function setHand(mid,h){var m=memById(mid);if(!m)return;if(m.hand===h)delete m.hand;else m.hand=h;save();rMembers(true);}
+function setGuest(mid,g){var m=memById(mid);if(!m||!!m.guest===!!g)return;m.guest=!!g;save();rMembers(true);updAS();toast(g?'게스트로 바꿨습니다. 랭킹에서 제외됩니다.':'정회원으로 바꿨습니다. 랭킹에 포함됩니다.');}
 /* 스트링 입력 폼 (라켓별) */
 function stModelChipsH(brand,val){
   var k=brandKey(brand,STRING_MODELS),list=STRING_MODELS[k]||[];
@@ -3164,7 +3173,8 @@ function calcRanks(f,lg,by){
       m.team2.forEach(function(id){if(stats[id]){stats[id].gf+=sc2;stats[id].ga+=sc1;stats[id].form.push(res===2?'W':res===1?'L':'D');if(res===2)stats[id].wins++;else if(res===1)stats[id].losses++;else stats[id].draws++;}});
     });
   });
-  var arr=Object.values(stats).filter(function(s){return s.played>0||s.att>0;});
+  var guestIds={};DB.members.forEach(function(m){if(m.guest)guestIds[m.id]=1;});   // 게스트는 랭킹 제외 (정회원 전환 시 자동 포함)
+  var arr=Object.values(stats).filter(function(s){return!guestIds[s.id]&&(s.played>0||s.att>0);});
   arr.forEach(function(s){
     s.attTotal=attTotal;
     // 최근 승률 추세: 최근 5경기(승부난 것) 승률 vs 전체 승률 (표본 6경기 이상일 때만)
