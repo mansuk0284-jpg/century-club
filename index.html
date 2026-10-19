@@ -469,17 +469,27 @@ input.mc-score::-webkit-outer-spin-button,input.mc-score::-webkit-inner-spin-but
 .plan-note{display:flex;align-items:center;gap:8px;margin-top:8px;padding:9px 10px;border:1px solid rgba(26,122,74,.35);background:var(--accent-l2);border-radius:6px;color:var(--text2);font-size:13.5px;flex-wrap:wrap;}
 .plan-note>span{flex:1;min-width:0;}
 .plan-note .ic{color:var(--accent);}
-.plan-home{display:flex;align-items:center;gap:10px;}
-.plan-home>div{flex:1;min-width:0;}
-.plan-home b{font-size:16px;color:var(--text);}
-.plan-mini{display:flex;flex-direction:column;gap:3px;margin-top:8px;padding-top:8px;border-top:1px dashed var(--line);font-size:13.5px;color:var(--text2);}
-.plan-mini b{color:var(--muted);font-weight:700;font-size:12px;margin-right:4px;}
 .mtx-wrap{overflow-x:auto;margin-top:8px;}
-.mtx{border-collapse:collapse;font-size:11.5px;min-width:100%;}
-.mtx th,.mtx td{border:1px solid var(--line2);padding:3px 2px;text-align:center;font-variant-numeric:tabular-nums;white-space:nowrap;}
+.mtx{border-collapse:collapse;font-size:11px;min-width:100%;}
+.mtx th,.mtx td{border:1px solid var(--line2);padding:4px 1px;text-align:center;font-variant-numeric:tabular-nums;white-space:nowrap;}
 .mtx th{background:var(--gray-1);font-weight:700;color:var(--text2);}
 .mtx td.me{background:var(--gray-1);color:var(--gray-3);}
-.mtx td.hi{color:var(--amber);font-weight:700;}
+.mtx span.hi{color:var(--amber);font-weight:800;}
+.rule{padding:10px 0;border-top:1px solid var(--line2);}
+.rule.first{border-top:none;padding-top:0;}
+.rule>b{display:block;font-size:15.5px;font-weight:700;color:var(--text);line-height:1.4;margin-bottom:3px;}
+.rule>span b{font-weight:700;color:var(--text);}
+.rule>span{display:block;font-size:14px;color:var(--text2);line-height:1.6;}
+.rule small{font-size:13px;color:var(--muted);line-height:1.55;}
+.plan-banner{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;margin-bottom:12px;border:1px solid rgba(183,121,31,.45);background:var(--amber-l);border-radius:8px;font-size:14px;color:var(--text2);line-height:1.55;}
+.plan-banner>div{flex:1;min-width:0;}
+.plan-banner b{color:var(--amber);}
+.plan-banner .sbtn{flex-shrink:0;}
+.mtx-hd{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-top:14px;padding-top:12px;border-top:1px solid var(--line2);}
+.mtx-hd b{font-family:'Gothic A1','Noto Sans KR',sans-serif;font-size:15.5px;font-weight:800;color:var(--text);white-space:nowrap;}
+.sbtn.lg-btn{height:32px;padding:0 10px;flex-shrink:0;gap:5px;font-weight:700;}
+@media (max-width:360px){#home-bk .sec-row .sec-en{display:none;}}
+@media (max-width:340px){.mtx{font-size:10px;}.mtx th,.mtx td{padding:4px 0;}}
 .av{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;flex-shrink:0;}
 
 /* ── 기록 ── */
@@ -790,14 +800,8 @@ input.mc-score::-webkit-outer-spin-button,input.mc-score::-webkit-inner-spin-but
 
   <!-- 섹션: 코트 예약 현황 (주간) -->
   <div id="home-bk">
-    <div class="sec-row"><div class="sec-label">모임 일정<span class="sec-en">Upcoming</span></div><button class="sbtn sq" onclick="bkCal()" title="모임 달력"><i data-ic="calendar" data-size="16"></i></button><button class="sbtn sq primary" onclick="bkGo('form','')" title="모임 추가"><i data-ic="plus" data-size="16"></i></button></div>
+    <div class="sec-row"><div class="sec-label">모임 일정<span class="sec-en">Upcoming</span></div><button class="sbtn lg-btn" onclick="goTab('plan')" title="백세리그 스케줄"><i data-ic="trophy" data-size="14"></i>백세리그</button><button class="sbtn sq" onclick="bkCal()" title="모임 달력"><i data-ic="calendar" data-size="16"></i></button><button class="sbtn sq primary" onclick="bkGo('form','')" title="모임 추가"><i data-ic="plus" data-size="16"></i></button></div>
     <div class="card" id="home-bk-card"></div>
-  </div>
-
-  <!-- 섹션: 백세리그 시즌 스케줄 -->
-  <div id="home-plan">
-    <div class="sec-row"><div class="sec-label">백세리그 스케줄<span class="sec-en">Season</span></div><button class="sbtn sq" onclick="goTab('plan')" title="시즌 스케줄"><i data-ic="chevron-right" data-size="16"></i></button></div>
-    <div class="card" id="home-plan-card"></div>
   </div>
 
   <!-- 섹션: 최근 모임 -->
@@ -1339,7 +1343,7 @@ function lgIco(s){return lgTagH(s);}
 function lgName(s){return lgOf(s)==='baekse'?'백세리그':'일반리그';}
 
 /* ── FIREBASE ── */
-var APP_VER='6.3 (2026-10-19)';
+var APP_VER='6.4 (2026-10-19)';
 var fbApp=null,fbDB=null,fbRef=null,isOnline=false;
 var FB_KEY='btc_firebase_cfg';
 var lastSavedSnapshot='';   // 자기가 저장한 데이터 추적 (echo 방지)
@@ -2358,7 +2362,7 @@ function rHome(){
   // 설정 행 뱃지
   var badge=document.getElementById('fav-fb-badge');
   if(badge)badge.className=isOnline?'ql-badge on':'ql-badge';
-  rBookings();rHomePlan();
+  rBookings();
   var card=document.getElementById('home-rec'),list=document.getElementById('home-rec-list');
   if(!DB.sessions.length){card.style.display='none';return;}
   card.style.display='block';
@@ -2542,101 +2546,119 @@ function bkToSession(id){   // 예약 정보(날짜·코트 종류·코트 수·
 }
 
 /* ══ 백세리그 시즌 스케줄: 정회원 8명 · 토요일 05:00 · 지난 기록 + 남은 일정을 합쳐 파트너·상대 완전 균형 ══ */
-/* ── 시즌 스케줄 생성기 (백세리그 정회원 8명 · 복식 · 2코트 · 회당 4라운드) ──
-   목표: 시즌 누적(지난 경기 포함) 파트너 횟수와 상대 횟수가 모든 쌍에서 최대한 같아지게.
-   출발점: 8인 휘스트 설계 Wh(8) 7라운드 — 모든 쌍이 파트너 1회·상대 2회가 되는 완전 균형 순환.
-   그 위에 담금질(simulated annealing)로 지난 기록·남은 라운드 수에 맞춰 보정하고,
-   같은 모임 안 파트너 중복(금지)·상대 중복(억제), 코트 배정 균형을 맞춘다. 실력은 전혀 보지 않는다.
-   입력 players: 8명 id 배열 / hist: {P:{'a|b':n}, O:{'a|b':n}, C:{id:{1:n,2:n}}} / nSessions: 남은 모임 수
-   출력: {sessions:[{matches:[{round,court,team1:[id,id],team2:[id,id]}]}], cost} */
+/* ── 시즌 스케줄 생성기 v2 (백세리그 정회원 8명 · 복식 · 2코트 · 회당 4라운드) ──
+   목표: 지난 경기까지 합친 시즌 누적에서 모든 쌍의 파트너 횟수와 상대 횟수를 최대한 같게 (실력은 보지 않음).
+   방법: 한 라운드의 구성 = "8명을 4쌍(파트너)으로 나누는 105가지" × "4쌍을 두 경기로 묶는 3가지" = 315가지.
+         라운드를 하나씩 골라 '다른 라운드는 그대로 두고 이 라운드만 가장 균형이 좋은 구성으로' 바꾸는 과정을
+         더 이상 좋아지지 않을 때까지 반복(좌표 하강)하고, 몇 라운드를 흔들어 다시 내려가는 것(반복 국소 탐색)으로 최적에 접근한다.
+   비용 = WP·Σ(파트너 누적 횟수)² + WO·Σ(상대 누적 횟수)² + 같은 모임 안 파트너 중복(WSP, 사실상 금지) + 같은 모임 안 상대 중복(WSO)
+   입력 players: 8명 id / hist: {P:{'a|b':n}, O:{'a|b':n}, C:{id:{1:n,2:n}}} (올해 지난 경기) / nSessions: 남은 모임 수
+   출력: {sessions:[{matches:[{round,court,team1,team2}]}], cost} */
+var SPG_OPTS=(function(){
+  var pairsets=[];
+  (function rec(rest,cur){
+    if(!rest.length){pairsets.push(cur.map(function(p){return p.slice();}));return;}
+    var a=rest[0];
+    for(var i=1;i<rest.length;i++){var b=rest[i];cur.push([a,b]);rec(rest.filter(function(x){return x!==a&&x!==b;}),cur);cur.pop();}
+  })([0,1,2,3,4,5,6,7],[]);
+  var groups=[[0,1,2,3],[0,2,1,3],[0,3,1,2]],out=[];   // (p0 vs p1 | p2 vs p3), (p0 vs p2 | p1 vs p3), (p0 vs p3 | p1 vs p2)
+  pairsets.forEach(function(ps){
+    groups.forEach(function(g){
+      var A=ps[g[0]],B=ps[g[1]],C=ps[g[2]],D=ps[g[3]];
+      out.push({pl:[A[0],A[1],B[0],B[1],C[0],C[1],D[0],D[1]],
+        pp:[A,B,C,D].map(function(p){return p[0]<p[1]?p[0]*8+p[1]:p[1]*8+p[0];}),
+        op:[[A,B],[C,D]].reduce(function(acc,m){m[0].forEach(function(x){m[1].forEach(function(y){acc.push(x<y?x*8+y:y*8+x);});});return acc;},[])});
+    });
+  });
+  return out;   // 315
+})();
 function seasonPlanGen(players,hist,nSessions,opt){
-  opt=opt||{};var RPS=opt.roundsPerSession||4,N=8,R=nSessions*RPS;
+  opt=opt||{};var RPS=opt.roundsPerSession||4,N=8,R=nSessions*RPS,NO=SPG_OPTS.length;
   if(players.length!==N)throw new Error('8명이어야 합니다');
-  var WP=opt.wp||30,WO=opt.wo||3,WSP=100,WSO=opt.wso||0.5;   // 가중치: 시즌 파트너 균형 > 시즌 상대 균형 > 모임 내 파트너 중복(금지) > 모임 내 상대 중복(억제)
+  var WP=opt.wp||6,WO=opt.wo||6,WSP=opt.wsp||200,WSO=opt.wso||0.5;
   var seed=opt.seed||12345;function rnd(){seed=(seed*1103515245+12345)&0x7fffffff;return seed/0x7fffffff;}
   function key(a,b){return a<b?a+'|'+b:b+'|'+a;}
-  var HP=new Int32Array(64),HO=new Int32Array(64);var hp=(hist&&hist.P)||{},ho=(hist&&hist.O)||{};
-  for(var a=0;a<N;a++)for(var b=0;b<N;b++){if(a===b)continue;var k=key(players[a],players[b]);HP[a*8+b]=hp[k]||0;HO[a*8+b]=ho[k]||0;}
-  // Wh(8) 기본 순환: 테이블A (∞,0) vs (1,3) · 테이블B (2,6) vs (4,5), 0~6에 i를 더해 7라운드 (∞=7)
-  var cyc=[];for(var i=0;i<7;i++){var f=function(x){return x===7?7:((x+i)%7);};cyc.push([f(7),f(0),f(1),f(3),f(2),f(6),f(4),f(5)]);}   // 한 라운드 = 8칸: [t1a,t1b,t2a,t2b | t1a,t1b,t2a,t2b]
-  function initial(){   // 7라운드 순환마다 선수 배치를 새로 섞어(균형은 그대로) 몇 주 뒤 같은 대진이 반복되지 않게
-    var rounds=[],perm,start;
-    for(var k=0;k<R;k++){
-      if(k%7===0){perm=[0,1,2,3,4,5,6,7];for(var i=7;i>0;i--){var j=Math.floor(rnd()*(i+1));var t=perm[i];perm[i]=perm[j];perm[j]=t;}start=Math.floor(rnd()*7);}
-      rounds.push(cyc[(start+k)%7].map(function(x){return perm[x];}));
+  var P=new Int32Array(64),O=new Int32Array(64),hp=(hist&&hist.P)||{},ho=(hist&&hist.O)||{};
+  for(var a=0;a<N;a++)for(var b=a+1;b<N;b++){var k=key(players[a],players[b]);P[a*8+b]=hp[k]||0;O[a*8+b]=ho[k]||0;}
+  var SP=[],SO=[];for(var s=0;s<nSessions;s++){SP.push(new Int32Array(64));SO.push(new Int32Array(64));}
+  var rounds=new Int32Array(R);   // 라운드별 선택한 구성 번호
+  function apply(r,o,sgn){var s=Math.floor(r/RPS),op=SPG_OPTS[o];
+    for(var t=0;t<4;t++){P[op.pp[t]]+=sgn;SP[s][op.pp[t]]+=sgn;}
+    for(var t2=0;t2<8;t2++){O[op.op[t2]]+=sgn;SO[s][op.op[t2]]+=sgn;}}
+  function addCost(r,o){var s=Math.floor(r/RPS),op=SPG_OPTS[o],c=0,sp=SP[s],so=SO[s];
+    for(var t=0;t<4;t++){var i=op.pp[t];c+=WP*(2*P[i]+1);if(sp[i]>0)c+=WSP;}
+    for(var t2=0;t2<8;t2++){var j=op.op[t2];c+=WO*(2*O[j]+1);if(so[j]>0)c+=WSO;}
+    return c;}
+  function totalCost(){var c=0;for(var i=0;i<64;i++){c+=WP*P[i]*P[i]+WO*O[i]*O[i];}
+    for(var s=0;s<nSessions;s++)for(var i2=0;i2<64;i2++){if(SP[s][i2]>1)c+=WSP*(SP[s][i2]-1);if(SO[s][i2]>1)c+=WSO*(SO[s][i2]-1);}
+    return c;}
+  function descend(){
+    var order=[];for(var r=0;r<R;r++)order.push(r);
+    for(var sweep=0;sweep<60;sweep++){
+      for(var i=R-1;i>0;i--){var j=Math.floor(rnd()*(i+1));var t=order[i];order[i]=order[j];order[j]=t;}
+      var changed=false;
+      for(var q=0;q<R;q++){
+        var r2=order[q],cur=rounds[r2];apply(r2,cur,-1);
+        var best=cur,bc=addCost(r2,cur),ties=1;
+        for(var o=0;o<NO;o++){if(o===cur)continue;var c=addCost(r2,o);
+          if(c<bc-1e-9){bc=c;best=o;ties=1;}
+          else if(Math.abs(c-bc)<1e-9&&best!==cur){ties++;if(rnd()*ties<1)best=o;}}   // 현재보다 나은 것 중 동률은 무작위
+        apply(r2,best,1);if(best!==cur){rounds[r2]=best;changed=true;}
+      }
+      if(!changed)break;
     }
-    return rounds;
   }
-  // 증분 비용: 상태 P,O(시즌 누적), SP,SO(모임별) + 현재 비용
-  var P,O,SP,SO,cost;
-  function reset(){P=new Int32Array(64);O=new Int32Array(64);SP=[];SO=[];for(var s=0;s<nSessions;s++){SP.push(new Int32Array(64));SO.push(new Int32Array(64));}cost=0;}
-  function pairAdd(M,a,b,w,sgn){   // 시즌 누적 쌍 횟수 ±1 — Σ(횟수)² 변화량 반환 (평균은 상수라 분산 최소화 = 제곱합 최소화)
-    var i=a*8+b,j=b*8+a,v=M[i];
-    if(sgn>0){M[i]=M[j]=v+1;return w*(2*v+1);}else{M[i]=M[j]=v-1;return w*(1-2*v);}
+  var bestCost=Infinity,bestRounds=null,t0=Date.now(),timeMs=opt.timeMs||1000,maxIter=opt.maxIter||100,minIter=opt.minIter||20;
+  function snapshot(){var c=totalCost();if(c<bestCost-1e-9){bestCost=c;bestRounds=Int32Array.from(rounds);}return c;}
+  // 시작: 무작위 구성 → 하강. 이후 몇 라운드를 흔들고 다시 하강 (더 나빠지면 되돌림)
+  for(var r=0;r<R;r++){rounds[r]=Math.floor(rnd()*NO);apply(r,rounds[r],1);}
+  descend();var curCost=snapshot();
+  for(var it=0;it<maxIter&&(it<minIter||Date.now()-t0<timeMs);it++){
+    var saved=Int32Array.from(rounds),kick=2+Math.floor(rnd()*4);
+    for(var kk=0;kk<kick;kk++){var rr=Math.floor(rnd()*R);apply(rr,rounds[rr],-1);rounds[rr]=Math.floor(rnd()*NO);apply(rr,rounds[rr],1);}
+    descend();var c=totalCost();
+    if(c<=curCost+1e-9){curCost=c;if(c<bestCost-1e-9){bestCost=c;bestRounds=Int32Array.from(rounds);}}
+    else{for(var r3=0;r3<R;r3++){if(rounds[r3]!==saved[r3]){apply(r3,rounds[r3],-1);rounds[r3]=saved[r3];apply(r3,rounds[r3],1);}}}
   }
-  function sessAdd(M,a,b,w,sgn){   // 모임 내 중복 벌점: 2회째부터 w씩
-    var i=a*8+b,j=b*8+a,v=M[i];
-    if(sgn>0){M[i]=M[j]=v+1;return v>=1?w:0;}else{M[i]=M[j]=v-1;return v>=2?-w:0;}
-  }
-  function applyRound(rd,s,sgn){
-    var d=0;
-    for(var m=0;m<2;m++){
-      var a=rd[m*4],b=rd[m*4+1],c=rd[m*4+2],e=rd[m*4+3];
-      d+=pairAdd(P,a,b,WP,sgn)+pairAdd(P,c,e,WP,sgn);
-      d+=sessAdd(SP[s],a,b,WSP,sgn)+sessAdd(SP[s],c,e,WSP,sgn);
-      var ops=[[a,c],[a,e],[b,c],[b,e]];
-      for(var q=0;q<4;q++){d+=pairAdd(O,ops[q][0],ops[q][1],WO,sgn)+sessAdd(SO[s],ops[q][0],ops[q][1],WSO,sgn);}
-    }
-    cost+=d;return d;
-  }
-  function fullCost(rounds){
-    reset();
-    for(var a=0;a<N;a++)for(var b=a+1;b<N;b++){P[a*8+b]=P[b*8+a]=HP[a*8+b];O[a*8+b]=O[b*8+a]=HO[a*8+b];cost+=WP*HP[a*8+b]*HP[a*8+b]+WO*HO[a*8+b]*HO[a*8+b];}
-    for(var r=0;r<R;r++)applyRound(rounds[r],Math.floor(r/RPS),1);
-    return cost;
-  }
-  function anneal(rounds,iters){
-    var cur=fullCost(rounds),best=cur,bestR=rounds.map(function(x){return x.slice();});
-    var T0=40,T1=0.2;
-    for(var it=0;it<iters;it++){
-      var T=T0*Math.pow(T1/T0,it/iters);
-      var r=Math.floor(rnd()*R),p=Math.floor(rnd()*8),q=Math.floor(rnd()*8);if(p===q)continue;
-      var rd=rounds[r],s=Math.floor(r/RPS),before=cur;
-      applyRound(rd,s,-1);var t=rd[p];rd[p]=rd[q];rd[q]=t;applyRound(rd,s,1);
-      var c=cost;
-      if(c<=before||rnd()<Math.exp((before-c)/T)){cur=c;if(c<best){best=c;bestR=rounds.map(function(x){return x.slice();});}}
-      else{applyRound(rd,s,-1);t=rd[p];rd[p]=rd[q];rd[q]=t;applyRound(rd,s,1);cur=before;}
-    }
-    return{rounds:bestR,cost:best};
-  }
-  var bestAll=null,restarts=opt.restarts||5,iters=opt.iters||40000;
-  for(var rs=0;rs<restarts;rs++){var res=anneal(initial(),iters);if(!bestAll||res.cost<bestAll.cost)bestAll=res;}
-  // 코트 배정: 시즌 누적 코트 횟수 + 모임 내 1·2코트 균형 (2^RPS 조합 전수)
+  // 코트 배정: 라운드마다 두 경기의 코트(1·2)를 맞바꿀지(flip) 시즌 전체로 정한다.
+  // 목표 — 시즌 누적(지난 경기 포함)과 각 모임 안에서 모든 선수의 코트 1·2 횟수 차이를 최소화 (무작위 시작 × 하강 반복)
   var CC=[];for(var i2=0;i2<N;i2++){var hc=(hist&&hist.C&&hist.C[players[i2]])||{};CC.push([hc[1]||0,hc[2]||0]);}
+  var pls=[];for(var rq=0;rq<R;rq++)pls.push(SPG_OPTS[bestRounds[rq]].pl);
+  function courtCost(flips){
+    var c1=CC.map(function(x){return x[0];}),c2=CC.map(function(x){return x[1];}),sc=0;
+    for(var s3=0;s3<nSessions;s3++){var s1=[0,0,0,0,0,0,0,0],s2b=[0,0,0,0,0,0,0,0];
+      for(var q3=0;q3<RPS;q3++){var r4=s3*RPS+q3,pl=pls[r4],f=flips[r4];
+        for(var m=0;m<2;m++){var onC1=((m===0)!==(f===1));for(var x=0;x<4;x++){var who=pl[m*4+x];if(onC1){c1[who]++;s1[who]++;}else{c2[who]++;s2b[who]++;}}}}
+      for(var i5=0;i5<N;i5++){var sd=s1[i5]-s2b[i5];sc+=0.5*sd*sd;}}
+    for(var i6=0;i6<N;i6++){var d=c1[i6]-c2[i6];sc+=d*d;}
+    return sc;
+  }
+  var flips=new Int32Array(R),bestFlips=null,bestCC=Infinity;
+  for(var rs0=0;rs0<40;rs0++){
+    for(var r5=0;r5<R;r5++)flips[r5]=rnd()<0.5?1:0;
+    var cur2=courtCost(flips),improved=true;
+    while(improved){improved=false;
+      for(var r6=0;r6<R;r6++){flips[r6]^=1;var c3=courtCost(flips);if(c3<cur2-1e-9){cur2=c3;improved=true;}else flips[r6]^=1;}
+      for(var r7=0;r7<R&&!improved;r7++)for(var r8=r7+1;r8<R&&!improved;r8++){flips[r7]^=1;flips[r8]^=1;var c4=courtCost(flips);if(c4<cur2-1e-9){cur2=c4;improved=true;}else{flips[r7]^=1;flips[r8]^=1;}}
+    }
+    if(cur2<bestCC-1e-9){bestCC=cur2;bestFlips=Int32Array.from(flips);}
+  }
   var sessions=[];
   for(var s2=0;s2<nSessions;s2++){
-    var rs2=bestAll.rounds.slice(s2*RPS,(s2+1)*RPS),bestFlip=0,bestScore=1e9;
-    for(var mask=0;mask<(1<<rs2.length);mask++){
-      var cc=CC.map(function(x){return x.slice();}),ss=[];for(var i3=0;i3<N;i3++)ss.push([0,0]);
-      rs2.forEach(function(rd,ri){var flip=(mask>>ri)&1;for(var m=0;m<2;m++){var court=(m===0)!==(flip===1)?0:1;for(var x=0;x<4;x++){var pl=rd[m*4+x];cc[pl][court]++;ss[pl][court]++;}}});
-      var sc=0;for(var i4=0;i4<N;i4++)sc+=Math.abs(cc[i4][0]-cc[i4][1])+0.6*Math.abs(ss[i4][0]-ss[i4][1]);
-      if(sc<bestScore-1e-9){bestScore=sc;bestFlip=mask;}
-    }
     var matches=[];
-    rs2.forEach(function(rd,ri){
-      var flip=(bestFlip>>ri)&1;
-      for(var m=0;m<2;m++){
-        var court=((m===0)!==(flip===1))?1:2;
-        for(var x=0;x<4;x++)CC[rd[m*4+x]][court-1]++;
-        matches.push({round:ri+1,court:court,team1:[players[rd[m*4]],players[rd[m*4+1]]],team2:[players[rd[m*4+2]],players[rd[m*4+3]]]});
+    for(var q2=0;q2<RPS;q2++){
+      var r9=s2*RPS+q2,pl2=pls[r9],f2=bestFlips[r9];
+      for(var m2=0;m2<2;m2++){
+        var court=((m2===0)!==(f2===1))?1:2;
+        matches.push({round:q2+1,court:court,team1:[players[pl2[m2*4]],players[pl2[m2*4+1]]],team2:[players[pl2[m2*4+2]],players[pl2[m2*4+3]]]});
       }
-      matches.sort(function(p1,p2){return p1.round-p2.round||p1.court-p2.court;});
-    });
+    }
+    matches.sort(function(p1,p2){return p1.round-p2.round||p1.court-p2.court;});
     sessions.push({matches:matches});
   }
-  return{sessions:sessions,cost:bestAll.cost};
+  return{sessions:sessions,cost:bestCost,iters:it};
 }
-/* 시즌 누적 통계 (지난 기록 + 계획) — 공정성 요약·표시용 */
+/* 시즌 누적 통계 (지난 기록 + 계획) — 표시·검증용 */
 function seasonPlanStats(players,hist,sessions){
   function key(a,b){return a<b?a+'|'+b:b+'|'+a;}
   var P={},O={},C={};var hp=(hist&&hist.P)||{},ho=(hist&&hist.O)||{};
@@ -2650,25 +2672,32 @@ function seasonPlanStats(players,hist,sessions){
   var pv=Object.keys(P).map(function(k){return P[k];}),ov=Object.keys(O).map(function(k){return O[k];});
   return{P:P,O:O,C:C,pMin:Math.min.apply(null,pv),pMax:Math.max.apply(null,pv),oMin:Math.min.apply(null,ov),oMax:Math.max.apply(null,ov)};
 }
-
-var PLAN_ID='baekse-2026',PLAN_YEAR=2026;
+var PLAN_ID='baekse-2026',PLAN_YEAR=2026,PLAN_GEN=2;
 var PLAN_NAMES=['박동석','이문호','김명준','이진식','정승오','김경인','장주현','김윤진'];   // 2026 백세리그 정회원 (관리자 지정)
 var PLAN_DATES=['2026-10-24','2026-10-31','2026-11-07','2026-11-14','2026-11-21','2026-11-28','2026-12-05','2026-12-12','2026-12-19','2026-12-26'];
-var planSel=null;   // 생성 전 선택한 참가자 id
+var planSel=null,planMat='total';   // 생성 전 선택한 참가자 id · 표 보기(past|future|total)
+function koCmp(a,b){return String(a).localeCompare(String(b),'ko');}
+function planSorted(ids){return ids.slice().sort(function(a,b){return koCmp(gn(a),gn(b));});}   // 가나다순
 function planGet(){return toArr(DB.plans).filter(function(p){return p.id===PLAN_ID;})[0]||null;}
 function planKey(a,b){return a<b?a+'|'+b:b+'|'+a;}
-function planPlayersDefault(){var ids=[];PLAN_NAMES.forEach(function(n){var m=DB.members.filter(function(x){return x.name===n&&!x.guest;})[0];if(m)ids.push(m.id);});return ids;}
-function planHist(players,year){   // 그 해 백세리그 모임(확정 전 포함)에서 참가자 간 파트너·상대·코트 횟수
-  var set={};players.forEach(function(p){set[p]=1;});var h={P:{},O:{},C:{}};players.forEach(function(p){h.C[p]={1:0,2:0};});
+function planRg(a,b){return a===b?a+'회':a+'~'+b+'회';}
+function planPlayersDefault(){var ids=[];PLAN_NAMES.forEach(function(n){var m=DB.members.filter(function(x){return x.name===n&&!x.guest;})[0];if(m)ids.push(m.id);});return planSorted(ids);}
+function planHist(players){   // 지금까지의 백세리그 모든 모임(확정 전·예정 포함)에서 참가자끼리의 파트너·상대·코트 횟수
+  var set={};players.forEach(function(p){set[p]=1;});
+  var h={P:{},O:{},C:{},meta:{sessions:0,matches:0,from:'',to:''}};players.forEach(function(p){h.C[p]={1:0,2:0};});
   DB.sessions.forEach(function(s){
-    if(lgOf(s)!=='baekse'||String(s.date).slice(0,4)!==String(year))return;
-    (s.matches||[]).forEach(function(m){
+    if(lgOf(s)!=='baekse')return;
+    var used=false;
+    toArr(s.matches).forEach(function(m){
       var t1=toArr(m.team1).filter(function(x){return set[x];}),t2=toArr(m.team2).filter(function(x){return set[x];});
+      if(!t1.length&&!t2.length)return;
+      used=true;h.meta.matches++;
       if(t1.length===2){var k1=planKey(t1[0],t1[1]);h.P[k1]=(h.P[k1]||0)+1;}
       if(t2.length===2){var k2=planKey(t2[0],t2[1]);h.P[k2]=(h.P[k2]||0)+1;}
       t1.forEach(function(a){t2.forEach(function(b){var k=planKey(a,b);h.O[k]=(h.O[k]||0)+1;});});
       var c=(m.court===2||m.court==='2')?2:1;t1.concat(t2).forEach(function(a){h.C[a][c]++;});
     });
+    if(used){h.meta.sessions++;if(!h.meta.from||s.date<h.meta.from)h.meta.from=s.date;if(!h.meta.to||s.date>h.meta.to)h.meta.to=s.date;}
   });
   return h;
 }
@@ -2676,29 +2705,76 @@ function planSessionFor(date){return DB.sessions.filter(function(s){return lgOf(
 function planStatus(p,date){var s=planSessionFor(date);if(s)return s.resultsLocked?'done':'set';if(toArr(p&&p.canceled).indexOf(date)>=0)return'cancel';return date<today()?'missed':'open';}
 function planEntry(p,date){return p?(toArr(p.sessions).filter(function(x){return x.date===date;})[0]||null):null;}
 function planOpenFor(date){var p=planGet();if(!p||!date||p.dates.indexOf(date)<0)return null;var st=planStatus(p,date);if(st!=='open'&&st!=='missed')return null;return planEntry(p,date);}
-function planTogSel(id){planSel=planSel||planPlayersDefault();var i=planSel.indexOf(id);if(i>=0)planSel.splice(i,1);else planSel.push(id);rPlan();}
-function planGenerate(){
-  var p=planGet(),players=p?p.players:(planSel||planPlayersDefault());
-  if(players.length!==8){toast('정회원 8명을 선택해야 해요 (현재 '+players.length+'명)');return;}
-  var tmp=p||{id:PLAN_ID,league:'baekse',year:PLAN_YEAR,players:players,dates:PLAN_DATES.slice(),canceled:[],sessions:[]};
-  var open=tmp.dates.filter(function(d){return planStatus(tmp,d)==='open';});
-  if(!open.length){toast('편성할 남은 일정이 없어요.');return;}
-  var t0=Date.now(),res=seasonPlanGen(players,planHist(players,PLAN_YEAR),open.length,{seed:(t0%2147483647)||1});
-  tmp.sessions=res.sessions.map(function(x,i){return{date:open[i],matches:x.matches};});
-  tmp.players=players;tmp.made=t0;
-  if(!p){DB.plans=toArr(DB.plans);DB.plans.push(tmp);}
-  save();rPlan();rHomePlan();toast('남은 '+open.length+'회 일정을 공평하게 편성했어요.');
+function planOpenEntries(p){return toArr(p&&p.sessions).filter(function(x){return planStatus(p,x.date)==='open';}).sort(function(a,b){return a.date<b.date?-1:a.date>b.date?1:0;});}
+function planSig(players,hist,entries){var st=seasonPlanStats(players,hist,entries),ks=Object.keys(st.P).sort();return ks.map(function(k){return st.P[k]+'.'+st.O[k];}).join(',');}
+function planNeeds(p){   // 다시 짜기가 필요한 이유: 'broken'(참가자 삭제) | 'ver'(이전 방식으로 만든 스케줄) | 'sync'(실제 경기가 스케줄과 달라짐) | ''(문제 없음)
+  if(!p)return'';
+  if(p.players.some(function(id){return!memById(id);}))return'broken';
+  if(!p.dates.some(function(d){return planStatus(p,d)==='open';}))return'';
+  if(p.gen!==PLAN_GEN)return'ver';
+  return p.sig===planSig(p.players,planHist(p.players),planOpenEntries(p))?'':'sync';
 }
-function planToggleCancel(date){
-  var p=planGet();if(!p)return;p.canceled=toArr(p.canceled);
-  var i=p.canceled.indexOf(date);
-  if(i>=0){if(!confirm(dstr(date)+' 취소를 해제하고 남은 일정을 다시 짤까요?'))return;p.canceled.splice(i,1);}
-  else{if(!confirm(dstr(date)+' 모임을 취소 처리하고 남은 일정을 다시 짤까요?\n(지난 기록과 남은 일정을 합쳐 다시 균형을 맞춥니다)'))return;p.canceled.push(date);}
-  save();planGenerate();
+function planTogSel(id){planSel=planSel||planPlayersDefault();var i=planSel.indexOf(id);if(i>=0)planSel.splice(i,1);else planSel.push(id);rPlan();}
+function planSetMat(v){planMat=v;rPlan();}
+function planBuild(players,canceled){   // 남은(open) 일정을 지난 경기와 모두 합쳐 새로 편성
+  var p=planGet(),tmp={dates:(p?p.dates:PLAN_DATES).slice(),canceled:canceled};
+  var open=tmp.dates.filter(function(d){return planStatus(tmp,d)==='open';});
+  if(!open.length)return null;
+  var hist=planHist(players),made=Date.now();
+  var res=seasonPlanGen(players,hist,open.length,{seed:(made%2147483647)||1});
+  var sessions=res.sessions.map(function(x,i){return{date:open[i],matches:x.matches};});
+  return{open:open,sessions:sessions,hist:hist,made:made,stats:seasonPlanStats(players,hist,sessions)};
+}
+function planGenerate(pre){
+  var p=planGet(),players=p?p.players.slice():planSorted(planSel||planPlayersDefault());
+  if(players.length!==8){toast('정회원 8명을 선택해야 해요 (현재 '+players.length+'명)');return;}
+  if(!pre){
+    toast('지난 경기를 반영해 균등하게 편성하는 중…');
+    setTimeout(function(){var b=planBuild(players,p?toArr(p.canceled):[]);if(!b){toast('편성할 남은 일정이 없어요.');return;}planGenerate(b);},40);
+    return;
+  }
+  var b=pre;
+  if(!p){p={id:PLAN_ID,league:'baekse',year:PLAN_YEAR,players:players,dates:PLAN_DATES.slice(),canceled:[],sessions:[]};DB.plans=toArr(DB.plans);DB.plans.push(p);}
+  p.players=players;p.sessions=b.sessions;p.made=b.made;p.gen=PLAN_GEN;p.sig=planSig(players,b.hist,b.sessions);
+  save();rPlan();toast('남은 '+b.open.length+'회를 균등하게 편성했어요.');
+}
+function planRegen(){
+  var p=planGet();if(!p)return;
+  var n=p.dates.filter(function(d){return planStatus(p,d)==='open';}).length;
+  if(confirm('지난 경기를 모두 반영해 남은 '+n+'회를 다시 편성합니다.\n이미 편성·확정한 모임은 바뀌지 않아요.\n\n진행할까요?'))planGenerate();
+}
+function planResetPlayers(){
+  var p=planGet();if(!p)return;
+  if(!confirm('스케줄표를 지우고 참가자를 다시 고릅니다.\n(지난 경기 기록은 그대로예요)\n\n진행할까요?'))return;
+  planSel=p.players.filter(function(id){return memById(id);});
+  DB.plans=toArr(DB.plans).filter(function(x){return x.id!==PLAN_ID;});
+  save();rPlan();
+}
+function planToggleCancel(date){   // 취소 처리/해제 → 남은 일정을 지난 경기와 합쳐 다시 편성 (다음 주로 순연하지 않음)
+  var p=planGet();if(!p)return;
+  toast('남은 일정을 다시 계산하는 중…');
+  setTimeout(function(){
+    var cur=toArr(p.canceled),isC=cur.indexOf(date)>=0;
+    var next=isC?cur.filter(function(d){return d!==date;}):cur.concat([date]);
+    var b=planBuild(p.players,next),msg;
+    if(!b){msg=dstr(date)+(isC?' 취소를 해제합니다.':' 모임을 취소 처리합니다.')+'\n\n남은 일정이 없어 편성할 모임이 없습니다.\n\n진행할까요?';}
+    else if(isC){msg=dstr(date)+' 취소를 해제합니다.\n\n· 남은 '+b.open.length+'회를 지난 경기와 합쳐 균등하게 다시 편성합니다.\n· 시즌 전체: 파트너 '+planRg(b.stats.pMin,b.stats.pMax)+' · 상대 '+planRg(b.stats.oMin,b.stats.oMax)+'\n\n진행할까요?';}
+    else{
+      var oe=planOpenEntries(p),shift=oe.length?seasonPlanStats(p.players,b.hist,oe.slice(0,-1)):null;   // 한 주씩 순연하면 마지막 주 대진이 빠짐
+      msg=dstr(date)+' 모임을 취소 처리합니다.\n\n· 다음 주로 그대로 미루지 않고, 남은 '+b.open.length+'회를 지난 경기와 합쳐 균등하게 다시 편성합니다. (시즌은 '+md(p.dates[p.dates.length-1])+'에 끝나요)\n· 다시 편성 후 시즌 전체: 파트너 '+planRg(b.stats.pMin,b.stats.pMax)+' · 상대 '+planRg(b.stats.oMin,b.stats.oMax)
+        +(shift?'\n   (참고 · 한 주씩 순연하면 파트너 '+planRg(shift.pMin,shift.pMax)+' · 상대 '+planRg(shift.oMin,shift.oMax)+')':'')+'\n· 이미 편성·확정한 모임은 바뀌지 않아요.\n\n진행할까요?';
+    }
+    if(!confirm(msg))return;
+    p.canceled=next;
+    if(!b){p.sessions=[];p.sig=planSig(p.players,planHist(p.players),[]);p.gen=PLAN_GEN;save();rPlan();toast(isC?'취소를 해제했어요.':'취소 처리했어요. 남은 일정이 없어요.');return;}
+    planGenerate(b);
+  },40);
 }
 function planApply(date){   // 스케줄표의 그 날짜 편성을 미리보기(pending)로 올려 확정 절차로
   var p=planGet(),e=planOpenFor(date);if(!p||!e){toast('스케줄표에 이 날짜 편성이 없어요.');return;}
-  if(p.players.some(function(id){return!memById(id);})){toast('참가자 중 삭제된 회원이 있어 적용할 수 없어요. 스케줄을 다시 생성하세요.');return;}
+  var need=planNeeds(p);
+  if(need==='broken'){toast('참가자 중 삭제된 회원이 있어요. 스케줄을 다시 생성하세요.');return;}
+  if(need&&!confirm('스케줄이 지금 기록과 달라져 있어요.\n먼저 [다시 짜기]를 하면 지난 경기를 모두 반영해 다시 균등하게 맞춰요.\n\n그래도 이 날짜의 기존 대진으로 편성할까요?'))return;
   var b=bookings().filter(function(x){return x.date===date;})[0];
   pending={id:uid(),ts:Date.now(),league:'baekse',date:date,matchType:'doubles',surface:(b&&b.surface)||'grass',courts:2,totalMin:120,gameMin:30,totalGames:e.matches.length,presentIds:p.players.slice(),
     matches:e.matches.map(function(m){return{id:uid(),round:m.round,court:m.court,type:'doubles',team1:m.team1.slice(),team2:m.team2.slice(),score1:'',score2:'',winner:null};}),resultsLocked:false,planId:p.id};
@@ -2706,59 +2782,108 @@ function planApply(date){   // 스케줄표의 그 날짜 편성을 미리보기
   activeId=null;goTab('session');showPrev();toast('시즌 스케줄표대로 불러왔어요. 확인 후 확정하세요.');
 }
 function planNm(id){return esc(gn(id));}
-function planMatchH(m){return'<div class="plan-m"><b>C'+m.court+'</b>'+planNm(m.team1[0])+'·'+planNm(m.team1[1])+'<i>vs</i>'+planNm(m.team2[0])+'·'+planNm(m.team2[1])+'</div>';}
+function planTeamH(t){return planSorted(toArr(t)).map(planNm).join('·');}
+function planMatchH(m){   // 팀 안 이름·두 팀의 순서 모두 가나다순
+  var a=planSorted(toArr(m.team1)),b=planSorted(toArr(m.team2));
+  if(a.length&&b.length&&koCmp(gn(a[0]),gn(b[0]))>0){var t=a;a=b;b=t;}
+  return'<div class="plan-m"><b>C'+m.court+'</b>'+a.map(planNm).join('·')+'<i>vs</i>'+b.map(planNm).join('·')+'</div>';
+}
 function planRoundsH(matches){
   var byR={};matches.forEach(function(m){byR[m.round]=byR[m.round]||[];byR[m.round].push(m);});
   return Object.keys(byR).sort(function(a,b){return a-b;}).map(function(r,i){return'<div class="plan-r'+(i===0?' first':'')+'"><span class="plan-rn">R'+r+'</span><div class="plan-mm">'+byR[r].sort(function(a,b){return a.court-b.court;}).map(planMatchH).join('')+'</div></div>';}).join('');
 }
 function planStatusPill(st){return st==='done'?'<span class="pill ok">완료</span>':st==='set'?'<span class="pill" style="color:var(--amber);border-color:rgba(183,121,31,.45);background:var(--amber-l);">편성됨</span>':st==='cancel'?'<span class="pill">취소</span>':st==='missed'?'<span class="pill">지남</span>':'<span class="pill" style="color:var(--accent);border-color:rgba(26,122,74,.35);">예정</span>';}
 function planShort(id){var n=gn(id);return n.length>2?n.slice(-2):n;}
-function planMatrixH(p,stats){
-  var ids=p.players;
+function planMatrixH(players,st){
+  var ids=planSorted(players);
   var h='<div class="mtx-wrap"><table class="mtx"><tr><th></th>'+ids.map(function(id){return'<th>'+esc(planShort(id))+'</th>';}).join('')+'</tr>';
-  ids.forEach(function(a){h+='<tr><th>'+esc(planShort(a))+'</th>'+ids.map(function(b){if(a===b)return'<td class="me">–</td>';var k=planKey(a,b),pv=stats.P[k]||0,ov=stats.O[k]||0;return'<td'+((pv>stats.pMin+1||ov>stats.oMin+1)?' class="hi"':'')+'>'+pv+'·'+ov+'</td>';}).join('')+'</tr>';});
-  return h+'</table></div><div class="prof-guide">칸 = 파트너 횟수·상대 횟수 (시즌 누적: 지난 경기 + 남은 스케줄). 색이 다른 칸은 평균보다 2회 이상 많은 쌍.</div>';
+  ids.forEach(function(a){h+='<tr><th>'+esc(planShort(a))+'</th>'+ids.map(function(b){
+    if(a===b)return'<td class="me">–</td>';
+    var k=planKey(a,b),pv=st.P[k]||0,ov=st.O[k]||0;
+    var hp=(st.pMax-st.pMin>=2&&pv===st.pMax)?' class="hi"':'',ho=(st.oMax-st.oMin>=2&&ov===st.oMax)?' class="hi"':'';
+    return'<td><span'+hp+'>'+pv+'</span>·<span'+ho+'>'+ov+'</span></td>';}).join('')+'</tr>';});
+  return h+'</table></div>';
 }
+function planRuleH(first,lead,desc){return'<div class="rule'+(first?' first':'')+'"><b>'+lead+'</b><span>'+desc+'</span></div>';}
+function planRulesH(p,players,hist,sPast,sAll,openN,need){
+  var m=hist.meta,h='<div class="card"><div class="card-title">편성 기준 <span class="ct-en">Rules</span></div>';
+  if(need==='broken')h+='<div class="plan-banner"><div><b>참가자 중 삭제된 회원이 있어요</b><br>[참가자 변경]으로 8명을 다시 골라 주세요.</div></div>';
+  else if(need==='ver')h+='<div class="plan-banner"><div><b>편성 방식이 개선됐어요</b><br>지난 경기 반영과 균등도가 좋아졌어요. 다시 짜면 새 방식으로 바뀌어요.</div><button class="sbtn primary" onclick="planRegen()">다시 짜기</button></div>';
+  else if(need==='sync')h+='<div class="plan-banner"><div><b>지난 경기가 스케줄과 달라졌어요</b><br>편성대로 치르지 않았거나 일정이 지나갔어요. 다시 짜면 지금까지의 경기를 모두 반영해 남은 일정을 맞춰요.</div><button class="sbtn primary" onclick="planRegen()">다시 짜기</button></div>';
+  var pr=sPast?'파트너 '+planRg(sPast.pMin,sPast.pMax)+' · 상대 '+planRg(sPast.oMin,sPast.oMax):'';
+  h+=planRuleH(true,'파트너와 상대방 편성을 균등하게','8명 모두가 서로 파트너로, 또 상대로 최대한 같은 횟수만큼 만나도록 편성합니다.'
+    +(sAll?'<br>시즌이 끝나면 모든 사이가 <b>파트너 '+planRg(sAll.pMin,sAll.pMax)+' · 상대 '+planRg(sAll.oMin,sAll.oMax)+'</b> (지난 경기 + 남은 일정 합계)':'')
+    +((sAll&&(sAll.pMax-sAll.pMin>1||sAll.oMax-sAll.oMin>1))?'<br><small>지난 모임에서 사람마다 뛴 횟수가 달라 모든 사이를 똑같이 맞출 수는 없지만, 남은 일정으로 그 차이를 최대한 줄였어요.</small>':''));
+  h+=planRuleH(false,'지난 경기를 모두 반영',m.sessions
+    ?'지금까지의 백세리그 <b>'+m.sessions+'개 모임 · '+m.matches+'경기</b>('+md(m.from)+'~'+md(m.to)+')를 모두 계산에 넣었어요.<br>지금까지 서로 만난 횟수는 '+pr+' — 적게 만난 사이를 남은 '+openN+'회에서 더 만나게 해 차이를 줄입니다.'
+    :'아직 반영할 지난 경기가 없어요. 경기가 쌓인 뒤 [다시 짜기]를 누르면 모두 반영해 다시 맞춰요.');
+  h+=planRuleH(false,'실력과 무관하게','승패·점수·랭킹은 전혀 쓰지 않고, 서로 만난 횟수만으로 짭니다.');
+  h+=planRuleH(false,'같은 날 같은 파트너 없음','한 모임(4라운드) 안에서는 같은 사람과 두 번 짝이 되지 않아요.');
+  h+=planRuleH(false,'전원 출전 · 코트 번갈아','8명이 4라운드 내내 코트에 서고(모임당 4경기), 코트 1·2도 고르게 배정해요.'
+    +(sAll?'<br><small>시즌 코트 1/2 · '+planSorted(players).map(function(id){return esc(gn(id))+' '+sAll.C[id][1]+'/'+sAll.C[id][2];}).join(', ')+'</small>':''));
+  if(players.length===8){
+    var modes=p?[['past','지난 경기'],['future','남은 일정'],['total','시즌 전체']]:[['past','지난 경기']];
+    var mode=p?planMat:'past',st=mode==='past'?sPast:mode==='future'?seasonPlanStats(players,null,planOpenEntries(p)):sAll;
+    h+='<div class="mtx-hd"><b>서로 만난 횟수</b><span class="mini-seg" style="margin-left:auto;">'+modes.map(function(x){return'<button type="button" class="'+(mode===x[0]?'on':'')+'" onclick="planSetMat(\''+x[0]+'\')">'+x[1]+'</button>';}).join('')+'</span></div>'
+      +planMatrixH(players,st)+'<div class="prof-guide">칸 = 파트너 횟수 · 상대 횟수 ('+(mode==='past'?'지금까지의 백세리그 경기':mode==='future'?'앞으로 편성된 남은 일정':'지난 경기 + 남은 일정')+'). 주황색 숫자는 가장 많이 만난 사이예요 (격차가 2회 이상일 때만 표시).</div>';
+  }
+  return h+'</div>';
+}
+function planCancelCardH(p){
+  var last=p?md(p.dates[p.dates.length-1]):'12/26';
+  return'<div class="card"><div class="card-title">모임이 취소되면? <span class="ct-en">Cancel</span></div>'
+    +planRuleH(true,'그 주는 건너뛰고 남은 모임을 다시 편성','날짜 카드의 [취소 처리]를 누르면 그 날짜는 리그에서 빠지고, 아직 치르지 않은 남은 모임 전체를 지난 경기와 합쳐 균등하게 다시 짭니다.')
+    +planRuleH(false,'다음 주로 그대로 순연하지는 않아요','시즌이 '+last+'에 끝나기 때문에 한 주씩 미루면 마지막 주 대진이 통째로 빠져 파트너·상대 횟수가 한쪽으로 치우칠 수 있어요. 그래서 남은 횟수에 맞춰 새로 맞춥니다. 취소 처리 전에 <b>다시 편성한 결과와 순연했을 때의 결과를 미리 비교</b>해 보여드려요.')
+    +planRuleH(false,'이미 편성·확정한 모임은 그대로','그 경기는 지난 경기로 계산돼요.')
+    +planRuleH(false,'8명이 다 모이지 못한 날도 같은 방법','리그 경기를 할 수 없는 날은 [취소 처리]하세요. 취소를 되돌리려면 [취소 해제]를 누르면 다시 편성돼요.')+'</div>';
+}
+function planBack(){if(window.history.state&&window.history.state.tab==='plan')window.history.back();else goTab('home');}
 function rPlan(){
   var el=document.getElementById('plan-page');if(!el)return;
   var p=planGet(),t=today();
-  var h='<div class="prof-back"><button class="ic-btn" onclick="goTab(\'home\')">'+ic('arrow-left',20)+'</button><span class="pg-hd" style="padding:0;"><span class="ko">백세리그 스케줄</span><span class="en">Season</span></span>'+(p?'<span style="margin-left:auto;"><button class="sbtn" onclick="planCopy()">'+ic('clipboard',13)+'표 복사</button></span>':'')+'</div>';
-  var regs=DB.members.filter(function(m){return!m.guest;}),sel=p?p.players:(planSel||(planSel=planPlayersDefault()));
-  var dates=p?p.dates:PLAN_DATES,open=dates.filter(function(d){return p?planStatus(p,d)==='open':d>=t;});
+  var h='<div class="prof-back"><button class="ic-btn" onclick="planBack()">'+ic('arrow-left',20)+'</button><span class="pg-hd" style="padding:0;"><span class="ko">백세리그 스케줄</span><span class="en">Season</span></span>'+(p?'<span style="margin-left:auto;"><button class="sbtn sq" title="표 복사" onclick="planCopy()">'+ic('clipboard',16)+'</button></span>':'')+'</div>';
+  var regs=planSorted(DB.members.filter(function(m){return!m.guest;}).map(function(m){return m.id;}));
+  var sel=p?p.players:(planSel||(planSel=planPlayersDefault())),players=planSorted(sel.filter(function(id){return memById(id);}));
+  var dates=p?p.dates:PLAN_DATES,open=dates.filter(function(d){return planStatus(p,d)==='open';});
+  var need=planNeeds(p);
   h+='<div class="card"><div class="card-title">'+PLAN_YEAR+' 백세리그 <span class="ct-en">Season Plan</span></div>'
-    +'<div class="f-lbl" style="margin-top:0;">정회원 8명 <small>— '+(p?'시즌 참가자':'누르면 선택·해제, 8명이어야 해요')+'</small></div><div class="tog-wrap">'
-    +regs.map(function(m){var on=sel.indexOf(m.id)>=0;return'<button type="button" class="tog'+(on?' on':'')+'"'+(p?' style="cursor:default;"':' onclick="planTogSel(\''+m.id+'\')"')+'>'+esc(m.name)+'</button>';}).join('')
-    +(sel.length!==8?'<span class="pill warn" style="align-self:center;">'+sel.length+'명 선택</span>':'')+'</div>'
+    +'<div class="f-lbl" style="margin-top:0;">참가 정회원 <small>— 가나다순'+(p?'':' · 누르면 선택·해제 (8명)')+'</small></div><div class="tog-wrap">'
+    +(p?players.map(function(id){return'<button type="button" class="tog on" style="cursor:default;">'+esc(gn(id))+'</button>';}).join('')
+        :regs.map(function(id){var on=sel.indexOf(id)>=0;return'<button type="button" class="tog'+(on?' on':'')+'" onclick="planTogSel(\''+id+'\')">'+esc(gn(id))+'</button>';}).join(''))
+    +(!p&&sel.length!==8?'<span class="pill warn" style="align-self:center;">'+sel.length+'명 선택</span>':'')+'</div>'
     +'<div class="f-lbl">남은 일정 <small>— 토요일 05:00 · 8명 전원 참석일에 리그 경기</small></div><div class="plan-dates">'
-    +dates.map(function(d){var st=p?planStatus(p,d):(d<t?'missed':'open');return'<span class="plan-d '+st+'">'+md(d)+'</span>';}).join('')+'</div>'
-    +'<div class="btn-row mt12">'+(p?'<button class="btn btn-ghost" onclick="if(confirm(\'지난 기록과 남은 일정(\'+'+open.length+'+\'회)을 합쳐 다시 짭니다. 진행할까요?\'))planGenerate()">'+ic('refresh',16)+'다시 짜기</button>':'<button class="btn btn-green" onclick="planGenerate()">'+ic('calendar',16)+'시즌 스케줄 생성</button>')+'</div>'
-    +'<div class="prof-guide" style="margin-top:8px;">실력은 보지 않고, 올해 백세리그 지난 경기까지 합쳐 모든 쌍의 <b>파트너 횟수와 상대 횟수가 최대한 같아지게</b> 남은 모임을 한 번에 짭니다. 모임이 취소되면 그 날짜를 취소 처리하면 남은 일정을 다시 맞춥니다.</div></div>';
+    +dates.map(function(d){var st=planStatus(p,d);return'<span class="plan-d '+st+'">'+md(d)+'</span>';}).join('')+'</div>'
+    +'<div class="prof-guide">초록 = 완료 · 주황 = 편성됨 · 취소선 = 취소·지남</div>'
+    +'<div class="btn-row mt12">'+(p?'<button class="btn btn-ghost" onclick="planRegen()">'+ic('refresh',16)+'다시 짜기</button>':'<button class="btn btn-green" onclick="planGenerate()">'+ic('calendar',16)+'시즌 스케줄 생성</button>')+'</div>'
+    +(p?'<div style="text-align:center;margin-top:10px;"><button class="sbtn" onclick="planResetPlayers()">참가자 변경</button></div>':'')+'</div>';
+  var hist=planHist(players),ok=players.length===8,openE=p?planOpenEntries(p):[];
+  var sPast=ok?seasonPlanStats(players,hist,[]):null,sAll=(p&&ok)?seasonPlanStats(players,hist,openE):null;
+  h+=planRulesH(p,players,hist,sPast,sAll,open.length,need);
+  h+=planCancelCardH(p);
   if(!p){el.innerHTML=h;return;}
-  var hist=planHist(p.players,PLAN_YEAR),stats=seasonPlanStats(p.players,hist,toArr(p.sessions).filter(function(x){return planStatus(p,x.date)==='open';}));
-  h+='<div class="card"><div class="card-title">공정성 <span class="ct-en">Balance</span></div>'
-    +'<div class="att-line"><b>파트너</b> 모든 쌍 '+stats.pMin+'~'+stats.pMax+'회 · <b>상대</b> 모든 쌍 '+stats.oMin+'~'+stats.oMax+'회 <span style="color:var(--muted);">(시즌 누적)</span></div>'
-    +'<div class="att-line" style="color:var(--muted);">코트 1/2 · '+p.players.map(function(id){return esc(planShort(id))+' '+stats.C[id][1]+'/'+stats.C[id][2];}).join(', ')+'</div>'
-    +planMatrixH(p,stats)+'</div>';
   p.dates.forEach(function(d){
     var st=planStatus(p,d),real=planSessionFor(d),e=planEntry(p,d);
     h+='<div class="card"><div class="card-title" style="justify-content:space-between;flex-wrap:wrap;row-gap:6px;"><span class="nw">'+dstr(d)+' <small style="font-weight:500;color:var(--muted);">05:00</small></span>'+planStatusPill(st)+'</div>';
     if(real)h+=planRoundsH(real.matches)+'<div class="prof-guide" style="margin-top:6px;">실제 편성된 경기 '+real.matches.length+'개'+(real.planId?' · 스케줄표 적용':'')+'</div><div class="btn-row mt8"><button class="btn btn-ghost" onclick="openSes(\''+real.id+'\')">'+ic(real.resultsLocked?'clipboard':'edit',15)+(real.resultsLocked?'결과 보기':'점수 입력')+'</button></div>';
     else if(st==='cancel')h+='<div class="prof-note">취소된 모임 · 남은 일정에 반영됨</div><div class="btn-row mt8"><button class="btn btn-ghost" onclick="planToggleCancel(\''+d+'\')">취소 해제</button></div>';
-    else if(e)h+=planRoundsH(e.matches)+'<div class="btn-row mt8"><button class="btn btn-green" onclick="planApply(\''+d+'\')">'+ic('shuffle',15)+'이 날짜로 편성</button><button class="btn btn-ghost" onclick="planToggleCancel(\''+d+'\')">취소 처리</button></div>';
+    else if(e&&st==='open')h+=planRoundsH(e.matches)+'<div class="btn-row mt8"><button class="btn btn-green" onclick="planApply(\''+d+'\')">'+ic('shuffle',15)+'이 날짜로 편성</button><button class="btn btn-ghost" onclick="planToggleCancel(\''+d+'\')">취소 처리</button></div>';
+    else if(st==='missed')h+='<div class="prof-note">지나간 일정이에요. 리그 경기를 치르지 않았다면 [다시 짜기]에서 제외돼요.</div>';
     else h+='<div class="prof-note">이 날짜 편성이 없어요. [다시 짜기]로 생성하세요.</div>';
     h+='</div>';
   });
   el.innerHTML=h;
 }
+function planMatchText(m){var a=planSorted(toArr(m.team1)),b=planSorted(toArr(m.team2));if(a.length&&b.length&&koCmp(gn(a[0]),gn(b[0]))>0){var t=a;a=b;b=t;}return'C'+m.court+' '+a.map(gn).join('·')+' vs '+b.map(gn).join('·');}
 function planText(){
   var p=planGet();if(!p)return'';
-  var lines=['['+PLAN_YEAR+' 백세리그 시즌 스케줄]','정회원: '+p.players.map(gn).join(' '),'토요일 05:00 · 8명 전원 참석일 리그 경기',''];
+  var lines=['['+PLAN_YEAR+' 백세리그 시즌 스케줄]','정회원(가나다순): '+planSorted(p.players).map(gn).join(' '),'토요일 05:00 · 8명 전원 참석일 리그 경기','편성 기준: 파트너·상대방 편성을 균등하게 (지난 경기 모두 반영)',''];
   p.dates.forEach(function(d){
-    var st=planStatus(p,d),real=planSessionFor(d),e=planEntry(p,d),ms=real?real.matches:(e?e.matches:null);
-    lines.push('* '+dstr(d)+(st==='done'?' (완료)':st==='set'?' (편성됨)':st==='cancel'?' (취소)':''));
-    if(ms){var byR={};ms.forEach(function(m){byR[m.round]=byR[m.round]||[];byR[m.round].push(m);});Object.keys(byR).sort(function(a,b){return a-b;}).forEach(function(r){lines.push(' R'+r+' '+byR[r].sort(function(a,b){return a.court-b.court;}).map(function(m){return'C'+m.court+' '+gn(m.team1[0])+'·'+gn(m.team1[1])+' vs '+gn(m.team2[0])+'·'+gn(m.team2[1]);}).join(' / '));});}
+    var st=planStatus(p,d),real=planSessionFor(d),e=planEntry(p,d),ms=real?real.matches:(st==='open'&&e?e.matches:null);
+    lines.push('* '+dstr(d)+(st==='done'?' · 완료':st==='set'?' · 편성됨':st==='cancel'?' · 취소':''));
+    if(ms){var byR={};ms.forEach(function(m){byR[m.round]=byR[m.round]||[];byR[m.round].push(m);});Object.keys(byR).sort(function(a,b){return a-b;}).forEach(function(r){lines.push(' R'+r+' '+byR[r].sort(function(a,b){return a.court-b.court;}).map(planMatchText).join(' / '));});}
     lines.push('');
   });
+  lines.push('※ 모임이 취소되면 남은 일정을 지난 경기와 합쳐 다시 편성합니다.');
   return lines.join('\n');
 }
 function planCopy(){
@@ -2768,14 +2893,6 @@ function planCopy(){
   else planShare(txt);
 }
 function planShare(txt){if(navigator.share){navigator.share({title:PLAN_YEAR+' 백세리그 시즌 스케줄',text:txt}).catch(function(){});}else{var ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');toast('스케줄표를 복사했어요.');}catch(e){toast('복사에 실패했어요.');}ta.remove();}}
-function rHomePlan(){
-  var el=document.getElementById('home-plan-card');if(!el)return;
-  var p=planGet(),t=today();
-  if(!p){var left=PLAN_DATES.filter(function(d){return d>=t;}).length;el.innerHTML='<div class="plan-home"><div><b>정회원 8명 · 남은 '+left+'회</b><div class="bkr-s">지난 기록까지 합쳐 남은 토요일 일정을 한 번에 공평하게 짜 둘 수 있어요.</div></div><button class="sbtn primary" onclick="goTab(\'plan\')">'+ic('calendar',13)+'만들기</button></div>';return;}
-  var open=p.dates.filter(function(d){return planStatus(p,d)==='open';}),next=open[0],e=next?planEntry(p,next):null;
-  el.innerHTML='<div class="plan-home"><div><b>'+(next?'다음 '+dstr(next)+' 05:00':'남은 일정이 없어요')+'</b><div class="bkr-s">남은 '+open.length+'회 · 정회원 8명 · 파트너·상대 균형 편성</div></div><button class="sbtn" onclick="goTab(\'plan\')">보기'+ic('chevron-right',13)+'</button></div>'
-    +(e?'<div class="plan-mini">'+e.matches.filter(function(m){return m.round===1;}).sort(function(a,b){return a.court-b.court;}).map(function(m){return'<span><b>R1 C'+m.court+'</b>'+planNm(m.team1[0])+'·'+planNm(m.team1[1])+' vs '+planNm(m.team2[0])+'·'+planNm(m.team2[1])+'</span>';}).join('')+'</div>':'');
-}
 
 /* ── MEMBERS ── */
 function rMembers(force){
