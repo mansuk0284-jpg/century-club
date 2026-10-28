@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="백세테니스">
@@ -54,6 +54,12 @@ body{
   overscroll-behavior:none;
 }
 #app{width:100%;max-width:480px;height:100%;display:flex;flex-direction:column;background:var(--bg);overflow:hidden;position:relative;}
+/* ── 화면 좌우 흔들림 방지 ──
+   갤럭시 '손으로 밀어서 캡처'처럼 손바닥이 닿으면 접점이 여러 개로 잡혀 브라우저가 확대(핀치)·좌우 이동으로 해석한다.
+   세로 스크롤만 허용하고, 가로로 밀어야 하는 영역(분석 칩·행렬표·안내 박스)만 예외로 둔다. */
+html,body,#app,#main{touch-action:pan-y;}
+html{overflow-x:hidden;}
+.ana-chips,.mtx-wrap,[style*="overflow-x:auto"]{touch-action:pan-x pan-y;overscroll-behavior-x:contain;}
 b,strong{font-weight:700;}
 .hd{font-family:'Gothic A1','Noto Sans KR',sans-serif;font-weight:800;letter-spacing:-.4px;}   /* 제목용 서체 */
 .eyebrow{font-family:'Cinzel',serif;font-size:10.5px;font-weight:700;letter-spacing:2.6px;color:var(--gold);text-transform:uppercase;}
@@ -77,7 +83,7 @@ b,strong{font-weight:700;}
 #nav button.on::after{opacity:1;}
 
 /* ── MAIN ── */
-#main{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain;position:relative;padding-bottom:22px;}
+#main{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior-x:none;overscroll-behavior-y:contain;position:relative;padding-bottom:22px;}
 #main > .pg{position:relative;z-index:1;}
 .pg{display:none}
 .pg.on{display:block}
@@ -1343,7 +1349,7 @@ function lgIco(s){return lgTagH(s);}
 function lgName(s){return lgOf(s)==='baekse'?'백세리그':'일반리그';}
 
 /* ── FIREBASE ── */
-var APP_VER='6.4 (2026-10-19)';
+var APP_VER='6.5 (2026-10-28)';
 var fbApp=null,fbDB=null,fbRef=null,isOnline=false;
 var FB_KEY='btc_firebase_cfg';
 var lastSavedSnapshot='';   // 자기가 저장한 데이터 추적 (echo 방지)
@@ -4114,6 +4120,17 @@ function normalizeWinners(){
     }
     e.preventDefault();                                     // 맨 위에서 아래로 당김 → 새로고침 차단
   },{passive:false});
+})();
+
+/* ── 화면 좌우 흔들림 방지 (보조) ──
+   주 방어는 CSS(touch-action·overscroll-behavior·뷰포트)이고, 입력창 포커스 등으로 화면이 옆으로 밀려난 경우에도 곧바로 제자리로 돌려놓는다.
+   분석 칩·표처럼 원래 가로로 밀리는 영역은 건드리지 않는다(스크롤 이벤트는 버블링되지 않음). */
+(function(){
+  function home(el){if(el&&el.scrollLeft)el.scrollLeft=0;}
+  window.addEventListener('scroll',function(){if(window.scrollX)window.scrollTo(0,window.scrollY);},{passive:true});
+  [document.getElementById('app'),document.getElementById('main'),document.body].forEach(function(el){
+    if(el)el.addEventListener('scroll',function(){home(el);},{passive:true});
+  });
 })();
 
 /* ── INIT ── */
